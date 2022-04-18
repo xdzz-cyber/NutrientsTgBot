@@ -1,0 +1,48 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Core", "Core", "{CE365D48-706B-4ECE-A626-94CBB8B2DDE4}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Infrastructure", "Infrastructure", "{FDC777D7-93F1-48F1-80CC-EA6FA86D0462}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Presentation", "Presentation", "{CA481D77-B0B4-4BD9-B8CA-91410C755025}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{719F12D9-C594-4B7C-99C4-79D5B5348CCE}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Application", "Application\Application.csproj", "{FF9E3929-4C0A-4350-9B02-4001BD3A58D0}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Domain", "Domain\Domain.csproj", "{FFD98767-1C67-4472-9608-348C8A59DAD6}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Persistence", "Persistence\Persistence.csproj", "{DB4171F2-6C08-47B6-A3EE-04AC542B25A0}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TelegramBotUI", "TelegramBotUI\TelegramBotUI.csproj", "{37C918BF-58D7-4205-94D5-7BC37DB8D2AA}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{FF9E3929-4C0A-4350-9B02-4001BD3A58D0} = {CE365D48-706B-4ECE-A626-94CBB8B2DDE4}
+		{FFD98767-1C67-4472-9608-348C8A59DAD6} = {CE365D48-706B-4ECE-A626-94CBB8B2DDE4}
+		{DB4171F2-6C08-47B6-A3EE-04AC542B25A0} = {FDC777D7-93F1-48F1-80CC-EA6FA86D0462}
+		{37C918BF-58D7-4205-94D5-7BC37DB8D2AA} = {CA481D77-B0B4-4BD9-B8CA-91410C755025}
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{FF9E3929-4C0A-4350-9B02-4001BD3A58D0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FF9E3929-4C0A-4350-9B02-4001BD3A58D0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FF9E3929-4C0A-4350-9B02-4001BD3A58D0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FF9E3929-4C0A-4350-9B02-4001BD3A58D0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FFD98767-1C67-4472-9608-348C8A59DAD6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FFD98767-1C67-4472-9608-348C8A59DAD6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FFD98767-1C67-4472-9608-348C8A59DAD6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FFD98767-1C67-4472-9608-348C8A59DAD6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DB4171F2-6C08-47B6-A3EE-04AC542B25A0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DB4171F2-6C08-47B6-A3EE-04AC542B25A0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DB4171F2-6C08-47B6-A3EE-04AC542B25A0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DB4171F2-6C08-47B6-A3EE-04AC542B25A0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{37C918BF-58D7-4205-94D5-7BC37DB8D2AA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{37C918BF-58D7-4205-94D5-7BC37DB8D2AA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{37C918BF-58D7-4205-94D5-7BC37DB8D2AA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{37C918BF-58D7-4205-94D5-7BC37DB8D2AA}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal
