@@ -17,7 +17,7 @@ public class UserDto : IMapWith<IdentityUser>
     public void Mapping(Profile profile)
     {
         profile.CreateMap<IdentityUser, UserDto>().ForMember(x => x.Id, 
-                opt => opt.MapFrom(x => x.Id))
+                opt => opt.MapFrom(x => Guid.Parse(x.Id)))
             .ForMember(x => x.Username, 
                 opt => opt.MapFrom(x => x.UserName))
             .ForMember(x => x.Email, opt => opt.MapFrom(x => x.Email))

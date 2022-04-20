@@ -24,7 +24,7 @@ public class GetUserListQueryHandler : IRequestHandler<GetUserListQuery, UserLis
 
         if (users == null)
         {
-            throw new NotFoundException(nameof(IdentityUser), request.Id);
+            throw new NotFoundException(nameof(IdentityUser), request.GetHashCode());
         }
 
         return new UserListVm() {Users = users};

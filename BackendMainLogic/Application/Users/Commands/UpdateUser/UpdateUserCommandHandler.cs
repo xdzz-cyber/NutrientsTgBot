@@ -19,10 +19,7 @@ public class UpdateUserCommandHandler : IRequestHandler<UpdateUserCommand>
     
     public async Task<Unit> Handle(UpdateUserCommand request, CancellationToken cancellationToken)
     {
-        //var user = await _ctx.Users.FirstOrDefaultAsync(x => x.Id == request.Id, cancellationToken);
-        
-       // if (user == null)
-       var user = await _userManager.FindByIdAsync(request.Id.ToString());
+        var user = await _userManager.FindByIdAsync(request.Id.ToString());
        
        if (user == null)
        {

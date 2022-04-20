@@ -1,4 +1,5 @@
 ﻿using Application.Common.Constants;
+using Application.Users.Commands.CreateUser;
 using Domain.Auth;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -21,7 +22,6 @@ public class AuthController : BaseController
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> Login([FromBody] LoginUserDto loginUserDto, [FromServices] SignInManager<IdentityUser> signInManager)
     {
-
         var result = await signInManager.PasswordSignInAsync(loginUserDto.Username, loginUserDto.Password, false, false);
         return  result.Succeeded ? Ok() : NotFound();
     }
@@ -30,29 +30,23 @@ public class AuthController : BaseController
     /// 
     /// </summary>
     /// <param name="registerUserDto"></param>
-    /// <param name="userManager"></param>
-    /// <param name="roleManager"></param>
     /// <returns></returns>
     [HttpPost]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<IActionResult> Register([FromBody] RegisterUserDto registerUserDto, 
-        [FromServices] UserManager<IdentityUser> userManager, [FromServices] RoleManager<IdentityRole> roleManager)
+    public async Task<IActionResult> Register([FromBody] RegisterUserDto registerUserDto)
     {
-        if (!roleManager.Roles.Any(x => x.Name.Equals(AuthRoles.User.ToString())))
+        var createUserCommand = new CreateUserCommand()
         {
-            var userRole = new IdentityRole(AuthRoles.User.ToString());
+            Email = registerUserDto.Email,
+            Password = registerUserDto.Password,
+            Phone = registerUserDto.Phone,
+            Usesrname = registerUserDto.Username
+        };
 
-            await roleManager.CreateAsync(userRole);
-        }
-        
-        var newUser = new IdentityUser { UserName = registerUserDto.Username, Email = registerUserDto.Email, PhoneNumber = registerUserDto.Phone};
-        await userManager.CreateAsync(newUser, registerUserDto.Password);
+        var result = await Mediator!.Send(createUserCommand);
 
-        var roleName = await roleManager.FindByNameAsync(AuthRoles.User.ToString());
-        var finalResult = await userManager.AddToRoleAsync(newUser, roleName.Name);
-
-        return finalResult.Succeeded ? Ok() : BadRequest();
+        return Ok(result);
     }
     
     

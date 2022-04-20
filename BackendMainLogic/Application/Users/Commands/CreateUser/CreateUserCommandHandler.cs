@@ -1,5 +1,6 @@
 ﻿using System.Security.Cryptography;
 using System.Text;
+using Application.Common.Constants;
 using Application.Interfaces;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
@@ -24,12 +25,18 @@ public class CreateUserCommandHandler : IRequestHandler<CreateUserCommand, Guid>
     {
         request.Password = _getSha256CodeOfString.GetHashCodeOfString(request.Password);
         
-        var userRole = new IdentityRole("User");
-        var newUser = new IdentityUser { UserName = request.Usesrname, PasswordHash = request.Password,Email = request.Email, PhoneNumber = request.Phone};
+        if (!_roleManager.Roles.Any(x => x.Name.Equals(AuthRoles.User.ToString())))
+        {
+            var userRole = new IdentityRole(AuthRoles.User.ToString());
+
+            await _roleManager.CreateAsync(userRole);
+        }
         
-        await _roleManager.CreateAsync(userRole);
+        var newUser = new IdentityUser { UserName = request.Usesrname, Email = request.Email, PhoneNumber = request.Phone};
         await _userManager.CreateAsync(newUser, request.Password);
-        await _userManager.AddToRoleAsync(newUser, userRole.Name);
+
+        var roleName = await _roleManager.FindByNameAsync(AuthRoles.User.ToString());
+        await _userManager.AddToRoleAsync(newUser, roleName.Name);
 
         return Guid.Parse(newUser.Id);
     }

@@ -1,7 +1,9 @@
 ﻿namespace Domain.Auth;
 
-public class RegisterUserDto
+public class UpdateUserDto
 {
+    public Guid Id { get; set; }
+    
     public string Username { get; set; }
     
     public string Password { get; set; }
