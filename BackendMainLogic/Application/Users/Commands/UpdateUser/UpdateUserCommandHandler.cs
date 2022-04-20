@@ -1,32 +1,40 @@
 ﻿using Application.Common.Exceptions;
 using Application.Interfaces;
-using Domain;
 using MediatR;
-using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Identity;
+
 
 namespace Application.Users.Commands.UpdateUser;
 
 public class UpdateUserCommandHandler : IRequestHandler<UpdateUserCommand>
 {
-    private readonly ITelegramBotDbContext _ctx;
+    private readonly UserManager<IdentityUser> _userManager;
+    private readonly IGetHashCodeOfString _getSha256CodeOfString;
 
-    public UpdateUserCommandHandler(ITelegramBotDbContext ctx)
+    public UpdateUserCommandHandler(UserManager<IdentityUser> userManager, IGetHashCodeOfString getSha256CodeOfString)
     {
-        _ctx = ctx;
+        _userManager = userManager;
+        _getSha256CodeOfString = getSha256CodeOfString;
     }
     
     public async Task<Unit> Handle(UpdateUserCommand request, CancellationToken cancellationToken)
     {
-        var user = await _ctx.Users.FirstOrDefaultAsync(x => x.Id == request.Id, cancellationToken);
+        //var user = await _ctx.Users.FirstOrDefaultAsync(x => x.Id == request.Id, cancellationToken);
         
-        if (user == null)
-        {
-            throw new NotFoundException(nameof(User), request.Id);
-        }
+       // if (user == null)
+       var user = await _userManager.FindByIdAsync(request.Id.ToString());
+       
+       if (user == null)
+       {
+           throw new NotFoundException(nameof(IdentityUser), request.Id);
+       }
 
-        user.Username = request.Username;
-
-        await _ctx.SaveChangesAsync(cancellationToken);
+        user.UserName = request.Username;
+        user.PasswordHash = _getSha256CodeOfString.GetHashCodeOfString(request.Password);
+        user.Email = request.Email;
+        user.PhoneNumber = request.Phone;
+        
+        await _userManager.UpdateAsync(user);
         
         return Unit.Value;
     }

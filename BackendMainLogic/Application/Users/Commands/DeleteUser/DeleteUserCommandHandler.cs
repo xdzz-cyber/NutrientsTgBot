@@ -1,31 +1,30 @@
 ﻿using Application.Common.Exceptions;
-using Application.Interfaces;
-using Domain;
 using MediatR;
-using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Identity;
+
 
 namespace Application.Users.Commands.DeleteUser;
 
 public class DeleteUserCommandHandler : IRequestHandler<DeleteUserCommand>
 {
-    private readonly ITelegramBotDbContext _ctx;
 
-    public DeleteUserCommandHandler(ITelegramBotDbContext ctx)
+    private readonly UserManager<IdentityUser> _userManager;
+
+    public DeleteUserCommandHandler(UserManager<IdentityUser> userManager)
     {
-        _ctx = ctx;
+        _userManager = userManager;
     }
     
     public async Task<Unit> Handle(DeleteUserCommand request, CancellationToken cancellationToken)
     {
-        var user = await _ctx.Users.FirstOrDefaultAsync(x => x.Id == request.Id, cancellationToken);
+        var user = await _userManager.FindByIdAsync(request.Id.ToString());
 
         if (user == null)
         {
-            throw new NotFoundException(nameof(User), request.Id);
+            throw new NotFoundException(nameof(IdentityUser), request.Id);
         }
-
-        _ctx.Users.Remove(user);
-        await _ctx.SaveChangesAsync(cancellationToken);
+        
+        await _userManager.DeleteAsync(user);
         
         return Unit.Value;
     }

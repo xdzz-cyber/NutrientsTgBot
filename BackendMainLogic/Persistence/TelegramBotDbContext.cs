@@ -1,23 +1,14 @@
 ﻿using Application.Interfaces;
-using Domain;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-using Persistence.EntityTypeConfigurations;
 
 namespace Persistence;
 
-public class TelegramBotDbContext : DbContext, ITelegramBotDbContext
+public class TelegramBotDbContext : IdentityDbContext<IdentityUser>, ITelegramBotDbContext
 {
     public TelegramBotDbContext(DbContextOptions<TelegramBotDbContext> options) : base(options)
     {
         
-    }
-    
-    public DbSet<User> Users { get; set; }
-
-
-    protected override void OnModelCreating(ModelBuilder modelBuilder)
-    {
-        modelBuilder.ApplyConfiguration(new UserConfiguration());
-        base.OnModelCreating(modelBuilder);
     }
 }
