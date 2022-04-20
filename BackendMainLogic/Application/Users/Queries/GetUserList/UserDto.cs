@@ -12,7 +12,7 @@ public class UserDto : IMapWith<User>
 
     public void Mapping(Profile profile)
     {
-        profile.CreateMap<User, UserDto>().ForMember(x => x.Id,
+        _ = profile.CreateMap<User, UserDto>().ForMember(x => x.Id,
                 opt => opt.MapFrom(x => x.Id))
             .ForMember(x => x.Username, 
                 opt => opt.MapFrom(x => x.Username));

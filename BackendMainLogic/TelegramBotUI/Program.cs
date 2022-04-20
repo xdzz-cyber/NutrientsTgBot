@@ -1,4 +1,4 @@
-using System.Reflection;
+﻿using System.Reflection;
 using Application;
 using Application.Common.Mappings;
 using Application.Interfaces;
@@ -41,7 +41,6 @@ if (app.Environment.IsDevelopment())
         catch (Exception e)
         {
         }
-    
     }
 }
 

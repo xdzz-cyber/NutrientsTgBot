@@ -1,0 +1,4 @@
+{
+  "Endpoint": "https://api.nal.usda.gov/fdc/v1/foods/list?dataType=Foundation&pageSize=200&pageNumber=1&api_key=Xenx4EKHBFRn0cct6zdlUMdkpdBwGxK18AUt2aTv",
+  "FoodsFileName": "foods.json"
+}

@@ -5,7 +5,10 @@ namespace Application.Common.Mappings;
 
 public class AssemblyMappingProfile : Profile
 {
-    public AssemblyMappingProfile(Assembly assembly) => ApplyMappingsFromAssemblies(assembly);
+    public AssemblyMappingProfile(Assembly assembly)
+    {
+        ApplyMappingsFromAssemblies(assembly);
+    }
 
     private void ApplyMappingsFromAssemblies(Assembly assembly)
     {
@@ -17,7 +20,7 @@ public class AssemblyMappingProfile : Profile
         {
             var instance = Activator.CreateInstance(type);
             var methodInfo = type.GetMethod("Mapping");
-            methodInfo?.Invoke(instance, new[] {this});
+            _ = methodInfo?.Invoke(instance, new[] { this });
         }
     }
 }
