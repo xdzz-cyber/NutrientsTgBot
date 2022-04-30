@@ -1,4 +1,4 @@
-﻿using Application.Common.Constants;
+﻿using Application.Auth.Queries.LoginUser;
 using Application.Users.Commands.CreateUser;
 using Domain.Auth;
 using Microsoft.AspNetCore.Identity;
@@ -9,21 +9,25 @@ namespace TelegramBotUI.Controllers;
 /// <summary>
 /// 
 /// </summary>
+[Route("api/[controller]/[action]")]
 public class AuthController : BaseController
 {
     /// <summary>
     /// 
     /// </summary>
     /// <param name="loginUserDto"></param>
-    /// <param name="signInManager"></param>
     /// <returns></returns>
     [HttpPost]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<IActionResult> Login([FromBody] LoginUserDto loginUserDto, [FromServices] SignInManager<IdentityUser> signInManager)
+    public async Task<IActionResult> Login([FromBody] LoginUserDto loginUserDto)
     {
-        var result = await signInManager.PasswordSignInAsync(loginUserDto.Username, loginUserDto.Password, false, false);
-        return  result.Succeeded ? Ok() : NotFound();
+        var result = await Mediator!.Send(new LoginUserQuery
+        {
+            Username = loginUserDto.Username, Password = loginUserDto.Password
+        });
+
+        return result ? Ok() : NotFound();
     }
     
     /// <summary>

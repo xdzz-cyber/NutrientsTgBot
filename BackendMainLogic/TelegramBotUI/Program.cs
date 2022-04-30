@@ -2,7 +2,10 @@ using System.Reflection;
 using Application;
 using Application.Common.Mappings;
 using Application.Interfaces;
+using Domain.TelegramBotEntities;
 using Persistence;
+using Telegram.Bot;
+using TelegramBotUI;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -16,6 +19,7 @@ builder.Services.AddAutoMapper(config =>
 builder.Services.AddApplication();
 builder.Services.AddPersistence(builder.Configuration);
 builder.Services.AddControllers();
+builder.Services.AddSingleton<TelegramBot>();
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowAll", policy =>

@@ -26,7 +26,7 @@ public class UserController : BaseController
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     public async Task<ActionResult<UserDetailsVm>> GetOne(Guid id)
     {
-        var query = new GetUserDetailsQuery() {Id = id};
+        var query = new GetUserDetailsQuery {Id = id};
         var result = await Mediator!.Send(query);
 
         return Ok(result);
