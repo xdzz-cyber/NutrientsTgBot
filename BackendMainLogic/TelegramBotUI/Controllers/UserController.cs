@@ -19,14 +19,14 @@ public class UserController : BaseController
     /// <summary>
     /// 
     /// </summary>
-    /// <param name="id"></param>
+    /// <param name="username"></param>
     /// <returns></returns>
-    [HttpGet("{id}")]
+    [HttpGet("{username}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-    public async Task<ActionResult<UserDetailsVm>> GetOne(Guid id)
+    public async Task<ActionResult<UserDetailsVm>> GetOne(string username)
     {
-        var query = new GetUserDetailsQuery {Id = id};
+        var query = new GetUserDetailsQuery(username);
         var result = await Mediator!.Send(query);
 
         return Ok(result);
@@ -60,7 +60,6 @@ public class UserController : BaseController
         var query = new UpdateUserCommand()
         {
             Email = updateUserDto.Email,
-            Id = updateUserDto.Id,
             Password = updateUserDto.Password,
             Phone = updateUserDto.Phone,
             Username = updateUserDto.Username
@@ -73,17 +72,15 @@ public class UserController : BaseController
     /// <summary>
     /// 
     /// </summary>
-    /// <param name="id"></param>
+    /// <param name="username"></param>
     /// <returns></returns>
-    [HttpDelete("{id}")]
+    [HttpDelete("{username}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-    public async Task<ActionResult<UserListVm>> Delete(string id)
+    public async Task<ActionResult<UserListVm>> Delete(string username)
     {
-        var query = new DeleteUserCommand()
-        {
-            Id = Guid.Parse(id)
-        };
+        var query = new DeleteUserCommand(username);
+        
         var result = await Mediator!.Send(query);
 
         return Ok(result);

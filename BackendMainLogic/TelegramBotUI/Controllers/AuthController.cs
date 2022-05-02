@@ -1,6 +1,7 @@
 ﻿using Application.Auth.Queries.LoginUser;
 using Application.Users.Commands.CreateUser;
 using Domain.Auth;
+using Domain.TelegramBotEntities;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
@@ -24,7 +25,7 @@ public class AuthController : BaseController
     {
         var result = await Mediator!.Send(new LoginUserQuery
         {
-            Username = loginUserDto.Username, Password = loginUserDto.Password
+            Username = loginUserDto.Username
         });
 
         return result ? Ok() : NotFound();
@@ -45,7 +46,7 @@ public class AuthController : BaseController
             Email = registerUserDto.Email,
             Password = registerUserDto.Password,
             Phone = registerUserDto.Phone,
-            Usesrname = registerUserDto.Username
+            Username = registerUserDto.Username
         };
 
         var result = await Mediator!.Send(createUserCommand);
@@ -63,7 +64,7 @@ public class AuthController : BaseController
     [HttpGet]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<IActionResult> Logout( [FromServices] SignInManager<IdentityUser> signInManager)
+    public async Task<IActionResult> Logout( [FromServices] SignInManager<AppUser> signInManager)
     {
         try
         {

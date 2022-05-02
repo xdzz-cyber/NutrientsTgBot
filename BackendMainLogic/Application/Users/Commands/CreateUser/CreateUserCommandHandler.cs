@@ -1,7 +1,6 @@
-﻿using System.Security.Cryptography;
-using System.Text;
-using Application.Common.Constants;
+﻿using Application.Common.Constants;
 using Application.Interfaces;
+using Domain.TelegramBotEntities;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
 
@@ -9,12 +8,12 @@ namespace Application.Users.Commands.CreateUser;
 
 public class CreateUserCommandHandler : IRequestHandler<CreateUserCommand, Guid>
 {
-    private readonly UserManager<IdentityUser> _userManager;
+    private readonly UserManager<AppUser> _userManager;
     private readonly RoleManager<IdentityRole> _roleManager;
     private readonly IGetHashCodeOfString _getSha256CodeOfString;
 
 
-    public CreateUserCommandHandler(UserManager<IdentityUser> userManager, RoleManager<IdentityRole> roleManager, IGetHashCodeOfString getSha256CodeOfString)
+    public CreateUserCommandHandler(UserManager<AppUser> userManager, RoleManager<IdentityRole> roleManager, IGetHashCodeOfString getSha256CodeOfString)
     {
         _userManager = userManager;
         _roleManager = roleManager;
@@ -32,10 +31,13 @@ public class CreateUserCommandHandler : IRequestHandler<CreateUserCommand, Guid>
             await _roleManager.CreateAsync(userRole);
         }
         
-        var newUser = new IdentityUser { UserName = request.Usesrname, Email = request.Email, PhoneNumber = request.Phone};
+        var newUser = new AppUser() { UserName = request.Username, 
+            Email = request.Email, PhoneNumber = request.Phone, ChatId = request.ChatId};
+        
         await _userManager.CreateAsync(newUser, request.Password);
 
         var roleName = await _roleManager.FindByNameAsync(AuthRoles.User.ToString());
+        
         await _userManager.AddToRoleAsync(newUser, roleName.Name);
 
         return Guid.Parse(newUser.Id);

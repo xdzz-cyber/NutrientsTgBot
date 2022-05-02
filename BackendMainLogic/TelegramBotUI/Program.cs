@@ -2,9 +2,7 @@ using System.Reflection;
 using Application;
 using Application.Common.Mappings;
 using Application.Interfaces;
-using Domain.TelegramBotEntities;
 using Persistence;
-using Telegram.Bot;
 using TelegramBotUI;
 
 var builder = WebApplication.CreateBuilder(args);
