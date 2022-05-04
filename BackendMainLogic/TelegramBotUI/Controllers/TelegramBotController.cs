@@ -1,5 +1,6 @@
 ﻿using System.Reflection;
 using Application.Common.Constants;
+using Application.Interfaces;
 using Application.Users.Commands.CreateUser;
 using Application.Users.Queries.GetUserList;
 using Microsoft.AspNetCore.Mvc;
@@ -16,7 +17,7 @@ public class TelegramBotController : BaseController
 {
     private readonly TelegramBotClient _telegramBotClient;
     private readonly Dictionary<string, Type> _telegramBotCommands;
-    private static readonly List<Type> _lastExecutedCommandsTypes = new List<Type>();
+    private static readonly List<Type> _lastExecutedCommandsTypes = new ();
 
     public TelegramBotController(TelegramBot telegramBot)
     {
@@ -36,21 +37,52 @@ public class TelegramBotController : BaseController
             return BadRequest("No chat found");
         }
         
-        
-        var command =  $"{upd.Message?.Text!.Replace("/", "").FirstCharToUpper()}";
-        
-        var queryType = command.All(char.IsDigit) ? _lastExecutedCommandsTypes.Last() : _telegramBotCommands[command];
-        
-        var ctor = queryType.GetConstructor(new[] {typeof(string), typeof(long)});
-        
-        var instance = ctor?.Invoke(new object[] {chat.Username!, chat.Id });
-        
-        var queryResult = JsonConvert.SerializeObject(await Mediator?.Send(instance ?? throw new InvalidOperationException())!);
+        try
+        {
+            var command = $"{upd.Message?.Text!.Replace("/", "").FirstCharToUpper()}";
 
-        await _telegramBotClient.SendTextMessageAsync(chat.Id, queryResult,
-            ParseMode.Markdown, replyMarkup: GetButton());
-        
-        _lastExecutedCommandsTypes.Add(_telegramBotCommands[command]);
+            if (command.All(char.IsDigit) && !_lastExecutedCommandsTypes.Any())
+            {
+                await _telegramBotClient.SendTextMessageAsync(chat.Id, "Bad request.",
+                    ParseMode.Markdown, replyMarkup: GetButton());
+                return Ok();
+            }
+
+            var queryType = command.All(char.IsDigit)
+                ? _lastExecutedCommandsTypes.Last(x => x.GetInterface(nameof(ICommand)) != null)
+                : _telegramBotCommands[command];
+
+            var ctorParamsTypes = queryType.GetInterface(nameof(IQuery)) != null
+                ? new[] {typeof(string), typeof(long)}
+                : new[] {typeof(string), typeof(long), typeof(double)};
+
+            var ctorParams = queryType.GetInterface(nameof(IQuery)) == null
+                ? new object[] {chat.Username!, chat.Id, double.Parse(command)}
+                : new object[] {chat.Username!, chat.Id};
+
+            var ctor = queryType.GetConstructor(ctorParamsTypes);
+
+            var instance = ctor?.Invoke(ctorParams);
+
+            var queryResult =
+                JsonConvert.SerializeObject(await Mediator?.Send(instance ?? throw new InvalidOperationException())!);
+
+            await _telegramBotClient.SendTextMessageAsync(chat.Id, queryResult,
+                ParseMode.Markdown, replyMarkup: GetButton());
+
+            if (!command.All(char.IsDigit))
+            {
+                _lastExecutedCommandsTypes.AddRange(new []{_telegramBotCommands[command],
+                    _telegramBotCommands.FirstOrDefault(x => 
+                        AreTwoStringsHaveCommonSubstring(x.Key, command) && x.Value.GetInterface(nameof(ICommand)) != null).Value});
+            }
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e.Message);
+            await _telegramBotClient.SendTextMessageAsync(chat.Id, e.Message,
+                ParseMode.Markdown, replyMarkup: GetButton());
+        }
 
         return Ok();
     }
@@ -65,5 +97,18 @@ public class TelegramBotController : BaseController
         }
         
         return new ReplyKeyboardMarkup(keyboardCommands){ResizeKeyboard = true};
+    }
+
+    private bool AreTwoStringsHaveCommonSubstring(string s1, string s2)
+    {
+        var sameLengthCounter = 0;
+        var i = 1;
+        while (!(s1.Length - i < 0 || s2.Length- i < 0) && s1[^i].Equals(s2[^i]))
+        {
+            sameLengthCounter += 1;
+            i += 1;
+        }
+
+        return sameLengthCounter >= (int) StringMaxSubstringLengthToBeEqualWithAnother.MaxLength;
     }
 }
