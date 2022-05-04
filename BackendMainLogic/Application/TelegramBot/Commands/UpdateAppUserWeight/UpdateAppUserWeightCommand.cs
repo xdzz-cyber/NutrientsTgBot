@@ -9,6 +9,6 @@ public class UpdateAppUserWeightCommand : IRequest<string>, ICommand
     public long ChatId { get; set; }
     public double Weight { get; set; }
 
-    public UpdateAppUserWeightCommand(string username, long chatId, double weight)
+    public UpdateAppUserWeightCommand(string username, long chatId, double weight = default)
     => (Username, ChatId, Weight) = (username, chatId, weight);
 }

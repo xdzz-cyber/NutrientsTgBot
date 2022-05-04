@@ -1,4 +1,6 @@
-﻿using Application.Common.Exceptions;
+﻿using Application.Common.Constants;
+using Application.Common.Exceptions;
+using Application.TelegramBot.Queries.GetUserWeight;
 using Domain.TelegramBotEntities;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
@@ -8,10 +10,12 @@ namespace Application.TelegramBot.Commands.UpdateAppUserWeight;
 public class UpdateAppUserWeightCommandHandler : IRequestHandler<UpdateAppUserWeightCommand, string>
 {
     private readonly UserManager<AppUser> _userManager;
+    private readonly IMediator _mediator;
 
-    public UpdateAppUserWeightCommandHandler(UserManager<AppUser> userManager)
+    public UpdateAppUserWeightCommandHandler(UserManager<AppUser> userManager, IMediator mediator)
     {
         _userManager = userManager;
+        _mediator = mediator;
     }
 
     public async Task<string> Handle(UpdateAppUserWeightCommand request, CancellationToken cancellationToken)
@@ -23,6 +27,12 @@ public class UpdateAppUserWeightCommandHandler : IRequestHandler<UpdateAppUserWe
             throw new NotFoundException(nameof(AppUser), request.ChatId);
         }
 
+        if (request.Weight <= 0)
+        {
+            return await _mediator.Send(new GetUserWeightQuery(username: request.Username, 
+                chatId: request.ChatId, QueryExecutingTypes.QueryAsResponseForCommand), cancellationToken);
+        }
+        
         appUser.Weight = request.Weight;
 
         var _ = await _userManager.UpdateAsync(appUser);

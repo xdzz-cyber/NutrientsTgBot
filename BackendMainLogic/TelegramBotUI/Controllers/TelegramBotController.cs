@@ -1,8 +1,6 @@
-﻿using System.Reflection;
+﻿using System.Globalization;
 using Application.Common.Constants;
 using Application.Interfaces;
-using Application.Users.Commands.CreateUser;
-using Application.Users.Queries.GetUserList;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using Telegram.Bot;
@@ -52,17 +50,31 @@ public class TelegramBotController : BaseController
                 ? _lastExecutedCommandsTypes.Last(x => x.GetInterface(nameof(ICommand)) != null)
                 : _telegramBotCommands[command];
 
-            var ctorParamsTypes = queryType.GetInterface(nameof(IQuery)) != null
-                ? new[] {typeof(string), typeof(long)}
-                : new[] {typeof(string), typeof(long), typeof(double)};
+            var ctorParamsTypes = new List<dynamic>();
 
-            var ctorParams = queryType.GetInterface(nameof(IQuery)) == null
-                ? new object[] {chat.Username!, chat.Id, double.Parse(command)}
-                : new object[] {chat.Username!, chat.Id};
+            var allParams = new List<dynamic> {chat.Username!, chat.Id, command.All(char.IsDigit) 
+                ? Convert.ToDouble(command, CultureInfo.InvariantCulture) : command};
+            
+            var ctors = queryType.GetConstructors();
+            // assuming class A has only one constructor
+            var ctor = ctors[0];
+            
+            var ctorParams = new List<dynamic?>(); 
+            
+            foreach (var param in ctor.GetParameters())
+            {
+                ctorParamsTypes.Insert(param.Position, param.ParameterType);
+            }
 
-            var ctor = queryType.GetConstructor(ctorParamsTypes);
+            foreach (var ctorParamType in ctorParamsTypes)
+            {
 
-            var instance = ctor?.Invoke(ctorParams);
+                ctorParams.Add(allParams.FirstOrDefault(x => x.GetType().Equals(ctorParamType))
+                               ?? ctor.GetParameters().FirstOrDefault(x
+                                   => x.ParameterType.Equals(ctorParamType))!.DefaultValue);
+            }
+
+            var instance = ctor.Invoke(ctorParams.ToArray());
 
             var queryResult =
                 JsonConvert.SerializeObject(await Mediator?.Send(instance ?? throw new InvalidOperationException())!);
@@ -90,10 +102,13 @@ public class TelegramBotController : BaseController
     private IReplyMarkup GetButton()
     {
         var keyboardCommands = new List<List<KeyboardButton>>();
-        
-        foreach (var key in _telegramBotCommands.Keys)
+
+        for (var i = 0; i < _telegramBotCommands.Keys.Count; i+=2)
         {
-            keyboardCommands.Add(new List<KeyboardButton>() {new (key)});
+            keyboardCommands.Add(_telegramBotCommands.Keys.Count == i + 1 ?
+                new List<KeyboardButton>{new (_telegramBotCommands.Keys.ToArray()[i])}:
+                new List<KeyboardButton>{new (_telegramBotCommands.Keys.ToArray()[i]),
+                new (_telegramBotCommands.Keys.ToArray()[i+1])});
         }
         
         return new ReplyKeyboardMarkup(keyboardCommands){ResizeKeyboard = true};
