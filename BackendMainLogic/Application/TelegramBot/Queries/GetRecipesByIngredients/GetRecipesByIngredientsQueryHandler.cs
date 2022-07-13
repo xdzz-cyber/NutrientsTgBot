@@ -42,7 +42,7 @@ public class GetRecipesByIngredientsQueryHandler : IRequestHandler<GetRecipesByI
             foreach (var recipe in content.Recipes)
             {
                 var tmp = _mapper.Map<RecipeViewDto>(recipe);
-                var msg = $"Title: {tmp.Title}, Vegetarian: {tmp.Vegetarian}, GlutenFree: {tmp.GlutenFree}, PricePerServing: {tmp.PricePerServing}, Link: {tmp.SpoonacularSourceUrl}";
+                var msg = $"<strong>Title: {tmp.Title}, Vegetarian: {tmp.Vegetarian}, GlutenFree: {tmp.GlutenFree}, PricePerServing: {tmp.PricePerServing}, Link: {tmp.SpoonacularSourceUrl} Save recipe(/AddRecipeToUser_{tmp.Id})</strong>";
                 response.AppendLine(msg);
                 msgResponse += msg;
                 // response.AppendLine("das");

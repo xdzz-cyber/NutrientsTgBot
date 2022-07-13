@@ -1,4 +1,5 @@
-﻿using Application.TelegramBot.Commands.UpdateUserWaterBalanceLevel;
+﻿using Application.TelegramBot.Commands.AddRecipeToUser;
+using Application.TelegramBot.Commands.UpdateUserWaterBalanceLevel;
 using Application.TelegramBot.Commands.UpdateUserWeight;
 using Application.TelegramBot.Queries;
 using Application.TelegramBot.Queries.GetRecipesByIngredients;
@@ -29,5 +30,7 @@ public static class TelegramBotCommands
         _commands.Add("GetUserWaterBalanceLevel", typeof(GetUserWaterBalanceLevelQuery));
         _commands.Add("UpdateUserWaterBalanceLevel", typeof(UpdateUserWaterBalanceLevelCommand));
         _commands.Add("GetRecipesByIngredients", typeof(GetRecipesByIngredientsQuery));
+        _commands.Add("AddRecipeToUser", typeof(AddRecipeToUserCommand));
     }
+    
 }

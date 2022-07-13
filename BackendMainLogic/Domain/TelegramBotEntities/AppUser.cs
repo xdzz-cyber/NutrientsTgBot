@@ -7,4 +7,6 @@ public class AppUser : IdentityUser
     public long ChatId { get; set; }
 
     public double Weight { get; set; }
+    
+    public ICollection<Recipe> Recipes { get; set; }
 }

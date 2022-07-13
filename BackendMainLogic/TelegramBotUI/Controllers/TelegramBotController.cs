@@ -1,4 +1,5 @@
 ﻿using System.Globalization;
+using System.Text.RegularExpressions;
 using Application.Common.Constants;
 using Application.Interfaces;
 using Microsoft.AspNetCore.Mvc;
@@ -37,9 +38,9 @@ public class TelegramBotController : BaseController
         
         try
         {
-            var command = $"{upd.Message?.Text!.Replace("/", "").FirstCharToUpper()}";
+            var command = $"{upd.Message?.Text!.Replace("/", "").Trim().FirstCharToUpper()}";
 
-            if (_telegramBotCommands.All(c => c.Key != command) && !_lastExecutedCommandsTypes.Any()) //command.All(char.IsDigit)
+            if (!_telegramBotCommands.Any(c => AreTwoStringsHaveCommonSubstring(c.Key, command)) && !_lastExecutedCommandsTypes.Any()) //command.All(char.IsDigit)
             {
                 await _telegramBotClient.SendTextMessageAsync(chat.Id, "Bad request.",
                     ParseMode.Markdown, replyMarkup: GetButton());
@@ -47,9 +48,19 @@ public class TelegramBotController : BaseController
                 return Ok();
             }
 
-            var queryType = _telegramBotCommands.All(c => c.Key != command)
-                ? _lastExecutedCommandsTypes.Last(x => x != null && x.GetInterfaces().Any(i => i.Name == nameof(ICommand) || i.Name == nameof(IQuery))) //GetInterface(nameof(ICommand)) != null || x.GetInterface(nameof(IQuery)) != null
-                : _telegramBotCommands[command];
+            var queryType = _telegramBotCommands.Any(c => AreTwoStringsHaveCommonSubstring(c.Key, command))
+                ? _telegramBotCommands[Regex.Replace(command, @"[0-9_]+", string.Empty)]
+                : _lastExecutedCommandsTypes.Last(x =>
+                    x != null && x.GetInterfaces().Any(i => i.Name == nameof(ICommand) || i.Name == nameof(IQuery))); //GetInterface(nameof(ICommand)) != null || x.GetInterface(nameof(IQuery)) != null
+                
+
+            // var queryType = _telegramBotCommands.FirstOrDefault(c => AreTwoStringsHaveCommonSubstring(c.Key, command));
+            //
+            // if (!string.IsNullOrEmpty(queryType.Key))
+            // {
+            //     queryType = _telegramBotCommands[queryType.Key];
+            // }
+            //      _lastExecutedCommandsTypes.Last(x => x != null && x.GetInterfaces().Any(i => i.Name == nameof(ICommand) || i.Name == nameof(IQuery)));
 
             var ctorParamsTypes = new List<object>();
 
@@ -86,9 +97,10 @@ public class TelegramBotController : BaseController
 
             var queryResult =
                 JsonConvert.SerializeObject(await Mediator?.Send(instance ?? throw new InvalidOperationException())!);
-
+            
+            
             await _telegramBotClient.SendTextMessageAsync(chat.Id, queryResult,
-                ParseMode.Markdown, replyMarkup: GetButton());
+                ParseMode.Html, replyMarkup: GetButton());
 
             if (_telegramBotCommands.Any(c => c.Key == command))
             {
@@ -103,7 +115,7 @@ public class TelegramBotController : BaseController
         {
             Console.WriteLine(e.Message);
             await _telegramBotClient.SendTextMessageAsync(chat.Id, e.Message,
-                ParseMode.Markdown, replyMarkup: GetButton());
+                ParseMode.Html, replyMarkup: GetButton());
         }
 
         return Ok();
@@ -115,10 +127,13 @@ public class TelegramBotController : BaseController
 
         for (var i = 0; i < _telegramBotCommands.Keys.Count; i+=2)
         {
-            keyboardCommands.Add(_telegramBotCommands.Keys.Count == i + 1 ?
-                new List<KeyboardButton>{new (_telegramBotCommands.Keys.ToArray()[i])}:
-                new List<KeyboardButton>{new (_telegramBotCommands.Keys.ToArray()[i]),
-                new (_telegramBotCommands.Keys.ToArray()[i+1])});
+            if (_telegramBotCommands.Keys.ToArray()[i] != "AddRecipeToUser")
+            {
+                keyboardCommands.Add(_telegramBotCommands.Keys.Count == i + 1 ?
+                    new List<KeyboardButton>{new (_telegramBotCommands.Keys.ToArray()[i])}:
+                    new List<KeyboardButton>{new (_telegramBotCommands.Keys.ToArray()[i]),
+                        new (_telegramBotCommands.Keys.ToArray()[i+1])}); 
+            }
         }
         
         return new ReplyKeyboardMarkup(keyboardCommands){ResizeKeyboard = true};
@@ -128,13 +143,17 @@ public class TelegramBotController : BaseController
     {
         var sameLengthCounter = 0;
         var i = 1;
-        while (!(s1.Length - i < 0 || s2.Length- i < 0) && s1[^i].Equals(s2[^i]))
+        while (!(s1.Length - i < 0 || s2.Length- i < 0))
         {
-            sameLengthCounter += 1;
+            if(s1[i-1] == s2[i-1]){
+                sameLengthCounter += 1;
+            }
+            
             i += 1;
         }
 
-        return sameLengthCounter >= (int) StringMaxSubstringLengthToBeEqualWithAnother.MaxLength;
+        var minimalLengthToBeEqual = s1.Length > s2.Length ? s2.Length / 2 : s1.Length / 2;
+        return sameLengthCounter >= minimalLengthToBeEqual;
     }
     
     public T GetDefaultGeneric<T>()

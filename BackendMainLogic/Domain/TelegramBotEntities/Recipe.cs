@@ -33,4 +33,6 @@ public class Recipe
     
     [JsonPropertyName("vegetarian")]
     public bool Vegetarian { get; set; }
+
+    public ICollection<AppUser> AppUsers { get; set; }
 }
