@@ -14,6 +14,7 @@ builder.Services.AddAutoMapper(config =>
     config.AddProfile(new AssemblyMappingProfile(typeof(ITelegramBotDbContext).Assembly));
 });
 
+builder.Services.AddHttpClient();
 builder.Services.AddApplication();
 builder.Services.AddPersistence(builder.Configuration);
 builder.Services.AddControllers();

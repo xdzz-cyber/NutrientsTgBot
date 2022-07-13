@@ -5,7 +5,7 @@ using Domain.TelegramBotEntities;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
 
-namespace Application.TelegramBot.Commands.UpdateAppUserWeight;
+namespace Application.TelegramBot.Commands.UpdateUserWeight;
 
 public class UpdateAppUserWeightCommandHandler : IRequestHandler<UpdateAppUserWeightCommand, string>
 {
@@ -20,6 +20,7 @@ public class UpdateAppUserWeightCommandHandler : IRequestHandler<UpdateAppUserWe
 
     public async Task<string> Handle(UpdateAppUserWeightCommand request, CancellationToken cancellationToken)
     {
+
         var appUser = await _userManager.FindByNameAsync(request.Username);
 
         if (appUser is null)

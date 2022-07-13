@@ -39,28 +39,28 @@ public class TelegramBotController : BaseController
         {
             var command = $"{upd.Message?.Text!.Replace("/", "").FirstCharToUpper()}";
 
-            if (command.All(char.IsDigit) && !_lastExecutedCommandsTypes.Any())
+            if (_telegramBotCommands.All(c => c.Key != command) && !_lastExecutedCommandsTypes.Any()) //command.All(char.IsDigit)
             {
                 await _telegramBotClient.SendTextMessageAsync(chat.Id, "Bad request.",
                     ParseMode.Markdown, replyMarkup: GetButton());
+                
                 return Ok();
             }
 
-            var queryType = command.All(char.IsDigit)
-                ? _lastExecutedCommandsTypes.Last(x => x.GetInterface(nameof(ICommand)) != null)
+            var queryType = _telegramBotCommands.All(c => c.Key != command)
+                ? _lastExecutedCommandsTypes.Last(x => x != null && x.GetInterfaces().Any(i => i.Name == nameof(ICommand) || i.Name == nameof(IQuery))) //GetInterface(nameof(ICommand)) != null || x.GetInterface(nameof(IQuery)) != null
                 : _telegramBotCommands[command];
 
-            var ctorParamsTypes = new List<dynamic>();
+            var ctorParamsTypes = new List<object>();
 
-            var allParams = new List<dynamic> {chat.Username!, chat.Id, command.All(char.IsDigit) 
-                ? Convert.ToDouble(command, CultureInfo.InvariantCulture) : command};
+            var allParams = new List<object> {chat.Username!, chat.Id, command.All(char.IsDigit) ? double.Parse(command) : command};
             
             var ctors = queryType.GetConstructors();
             // assuming class A has only one constructor
             var ctor = ctors[0];
             
-            var ctorParams = new List<dynamic?>(); 
-            
+            var ctorParams = new List<object?>();
+
             foreach (var param in ctor.GetParameters())
             {
                 ctorParamsTypes.Insert(param.Position, param.ParameterType);
@@ -68,10 +68,18 @@ public class TelegramBotController : BaseController
 
             foreach (var ctorParamType in ctorParamsTypes)
             {
-
-                ctorParams.Add(allParams.FirstOrDefault(x => x.GetType().Equals(ctorParamType))
-                               ?? ctor.GetParameters().FirstOrDefault(x
-                                   => x.ParameterType.Equals(ctorParamType))!.DefaultValue);
+                ctorParams.Add(allParams.FirstOrDefault(x => x.GetType().Equals(ctorParamType) && !ctorParams.Any(ctp => ctp!.GetHashCode().Equals(x.GetHashCode()))) ?? GetDefault((Type) ctorParamType));
+                //     &&
+                // !ctorParams.Any(element => element != null && element.GetHashCode() == x.GetHashCode())) ?? GetDefault((Type) ctorParamType)
+                //var f = GetDefaultValue((ctorParamType as Type)!);
+                //var s = allParams.FirstOrDefault(x => x.GetType().Equals(ctorParamType)) ?? GetDefault((Type) ctorParamType);
+                // var el = allParams.FirstOrDefault(x =>
+                //     GetDefaultValue((x as Type)) == GetDefaultValue((ctorParamType as Type)) &&
+                //     !ctorParams.Any(element => element != null && element.GetHashCode() == x.GetHashCode()));
+                // ctorParams.Add(el); 
+                
+                //x.GetType().Equals(ctorParamType))
+                // ?? GetDefault(ctorParamType)
             }
 
             var instance = ctor.Invoke(ctorParams.ToArray());
@@ -82,11 +90,13 @@ public class TelegramBotController : BaseController
             await _telegramBotClient.SendTextMessageAsync(chat.Id, queryResult,
                 ParseMode.Markdown, replyMarkup: GetButton());
 
-            if (!command.All(char.IsDigit))
+            if (_telegramBotCommands.Any(c => c.Key == command))
             {
                 _lastExecutedCommandsTypes.AddRange(new []{_telegramBotCommands[command],
                     _telegramBotCommands.FirstOrDefault(x => 
-                        AreTwoStringsHaveCommonSubstring(x.Key, command) && x.Value.GetInterface(nameof(ICommand)) != null).Value});
+                        AreTwoStringsHaveCommonSubstring(x.Key, command) && 
+                        x.Value.GetInterface(nameof(ICommand)) != null)
+                        .Value});
             }
         }
         catch (Exception e)
@@ -126,4 +136,23 @@ public class TelegramBotController : BaseController
 
         return sameLengthCounter >= (int) StringMaxSubstringLengthToBeEqualWithAnother.MaxLength;
     }
+    
+    public T GetDefaultGeneric<T>()
+    {
+        return default(T);
+    }
+    
+    public object GetDefault(Type t)
+    {
+        return this.GetType().GetMethod("GetDefaultGeneric").MakeGenericMethod(t).Invoke(this, null);
+    }
+    
+    public object GetDefaultValue(Type t)
+    {
+        if (t.IsValueType)
+            return Activator.CreateInstance(t);
+
+        return null;
+    }
 }
+

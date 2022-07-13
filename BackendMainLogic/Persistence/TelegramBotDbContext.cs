@@ -26,6 +26,6 @@ public class TelegramBotDbContext : IdentityDbContext<AppUser>, ITelegramBotDbCo
         optionsBuilder.UseSqlServer(configuration.GetConnectionString("DefaultConnection")!);
     }
     
-    // public DbSet<WaterLevelOfUser> WaterLevelOfUsers { get; set; }
+    public DbSet<WaterLevelOfUser> WaterLevelOfUsers { get; set; }
     // public DbSet<AppUser> AppUsers { get; set; }
 }

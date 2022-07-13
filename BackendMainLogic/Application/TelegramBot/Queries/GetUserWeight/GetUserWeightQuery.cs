@@ -10,7 +10,6 @@ public class GetUserWeightQuery : IRequest<string>, IQuery
     
     public long ChatId { get; set; }
     
-
     public QueryExecutingTypes QueryExecutingType { get; set; }
     
 

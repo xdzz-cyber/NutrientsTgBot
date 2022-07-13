@@ -1,7 +1,7 @@
 ﻿using Application.Interfaces;
 using MediatR;
 
-namespace Application.TelegramBot.Commands.UpdateAppUserWeight;
+namespace Application.TelegramBot.Commands.UpdateUserWeight;
 
 public class UpdateAppUserWeightCommand : IRequest<string>, ICommand
 {
