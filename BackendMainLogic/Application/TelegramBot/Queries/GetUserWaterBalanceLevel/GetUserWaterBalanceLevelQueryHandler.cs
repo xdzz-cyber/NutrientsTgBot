@@ -32,7 +32,7 @@ public class GetUserWaterBalanceLevelQueryHandler : IRequestHandler<GetUserWater
 
         if (request.QueryExecutingType.Equals(QueryExecutingTypes.QueryAsResponseForCommand) || currentWaterLevelOfUser is null)
         {
-            return "Please, enter new amount of consumed water during current day in milliliters";
+            return "Please, set amount of consumed water during current day in milliliters before getting it.";
         }
 
         var waterLevelMargin =  WaterLevelBalanceConstants.WaterLevelBalanceFormulaConstant * 

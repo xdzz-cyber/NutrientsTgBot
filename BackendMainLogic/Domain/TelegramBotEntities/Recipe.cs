@@ -1,9 +1,13 @@
-﻿using System.Text.Json.Serialization;
+﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+using System.Text.Json.Serialization;
 
 namespace Domain.TelegramBotEntities;
 
 public class Recipe
 {
+    [Key]
+    [DatabaseGenerated(DatabaseGeneratedOption.None)]
     [JsonPropertyName("id")]
     public int Id { get; set; }
     
@@ -33,6 +37,5 @@ public class Recipe
     
     [JsonPropertyName("vegetarian")]
     public bool Vegetarian { get; set; }
-
-    public ICollection<AppUser> AppUsers { get; set; }
+    public ICollection<RecipesUsers> RecipesUsers { get; set; }
 }

@@ -26,24 +26,25 @@ public class TelegramBotDbContext : IdentityDbContext<AppUser>, ITelegramBotDbCo
         optionsBuilder.UseSqlServer(configuration.GetConnectionString("DefaultConnection")!);
     }
 
-    // protected override void OnModelCreating(ModelBuilder builder)
-    // {
-    //     builder.Entity<RecipesUsers>()
-    //         .HasKey(ru => new { ru.RecipeId, ru.AppUserId });  
-    //     builder.Entity<RecipesUsers>()
-    //         .HasOne(ru => ru.Recipe)
-    //         .WithMany(r => r.RecipesUsers)
-    //         .HasForeignKey(ru => ru.RecipeId);  
-    //     builder.Entity<RecipesUsers>()
-    //         .HasOne(ru => ru.AppUser)
-    //         .WithMany(au => au.RecipesUsers)
-    //         .HasForeignKey(ru => ru.AppUserId);
-    // }
+    protected override void OnModelCreating(ModelBuilder builder)
+    {
+        base.OnModelCreating(builder);
+        
+        builder.Entity<RecipesUsers>()
+            .HasKey(ru => new { ru.RecipeId, ru.AppUserId });  
+        builder.Entity<RecipesUsers>()
+            .HasOne(ru => ru.Recipe)
+            .WithMany(r => r.RecipesUsers)
+            .HasForeignKey(ru => ru.RecipeId);  
+        builder.Entity<RecipesUsers>()
+            .HasOne(ru => ru.AppUser)
+            .WithMany(au => au.RecipesUsers)
+            .HasForeignKey(ru => ru.AppUserId);
+    }
 
     public DbSet<WaterLevelOfUser> WaterLevelOfUsers { get; set; }
-    
     public DbSet<Recipe> Recipes { get; set; }
+    public DbSet<RecipesUsers> RecipesUsers { get; set; }
     
-    //public DbSet<RecipesUsers> RecipesUsers { get; set; }
     // public DbSet<AppUser> AppUsers { get; set; }
 }

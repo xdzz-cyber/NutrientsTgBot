@@ -18,13 +18,18 @@ public class StartApplicationQueryHandler : IRequestHandler<StartApplicationQuer
     
     public async Task<string> Handle(StartApplicationQuery request, CancellationToken cancellationToken)
     {
-       
-            var userId = Guid.Parse(_userManager.FindByNameAsync(request.Username).Result.Id);
+            var user = await _userManager.FindByNameAsync(request.Username);
             
-            if (string.IsNullOrEmpty(userId.ToString()))
+            var userId = Guid.NewGuid();
+            
+            if (user is null)
             {
                 userId = await _mediator.Send(new CreateUserCommand(username: request.Username, chatId: request.ChatId), cancellationToken);
             }
+            
+            //var userId = Guid.Parse(user.Id);
+            
+            
 
             return string.IsNullOrEmpty(userId.ToString()) ? "Bad data given. Try to start again" 
                 : "You've been successfully logged in";

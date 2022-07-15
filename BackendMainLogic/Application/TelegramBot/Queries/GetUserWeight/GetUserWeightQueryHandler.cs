@@ -19,7 +19,7 @@ public class GetUserWeightQueryHandler : IRequestHandler<GetUserWeightQuery, str
 
         if (user.Weight <= 0 || request.QueryExecutingType.Equals(QueryExecutingTypes.QueryAsResponseForCommand))
         {
-            return "Please, enter your weight."; 
+            return "Please, set your weight before getting it."; 
         }
 
         return $"Your weight is {user.Weight}";

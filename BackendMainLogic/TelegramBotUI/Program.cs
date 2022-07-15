@@ -42,18 +42,20 @@ app.UseSwaggerUI(config =>
 if (app.Environment.IsDevelopment())
 {
     app.UseDeveloperExceptionPage();
-    using (var serviceProvider = builder.Services.BuildServiceProvider())
-    {
+   
         try
         {
-            var ctx = serviceProvider.GetRequiredService<TelegramBotDbContext>();
+            var scope = app.Services.CreateScope();
+            var ctx = scope.ServiceProvider.GetRequiredService<TelegramBotDbContext>();
+            var cts = new CancellationTokenSource();
             DbInitializer.Initialize(ctx);
+            await new DbSeed(new HttpClient(), ctx).Seed(cts.Token);
         }
         catch (Exception e)
         {
+            Console.WriteLine(e.Message);
+            throw;
         }
-    
-    }
 }
 
 app.UseRouting();
