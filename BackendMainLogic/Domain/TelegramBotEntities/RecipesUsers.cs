@@ -9,4 +9,7 @@ public class RecipesUsers
     public AppUser AppUser { get; set; }
     
     public string AppUserId { get; set; }
+    
+
+    public bool IsPartOfTheMeal { get; set; }
 }

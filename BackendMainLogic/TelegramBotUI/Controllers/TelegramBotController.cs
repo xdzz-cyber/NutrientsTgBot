@@ -1,5 +1,4 @@
-﻿using System.Globalization;
-using System.Text.RegularExpressions;
+﻿using System.Text.RegularExpressions;
 using Application.Common.Constants;
 using Application.Interfaces;
 using Microsoft.AspNetCore.Mvc;
@@ -49,7 +48,7 @@ public class TelegramBotController : BaseController
             }
 
             var queryType = _telegramBotCommands.Any(c => AreTwoStringsHaveCommonSubstring(c.Key, command))
-                ? _telegramBotCommands[Regex.Replace(command, @"[0-9_]+", string.Empty)]
+                ? _telegramBotCommands.First(c => AreTwoStringsHaveCommonSubstring(c.Key, command)).Value //_telegramBotCommands[Regex.Replace(command, @"[0-9_]+", string.Empty)]
                 : _lastExecutedCommandsTypes.Last(x =>
                     x != null && x.GetInterfaces().Any(i => i.Name == nameof(ICommand) || i.Name == nameof(IQuery))); //GetInterface(nameof(ICommand)) != null || x.GetInterface(nameof(IQuery)) != null
                 
@@ -133,6 +132,10 @@ public class TelegramBotController : BaseController
                     new List<KeyboardButton>{new (_telegramBotCommands.Keys.ToArray()[i])}:
                     new List<KeyboardButton>{new (_telegramBotCommands.Keys.ToArray()[i]),
                         new (_telegramBotCommands.Keys.ToArray()[i+1])}); 
+            }
+            else
+            {
+                i -= 1;
             }
         }
         

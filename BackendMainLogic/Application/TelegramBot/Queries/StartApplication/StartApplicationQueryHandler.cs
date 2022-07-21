@@ -27,10 +27,6 @@ public class StartApplicationQueryHandler : IRequestHandler<StartApplicationQuer
                 userId = await _mediator.Send(new CreateUserCommand(username: request.Username, chatId: request.ChatId), cancellationToken);
             }
             
-            //var userId = Guid.Parse(user.Id);
-            
-            
-
             return string.IsNullOrEmpty(userId.ToString()) ? "Bad data given. Try to start again" 
                 : "You've been successfully logged in";
     }

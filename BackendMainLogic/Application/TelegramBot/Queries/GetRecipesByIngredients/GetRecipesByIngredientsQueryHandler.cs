@@ -1,12 +1,8 @@
-﻿using System.Net.Http.Json;
-using System.Text;
-using System.Text.Encodings.Web;
-using System.Web;
+﻿using System.Text;
 using Application.Common.Constants;
 using AutoMapper;
 using Domain.TelegramBotEntities;
 using MediatR;
-using Newtonsoft.Json;
 using JsonSerializer = System.Text.Json.JsonSerializer;
 
 namespace Application.TelegramBot.Queries.GetRecipesByIngredients;
@@ -35,6 +31,7 @@ public class GetRecipesByIngredientsQueryHandler : IRequestHandler<GetRecipesByI
         var content = new RecipesList();
         var response = new StringBuilder();
         var msgResponse = "";
+        var recipesIds = new List<string>();
         if (recipes.IsSuccessStatusCode)
         {
             var r = await recipes.Content.ReadAsStringAsync(cancellationToken);
@@ -45,11 +42,22 @@ public class GetRecipesByIngredientsQueryHandler : IRequestHandler<GetRecipesByI
                 var msg = $"<strong>Title: {tmp.Title}, Vegetarian: {tmp.Vegetarian}, GlutenFree: {tmp.GlutenFree}, PricePerServing: {tmp.PricePerServing}, Link: {tmp.SpoonacularSourceUrl} Save recipe(/AddRecipeToUser_{tmp.Id})</strong>";
                 response.AppendLine(msg);
                 msgResponse += msg;
+                recipesIds.Add(recipe.Id.ToString());
                 // response.AppendLine("das");
             }
-            Console.Write("");
+            
+            response.AppendLine("Save all(/AddRecipeToUser_All)");
+
+            if (!StateManagement.TempData.ContainsKey("RecipesIds"))
+            {
+                StateManagement.TempData.Add("RecipesIds", string.Join(",", recipesIds));
+            }
+            else
+            {
+                StateManagement.TempData["RecipesIds"] = string.Join(",", recipesIds);
+            }
+            
         }
-        //var r = JsonSerializer.Deserialize<IEnumerable<Recipe>>(recipes!);
 
         return response.ToString();
     }

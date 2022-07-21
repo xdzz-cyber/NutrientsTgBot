@@ -14,6 +14,7 @@ builder.Services.AddAutoMapper(config =>
     config.AddProfile(new AssemblyMappingProfile(typeof(ITelegramBotDbContext).Assembly));
 });
 
+
 builder.Services.AddHttpClient();
 builder.Services.AddApplication();
 builder.Services.AddPersistence(builder.Configuration);
@@ -29,6 +30,7 @@ builder.Services.AddCors(options =>
     });
 });
 builder.Services.AddSwaggerGen();
+
 
 var app = builder.Build();
 
@@ -64,7 +66,6 @@ app.UseCors("AllowAll");
 
 app.UseAuthentication();
 app.UseAuthorization();
-
 app.UseEndpoints(endpoints =>
 {
     endpoints.MapControllers();

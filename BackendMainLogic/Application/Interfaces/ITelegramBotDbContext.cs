@@ -10,6 +10,7 @@ public interface ITelegramBotDbContext
     public DbSet<WaterLevelOfUser> WaterLevelOfUsers { get; set; }
     
     public DbSet<Recipe> Recipes { get; set; }
+    public DbSet<Meal> Meals { get; set; }
     
     public DbSet<RecipesUsers> RecipesUsers { get; set; }
 }

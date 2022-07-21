@@ -1,10 +1,7 @@
-﻿using Microsoft.Extensions.Configuration;
-
-namespace Application.Common.Constants;
+﻿namespace Application.Common.Constants;
 
 public static class TelegramBotRecipesHttpPaths
 {
-
     public static readonly string GetRecipesDataByIngredients = $"";
     
     public static readonly string GetFullRecipesData = $"";
@@ -14,5 +11,4 @@ public static class TelegramBotRecipesHttpPaths
     public static readonly string GetAllRandomRecipes = $"";
     
     public static readonly string GetRecipeById = $"";
-
 }
