@@ -27,10 +27,10 @@ public class AddRecipeToUserCommandHandler : IRequestHandler<AddRecipeToUserComm
 
         try
         {
-            var dataFilterForSingleId = Regex.Matches(request.RecipeId, TelegramBotAddRecipeToUserDataPatterns.InputDataPatternForSingleId);//new Regex(@TelegramBotAddRecipeToUserDataPatterns.InputDataPatternForSingleId);
+            var dataFilterForSingleId = Regex.Matches(request.RecipeId, TelegramBotRecipeCommandsNQueriesDataPatterns.InputDataPatternForSingleId);
 
             var dataFilterForIds = Regex.Matches(request.RecipeId,
-                TelegramBotAddRecipeToUserDataPatterns.InputDataPatternForIds);//new Regex(@TelegramBotAddRecipeToUserDataPatterns.InputDataPatternForIds);
+                TelegramBotRecipeCommandsNQueriesDataPatterns.InputDataPatternForIds);//new Regex(@TelegramBotAddRecipeToUserDataPatterns.InputDataPatternForIds);
             
 
             var user = await _userManager.FindByNameAsync(request.Username);

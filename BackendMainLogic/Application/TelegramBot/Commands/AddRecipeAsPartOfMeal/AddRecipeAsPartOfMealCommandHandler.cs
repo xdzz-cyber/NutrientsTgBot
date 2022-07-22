@@ -1,4 +1,6 @@
-﻿using Application.Interfaces;
+﻿using System.Text.RegularExpressions;
+using Application.Common.Constants;
+using Application.Interfaces;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 
@@ -15,8 +17,10 @@ public class AddRecipeAsPartOfMealCommandHandler : IRequestHandler<AddRecipeAsPa
 
     public async Task<string> Handle(AddRecipeAsPartOfMealCommand request, CancellationToken cancellationToken)
     {
+        var matchPartOfInputData = Regex.Matches(request.RecipeId, TelegramBotRecipeCommandsNQueriesDataPatterns.InputDataPatternForSingleId);
+
         var recipe = await _ctx.RecipesUsers
-            .FirstOrDefaultAsync(ru => ru.RecipeId.ToString() == request.RecipeId, cancellationToken: cancellationToken);
+            .FirstOrDefaultAsync(ru => ru.RecipeId.ToString() == matchPartOfInputData.First().Value, cancellationToken: cancellationToken);
 
         if (recipe is null)
         {

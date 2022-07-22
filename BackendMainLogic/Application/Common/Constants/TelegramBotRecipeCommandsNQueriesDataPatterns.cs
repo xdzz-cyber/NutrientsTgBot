@@ -1,6 +1,6 @@
 ﻿namespace Application.Common.Constants;
 
-public static class TelegramBotAddRecipeToUserDataPatterns
+public static class TelegramBotRecipeCommandsNQueriesDataPatterns
 {
     public static readonly string InputDataPatternForSingleId = "\\d{6}";
     

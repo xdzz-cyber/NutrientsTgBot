@@ -1,4 +1,6 @@
-﻿using Application.Interfaces;
+﻿using System.Text.RegularExpressions;
+using Application.Common.Constants;
+using Application.Interfaces;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 
@@ -15,18 +17,24 @@ public class RemoveRecipeFromTheMealCommandHandler : IRequestHandler<RemoveRecip
     
     public async Task<string> Handle(RemoveRecipeFromTheMealCommand request, CancellationToken cancellationToken)
     {
+        var matchPartOfInputData = Regex.Matches(request.RecipeId, TelegramBotRecipeCommandsNQueriesDataPatterns.InputDataPatternForSingleId);
+
         var recipe = await _ctx.RecipesUsers
-            .FirstOrDefaultAsync(ru => ru.RecipeId.ToString() == request.RecipeId, cancellationToken: cancellationToken);
+            .FirstOrDefaultAsync(ru => ru.RecipeId.ToString() == matchPartOfInputData.First().Value, cancellationToken: cancellationToken);
 
         if (recipe is null)
         {
             return "Recipe doesn't exist.";
         }
 
-        recipe.IsPartOfTheMeal = false;
+        if (!recipe.IsPartOfTheMeal)
+        {
+            return "Recipe is not part of the meal.";
+        }
 
+        recipe.IsPartOfTheMeal = false;
         await _ctx.SaveChangesAsync(cancellationToken);
 
-        return "Recipe has been successfully removed from the meal.";
+        return "Recipe has been successfully removed as part of the meal.";
     }
 }

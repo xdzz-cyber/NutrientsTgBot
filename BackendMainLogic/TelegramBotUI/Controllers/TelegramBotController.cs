@@ -1,6 +1,6 @@
-﻿using System.Text.RegularExpressions;
-using Application.Common.Constants;
+﻿using Application.Common.Constants;
 using Application.Interfaces;
+using Domain.TelegramBotEntities;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using Telegram.Bot;
@@ -14,7 +14,7 @@ namespace TelegramBotUI.Controllers;
 public class TelegramBotController : BaseController
 {
     private readonly TelegramBotClient _telegramBotClient;
-    private readonly Dictionary<string, Type> _telegramBotCommands;
+    private readonly Dictionary<string, TelegramBotCommand> _telegramBotCommands;
     private static readonly List<Type> _lastExecutedCommandsTypes = new ();
 
     public TelegramBotController(TelegramBot telegramBot)
@@ -48,7 +48,7 @@ public class TelegramBotController : BaseController
             }
 
             var queryType = _telegramBotCommands.Any(c => AreTwoStringsHaveCommonSubstring(c.Key, command))
-                ? _telegramBotCommands.First(c => AreTwoStringsHaveCommonSubstring(c.Key, command)).Value //_telegramBotCommands[Regex.Replace(command, @"[0-9_]+", string.Empty)]
+                ? _telegramBotCommands.First(c => AreTwoStringsHaveCommonSubstring(c.Key, command)).Value.Type //_telegramBotCommands[Regex.Replace(command, @"[0-9_]+", string.Empty)]
                 : _lastExecutedCommandsTypes.Last(x =>
                     x != null && x.GetInterfaces().Any(i => i.Name == nameof(ICommand) || i.Name == nameof(IQuery))); //GetInterface(nameof(ICommand)) != null || x.GetInterface(nameof(IQuery)) != null
                 
@@ -101,13 +101,14 @@ public class TelegramBotController : BaseController
             await _telegramBotClient.SendTextMessageAsync(chat.Id, queryResult,
                 ParseMode.Html, replyMarkup: GetButton());
 
-            if (_telegramBotCommands.Any(c => c.Key == command))
+            if (_telegramBotCommands.Any(c => AreTwoStringsHaveCommonSubstring(c.Key, command)))
             {
-                _lastExecutedCommandsTypes.AddRange(new []{_telegramBotCommands[command],
-                    _telegramBotCommands.FirstOrDefault(x => 
-                        AreTwoStringsHaveCommonSubstring(x.Key, command) && 
-                        x.Value.GetInterface(nameof(ICommand)) != null)
-                        .Value});
+                // _lastExecutedCommandsTypes.AddRange(new []{_telegramBotCommands[command].Type,
+                //     _telegramBotCommands.FirstOrDefault(x => 
+                //         AreTwoStringsHaveCommonSubstring(x.Key, command) && 
+                //         x.Value.Type.GetInterface(nameof(ICommand)) != null)
+                //         .Value.Type});
+                _lastExecutedCommandsTypes.Add(_telegramBotCommands.FirstOrDefault(c => AreTwoStringsHaveCommonSubstring(c.Key, command)).Value.Type);
             }
         }
         catch (Exception e)
@@ -126,12 +127,19 @@ public class TelegramBotController : BaseController
 
         for (var i = 0; i < _telegramBotCommands.Keys.Count; i+=2)
         {
-            if (_telegramBotCommands.Keys.ToArray()[i] != "AddRecipeToUser")
+            if (_telegramBotCommands[_telegramBotCommands.Keys.ToArray()[i]].IsVisibleAsPartOfUserInterface)
             {
-                keyboardCommands.Add(_telegramBotCommands.Keys.Count == i + 1 ?
-                    new List<KeyboardButton>{new (_telegramBotCommands.Keys.ToArray()[i])}:
-                    new List<KeyboardButton>{new (_telegramBotCommands.Keys.ToArray()[i]),
-                        new (_telegramBotCommands.Keys.ToArray()[i+1])}); 
+                keyboardCommands.Add(_telegramBotCommands.Keys.Count == i + 1
+                    ? new List<KeyboardButton> {new(_telegramBotCommands.Keys.ToArray()[i])}
+                    : (_telegramBotCommands[_telegramBotCommands.Keys.ToArray()[i + 1]].IsVisibleAsPartOfUserInterface
+                        ? new List<KeyboardButton>
+                        {
+                            new(_telegramBotCommands.Keys.ToArray()[i]),
+                            new(_telegramBotCommands.Keys.ToArray()[i + 1])
+                        }
+                        : new List<KeyboardButton>{new(_telegramBotCommands.Keys.ToArray()[i])}));
+                // new List<KeyboardButton>{new (_telegramBotCommands.Keys.ToArray()[i]),
+                //  new (_telegramBotCommands[_telegramBotCommands.Keys.ToArray()[i+1]].IsVisibleAsPartOfUserInterface ?_telegramBotCommands.Keys.ToArray()[i+1] : string.Empty)}); 
             }
             else
             {
@@ -155,7 +163,7 @@ public class TelegramBotController : BaseController
             i += 1;
         }
 
-        var minimalLengthToBeEqual = s1.Length > s2.Length ? s2.Length / 2 : s1.Length / 2;
+        var minimalLengthToBeEqual = s1.Length > s2.Length ? s2.Length * 0.75 : s1.Length * 0.75;
         return sameLengthCounter >= minimalLengthToBeEqual;
     }
     
