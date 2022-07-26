@@ -39,8 +39,8 @@ public class GetUserRecipeListQueryHandler : IRequestHandler<GetUserRecipeListQu
         }
 
         response.AppendLine("Clear liked list(/ClearLikedRecipesList)");
-        response.AppendLine("Remove all from meal(/ClearMealOffRecipes)");
-        response.AppendLine("Add all recipes as part of the meal(/AddAllRecipesAsMeal)");
+        response.AppendLine("Remove all from meal(/ClearRecipesAsPartOfMeal)");
+        response.AppendLine("Add all liked recipes as part of the meal(/AddAllLikedRecipesAsMeal)");
         
         return response.ToString();
     }

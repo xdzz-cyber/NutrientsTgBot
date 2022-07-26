@@ -10,6 +10,5 @@ public class RecipesUsers
     
     public string AppUserId { get; set; }
     
-
     public bool IsPartOfTheMeal { get; set; }
 }

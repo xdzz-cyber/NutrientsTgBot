@@ -124,27 +124,34 @@ public class TelegramBotController : BaseController
     private IReplyMarkup GetButton()
     {
         var keyboardCommands = new List<List<KeyboardButton>>();
-
-        for (var i = 0; i < _telegramBotCommands.Keys.Count; i+=2)
+        var keyboardsCommandsCount = _telegramBotCommands
+            .Count(command => command.Value.IsVisibleAsPartOfUserInterface);
+        var visibleTelegramBotCommands = _telegramBotCommands.Keys.Where(key => _telegramBotCommands[key].IsVisibleAsPartOfUserInterface).ToList();
+        
+        for (var i = 0; i < keyboardsCommandsCount; i+=2) //_telegramBotCommands.Keys.Count
         {
-            if (_telegramBotCommands[_telegramBotCommands.Keys.ToArray()[i]].IsVisibleAsPartOfUserInterface)
+            keyboardCommands.Add(i + 1 != keyboardsCommandsCount ?  new List<KeyboardButton>
             {
-                keyboardCommands.Add(_telegramBotCommands.Keys.Count == i + 1
-                    ? new List<KeyboardButton> {new(_telegramBotCommands.Keys.ToArray()[i])}
-                    : (_telegramBotCommands[_telegramBotCommands.Keys.ToArray()[i + 1]].IsVisibleAsPartOfUserInterface
-                        ? new List<KeyboardButton>
-                        {
-                            new(_telegramBotCommands.Keys.ToArray()[i]),
-                            new(_telegramBotCommands.Keys.ToArray()[i + 1])
-                        }
-                        : new List<KeyboardButton>{new(_telegramBotCommands.Keys.ToArray()[i])}));
-                // new List<KeyboardButton>{new (_telegramBotCommands.Keys.ToArray()[i]),
-                //  new (_telegramBotCommands[_telegramBotCommands.Keys.ToArray()[i+1]].IsVisibleAsPartOfUserInterface ?_telegramBotCommands.Keys.ToArray()[i+1] : string.Empty)}); 
-            }
-            else
-            {
-                i -= 1;
-            }
+                new(visibleTelegramBotCommands[i]),
+                new(visibleTelegramBotCommands[i + 1])
+            } : new List<KeyboardButton>{visibleTelegramBotCommands[i]});
+           
+            // if (_telegramBotCommands[_telegramBotCommands.Keys.ToArray()[i]].IsVisibleAsPartOfUserInterface)
+            // {
+            //     keyboardCommands.Add(_telegramBotCommands.Keys.Count == i + 1
+            //         ? new List<KeyboardButton> {new(_telegramBotCommands.Keys.ToArray()[i])}
+            //         : (_telegramBotCommands[_telegramBotCommands.Keys.ToArray()[i + 1]].IsVisibleAsPartOfUserInterface
+            //             ? new List<KeyboardButton>
+            //             {
+            //                 new(_telegramBotCommands.Keys.ToArray()[i]),
+            //                 new(_telegramBotCommands.Keys.ToArray()[i + 1])
+            //             }
+            //             : new List<KeyboardButton>{new(_telegramBotCommands.Keys.ToArray()[i])}));
+            // }
+            // else
+            // {
+            //     i -= 1;
+            // }
         }
         
         return new ReplyKeyboardMarkup(keyboardCommands){ResizeKeyboard = true};

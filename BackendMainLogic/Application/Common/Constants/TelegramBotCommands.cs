@@ -1,11 +1,20 @@
-﻿using Application.TelegramBot.Commands.AddRecipeAsPartOfMeal;
+﻿using Application.TelegramBot.Commands.AddAllLikedRecipesAsMeal;
+using Application.TelegramBot.Commands.AddRecipeAsPartOfMeal;
+using Application.TelegramBot.Commands.AddRecipeFiltersToUser;
 using Application.TelegramBot.Commands.AddRecipeToUser;
+using Application.TelegramBot.Commands.ClearLikedRecipesList;
+using Application.TelegramBot.Commands.ClearRecipesAsPartOfMeal;
 using Application.TelegramBot.Commands.RemoveRecipeFromLikedList;
 using Application.TelegramBot.Commands.RemoveRecipeFromTheMeal;
+using Application.TelegramBot.Commands.TurnOffAllRecipeFiltersOfUser;
+using Application.TelegramBot.Commands.TurnOffRecipeFilterOfUser;
+using Application.TelegramBot.Commands.TurnOnAllRecipeFiltersOfUser;
 using Application.TelegramBot.Commands.UpdateUserWaterBalanceLevel;
 using Application.TelegramBot.Commands.UpdateUserWeight;
 using Application.TelegramBot.Queries;
+using Application.TelegramBot.Queries.GetRecipesAsPartOfMeal;
 using Application.TelegramBot.Queries.GetRecipesByIngredients;
+using Application.TelegramBot.Queries.GetUserFiltersForRecipes;
 using Application.TelegramBot.Queries.GetUserRecipeList;
 using Application.TelegramBot.Queries.GetUserWaterBalanceLevel;
 using Application.TelegramBot.Queries.GetUserWeight;
@@ -40,10 +49,16 @@ public static class TelegramBotCommands
         _commands.Add("AddRecipeAsPartOfMeal", new TelegramBotCommand(typeof(AddRecipeAsPartOfMealCommand), false));
         _commands.Add("RemoveRecipeFromTheMeal", new TelegramBotCommand(typeof(RemoveRecipeFromTheMealCommand), false));
         _commands.Add("RemoveRecipeFromLikedList", new TelegramBotCommand(typeof(RemoveRecipeFromLikedListCommand), false));
-        // _commands.Add("ClearLikedRecipesList", typeof(ClearLikedRecipesList));
-        // _commands.Add("ClearMealOffRecipes", typeof(ClearMealOffRecipes));
-        // _commands.Add("AddAllRecipesAsMeal", typeof(AddAllRecipesAsMeal));
-        // Filters and find by nutrients will be here
+        _commands.Add("ClearLikedRecipesList", new TelegramBotCommand(typeof(ClearLikedRecipesListCommand), false));
+        _commands.Add("ClearRecipesAsPartOfMeal", new TelegramBotCommand(typeof(ClearRecipesAsPartOfMealCommand), false));
+        _commands.Add("GetRecipesAsPartOfMeal", new TelegramBotCommand(typeof(GetRecipesAsPartOfMealQuery), true));
+        _commands.Add("AddAllLikedRecipesAsMeal", new TelegramBotCommand(typeof(AddAllLikedRecipesAsMealCommand), false));
+        _commands.Add("GetUserFiltersForRecipes", new TelegramBotCommand(typeof(GetUserFiltersForRecipesQuery), true));
+        _commands.Add("AddRecipeFiltersToUser",new TelegramBotCommand(typeof(AddRecipeFiltersToUserCommand), false));
+        _commands.Add("TurnOffRecipeFilterOfUser", new TelegramBotCommand(typeof(TurnOffRecipeFilterOfUserCommand),false));
+        _commands.Add("TurnOffAllRecipeFiltersOfUser", new TelegramBotCommand(typeof(TurnOffAllRecipeFiltersOfUserCommand),false));
+        _commands.Add("TurnOnAllRecipeFiltersOfUser", new TelegramBotCommand(typeof(TurnOnAllRecipeFiltersOfUserCommand), false));
+        // Filters, find by nutrients, get meal and get fat,carbohydrates,protein for period of time will be here
     }
     
 }

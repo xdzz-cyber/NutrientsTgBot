@@ -13,4 +13,6 @@ public interface ITelegramBotDbContext
     public DbSet<Meal> Meals { get; set; }
     
     public DbSet<RecipesUsers> RecipesUsers { get; set; }
+    public DbSet<RecipeFilters> RecipeFilters { get; set; }
+    public DbSet<RecipeFiltersUsers> RecipeFiltersUsers { get; set; }
 }

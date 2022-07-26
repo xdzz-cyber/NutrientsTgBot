@@ -40,6 +40,17 @@ public class TelegramBotDbContext : IdentityDbContext<AppUser>, ITelegramBotDbCo
             .HasOne(ru => ru.AppUser)
             .WithMany(au => au.RecipesUsers)
             .HasForeignKey(ru => ru.AppUserId);
+        
+        builder.Entity<RecipeFiltersUsers>()
+            .HasKey(rfu => new {rfu.AppUserId, rfu.RecipeFiltersId });  
+        builder.Entity<RecipeFiltersUsers>()
+            .HasOne(rfu => rfu.AppUser)
+            .WithMany(user => user.RecipeFiltersUsers)
+            .HasForeignKey(rfu => rfu.AppUserId);  
+        builder.Entity<RecipeFiltersUsers>()
+            .HasOne(rfu => rfu.RecipeFilters)
+            .WithMany(rf => rf.RecipeFiltersUsers)
+            .HasForeignKey(rfu => rfu.RecipeFiltersId);
     }
 
     public DbSet<WaterLevelOfUser> WaterLevelOfUsers { get; set; }
@@ -47,6 +58,8 @@ public class TelegramBotDbContext : IdentityDbContext<AppUser>, ITelegramBotDbCo
     
     public DbSet<Meal> Meals { get; set; }
     public DbSet<RecipesUsers> RecipesUsers { get; set; }
-    
+    public DbSet<RecipeFilters> RecipeFilters { get; set; }
+    public DbSet<RecipeFiltersUsers> RecipeFiltersUsers { get; set; }
+
     // public DbSet<AppUser> AppUsers { get; set; }
 }

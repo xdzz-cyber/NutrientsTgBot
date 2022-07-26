@@ -9,4 +9,7 @@ public class AppUser : IdentityUser
     public double Weight { get; set; }
     
     public ICollection<RecipesUsers> RecipesUsers { get; set; }
+    
+    
+    public ICollection<RecipeFiltersUsers> RecipeFiltersUsers { get; set; }
 }
