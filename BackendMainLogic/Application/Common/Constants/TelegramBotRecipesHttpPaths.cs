@@ -11,4 +11,6 @@ public static class TelegramBotRecipesHttpPaths
     public static readonly string GetAllRandomRecipes = $"";
     
     public static readonly string GetRecipeById = $"";
+    
+    public static readonly string GetRecipesByNutrients = "";
 }

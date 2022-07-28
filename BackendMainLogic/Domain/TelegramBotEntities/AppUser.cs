@@ -5,11 +5,9 @@ namespace Domain.TelegramBotEntities;
 public class AppUser : IdentityUser
 {
     public long ChatId { get; set; }
-
     public double Weight { get; set; }
-    
     public ICollection<RecipesUsers> RecipesUsers { get; set; }
-    
-    
     public ICollection<RecipeFiltersUsers> RecipeFiltersUsers { get; set; }
+    
+    public ICollection<NutrientUser> NutrientUsers { get; set; }
 }

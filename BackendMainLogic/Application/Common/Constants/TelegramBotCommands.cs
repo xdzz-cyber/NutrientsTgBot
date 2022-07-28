@@ -9,12 +9,15 @@ using Application.TelegramBot.Commands.RemoveRecipeFromTheMeal;
 using Application.TelegramBot.Commands.TurnOffAllRecipeFiltersOfUser;
 using Application.TelegramBot.Commands.TurnOffRecipeFilterOfUser;
 using Application.TelegramBot.Commands.TurnOnAllRecipeFiltersOfUser;
+using Application.TelegramBot.Commands.UpdateUserNutrientsPlan;
 using Application.TelegramBot.Commands.UpdateUserWaterBalanceLevel;
 using Application.TelegramBot.Commands.UpdateUserWeight;
 using Application.TelegramBot.Queries;
 using Application.TelegramBot.Queries.GetRecipesAsPartOfMeal;
 using Application.TelegramBot.Queries.GetRecipesByIngredients;
+using Application.TelegramBot.Queries.GetRecipesByNutrients;
 using Application.TelegramBot.Queries.GetUserFiltersForRecipes;
+using Application.TelegramBot.Queries.GetUserNutrientsPlan;
 using Application.TelegramBot.Queries.GetUserRecipeList;
 using Application.TelegramBot.Queries.GetUserWaterBalanceLevel;
 using Application.TelegramBot.Queries.GetUserWeight;
@@ -58,6 +61,9 @@ public static class TelegramBotCommands
         _commands.Add("TurnOffRecipeFilterOfUser", new TelegramBotCommand(typeof(TurnOffRecipeFilterOfUserCommand),false));
         _commands.Add("TurnOffAllRecipeFiltersOfUser", new TelegramBotCommand(typeof(TurnOffAllRecipeFiltersOfUserCommand),false));
         _commands.Add("TurnOnAllRecipeFiltersOfUser", new TelegramBotCommand(typeof(TurnOnAllRecipeFiltersOfUserCommand), false));
+        _commands.Add("GetRecipesByNutrients", new TelegramBotCommand(typeof(GetRecipesByNutrientsQuery), true));
+        _commands.Add("UpdateUserNutrientsPlan", new TelegramBotCommand(typeof(UpdateUserNutrientsPlanCommand), true));
+        _commands.Add("GetUserNutrientsPlan", new TelegramBotCommand(typeof(GetUserNutrientsPlanQuery), true));
         // Filters, find by nutrients, get meal and get fat,carbohydrates,protein for period of time will be here
     }
     

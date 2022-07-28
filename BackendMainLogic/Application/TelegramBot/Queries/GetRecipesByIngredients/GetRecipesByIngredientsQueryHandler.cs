@@ -1,8 +1,9 @@
 ﻿using System.Text;
 using Application.Common.Constants;
 using Application.Interfaces;
-using AutoMapper;
+using Application.TelegramBot.Queries.Dtos;
 using Domain.TelegramBotEntities;
+using AutoMapper;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
