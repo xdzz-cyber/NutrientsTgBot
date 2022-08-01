@@ -12,30 +12,25 @@ public class Recipe
     public int Id { get; set; }
     
     [JsonPropertyName("title")]
-    public string Title { get; set; } = null!;
-    
-    [JsonPropertyName("cookingMinutes")]
-    public int CookingMinutes { get; set; }
+    public string Title { get; set; } = "";
+
+    [JsonPropertyName("cookingMinutes")] public int CookingMinutes { get; set; } = 0;
     
     [JsonPropertyName("sourceName")]
-    public string SourceName { get; set; } = null!;
+    public string SourceName { get; set; } = "";
     
     [JsonPropertyName("spoonacularSourceUrl")]
-    public string SpoonacularSourceUrl { get; set; } = null!;
-    
-    [JsonPropertyName("aggregateLikes")]
-    public int AggregateLikes { get; set; }
-    
-    [JsonPropertyName("healthScore")]
-    public int HealthScore { get; set; }
-    
-    [JsonPropertyName("pricePerServing")]
-    public double PricePerServing { get; set; }
-    
-    [JsonPropertyName("glutenFree")]
-    public bool GlutenFree { get; set; }
-    
-    [JsonPropertyName("vegetarian")]
-    public bool Vegetarian { get; set; }
-    public ICollection<RecipesUsers> RecipesUsers { get; set; }
+    public string SpoonacularSourceUrl { get; set; } = "";
+
+    [JsonPropertyName("sourceUrl")] public string SourceUrl { get; set; } = "";
+    [JsonPropertyName("aggregateLikes")] public int AggregateLikes { get; set; } = 0;
+
+    [JsonPropertyName("healthScore")] public int HealthScore { get; set; } = 0;
+
+    [JsonPropertyName("pricePerServing")] public double PricePerServing { get; set; } = 0;
+
+    [JsonPropertyName("glutenFree")] public bool GlutenFree { get; set; } = false;
+
+    [JsonPropertyName("vegetarian")] public bool Vegetarian { get; set; } = false;
+    public ICollection<RecipesUsers> RecipesUsers { get; set; } = new List<RecipesUsers>();
 }

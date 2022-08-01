@@ -88,6 +88,16 @@ public class AddRecipeToUserCommandHandler : IRequestHandler<AddRecipeToUserComm
                 //var recipesToAdd = new List<Recipe>();
                 foreach (var id in recipesIds)
                 {
+                    if (!_ctx.Recipes.Any(r => r.Id.ToString() == id))
+                    {
+                        var recipeToBeAddedHttpMessage = await _httpClient
+                            .GetAsync(TelegramBotRecipesHttpPaths.GetRecipeById.Replace("id", id),cancellationToken);
+                        var recipeToBeAdded = JsonSerializer.Deserialize<Recipe>(
+                            await recipeToBeAddedHttpMessage.Content.ReadAsStreamAsync(cancellationToken));
+                        await _ctx.Recipes.AddAsync(recipeToBeAdded!,cancellationToken: cancellationToken);
+                        await _ctx.SaveChangesAsync(cancellationToken);// might be shit
+                    }
+                    
                     if (!_ctx.RecipesUsers.Any(ru => ru.RecipeId.ToString() == id))
                     {
                         await _ctx.RecipesUsers.AddAsync(new RecipesUsers

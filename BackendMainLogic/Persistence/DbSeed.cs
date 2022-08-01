@@ -41,7 +41,8 @@ public class DbSeed
                     SourceName = recipe.SourceName ?? string.Empty,
                     SpoonacularSourceUrl = recipe.SpoonacularSourceUrl,
                     Title = recipe.Title,
-                    Vegetarian = recipe.Vegetarian
+                    Vegetarian = recipe.Vegetarian,
+                    SourceUrl = recipe.SourceUrl
                 };
                await _ctx.Recipes.AddAsync(newRecipe, cancellationToken);
             }
