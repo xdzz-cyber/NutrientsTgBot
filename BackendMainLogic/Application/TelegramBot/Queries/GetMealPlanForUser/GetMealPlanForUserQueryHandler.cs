@@ -84,7 +84,7 @@ public class GetMealPlanForUserQueryHandler : IRequestHandler<GetMealPlanForUser
                 mealsIds.Add(meal.Id.ToString());
             }
             
-            response.AppendLine("Add everything as part of the meal(/AddRecipesAsPartOfMeal)");
+            response.AppendLine("Add everything as part of the meal(/AddAllRecipesAsPartOfMeal)");
            
             var nutrientMessage = $"Calories = {nutrients!.Nutrients.Calories}, Fat = {nutrients.Nutrients.Fat}, " +
                                   $"Carbohydrates = {nutrients.Nutrients.Carbohydrates}, Protein = {nutrients.Nutrients.Protein}";

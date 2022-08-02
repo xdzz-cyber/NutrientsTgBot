@@ -170,7 +170,7 @@ public class TelegramBotController : BaseController
             i += 1;
         }
 
-        var minimalLengthToBeEqual = s1.Length > s2.Length ? s2.Length * 0.75 : s1.Length * 0.75;
+        var minimalLengthToBeEqual = s1.Length > s2.Length ? s1.Length * 0.95 : s2.Length * 0.95;
         return sameLengthCounter >= minimalLengthToBeEqual;
     }
     

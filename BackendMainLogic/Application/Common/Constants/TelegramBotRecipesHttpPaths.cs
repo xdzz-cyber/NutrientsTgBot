@@ -15,4 +15,6 @@ public static class TelegramBotRecipesHttpPaths
     public static readonly string GetRecipesByNutrients = "";
 
     public static readonly string GetMealPlan = "";
+
+    public static readonly string GetRecipesWithNutrition = "";
 }

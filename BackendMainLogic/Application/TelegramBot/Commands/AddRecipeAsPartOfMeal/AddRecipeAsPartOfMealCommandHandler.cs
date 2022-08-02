@@ -40,7 +40,8 @@ public class AddRecipeAsPartOfMealCommandHandler : IRequestHandler<AddRecipeAsPa
             await _ctx.SaveChangesAsync(cancellationToken);
             //return "Recipe doesn't exist.";
         }
-        else
+        else if(_ctx.RecipesUsers.Count(ru => ru.AppUserId == userInfo.Id) 
+                == TelegramBotRecipesPerUserAmount.MaxRecipesPerUser)
         {
             return "Limit of saved recipes has been exceeded. Please, remove some to add new ones.";
         }
