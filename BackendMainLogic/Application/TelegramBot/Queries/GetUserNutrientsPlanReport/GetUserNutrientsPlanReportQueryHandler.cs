@@ -39,23 +39,59 @@ public class GetUserNutrientsPlanReportQueryHandler : IRequestHandler<GetUserNut
         // var recipesNutrition = JsonSerializer
         //     .Deserialize<RecipesNutrition>(recipesNutritionData);
 
-        var t = JsonSerializer.Deserialize<List<JsonDocument>>(recipesNutritionData);
+        var recipes = JsonSerializer.Deserialize<List<RecipesNutrition>>(recipesNutritionData);
         
-        var recipesNutrients = JsonSerializer.Deserialize<RecipesNutrientsList>(recipesNutritionData);
-
+        var recipeNutrients = new List<RecipeNutrientViewDto>();
+        
         var response = new StringBuilder();
-
         var nutrients = await _ctx.Nutrients.ToListAsync(cancellationToken);
         
-        foreach (var recipeNutrient in recipesNutrients!.Nutrients)
+        foreach (var recipe in recipes!)
+        {
+            var neededNutrients = recipe.Nutrition.Nutrients
+                .Where(rn => nutrients.FirstOrDefault(n => n.Name.Equals(rn.Name)) != null).ToList();
+
+            foreach (var neededNutrient in neededNutrients)
+            {
+                if (recipeNutrients.Any(rn => rn.Name.Equals(neededNutrient.Name)))
+                {
+                    var nutrientThatAlreadyBeenAdded = recipeNutrients
+                        .FirstOrDefault(rn => rn.Name.Equals(neededNutrient.Name));
+
+                    nutrientThatAlreadyBeenAdded!.Amount += neededNutrient.Amount;
+                }
+                else
+                {
+                    recipeNutrients.Add(neededNutrient);
+                }
+            }
+            //recipeNutrients.AddRange();
+        }
+
+        // var recipeNutrientsCombined = new List<RecipeNutrientViewDto>();
+        //
+        // foreach (var recipeNutrient in recipeNutrients)
+        // {
+        //     recipeNutrientsCombined.Add(new RecipeNutrientViewDto
+        //     {
+        //         Amount = recipeNutrient.Amount + ,
+        //         Name = recipeNutrient.Name,
+        //         Unit = recipeNutrient.Unit
+        //     });
+        // }
+        
+        //var recipesNutrients = JsonSerializer.Deserialize<RecipesNutrientsList>(recipesNutritionData);
+        
+        
+        foreach (var recipeNutrient in recipeNutrients)
         {
             var nutrientByName = nutrients.FirstOrDefault(n => n.Name.Equals(recipeNutrient.Name));
             
             var userPreferenceForCurrentNutrient = await _ctx.NutrientUsers
                 .FirstOrDefaultAsync(nu => nu.NutrientId == nutrientByName!.Id, cancellationToken: cancellationToken);
-
+        
             var responseMessageForCurrentNutrient = "";
-
+        
             if (recipeNutrient.Amount <= userPreferenceForCurrentNutrient!.MaxValue
                 && recipeNutrient.Amount >= userPreferenceForCurrentNutrient.MinValue)
             {
@@ -70,7 +106,7 @@ public class GetUserNutrientsPlanReportQueryHandler : IRequestHandler<GetUserNut
                 responseMessageForCurrentNutrient =
                     $"{recipeNutrient.Name} is above your preferences. You have to consume less.";
             }
-
+        
             response.AppendLine(responseMessageForCurrentNutrient);
         }
 
