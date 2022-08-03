@@ -99,12 +99,14 @@ public class GetUserNutrientsPlanReportQueryHandler : IRequestHandler<GetUserNut
                                                     $"{Math.Abs(recipeNutrient.Amount - userPreferenceForCurrentNutrient.MaxValue)} still need to be consumed.";
             } else if (recipeNutrient.Amount < userPreferenceForCurrentNutrient.MinValue)
             {
-                responseMessageForCurrentNutrient = $"{recipeNutrient.Name} is below your preferences. You have to consume more.";
+                responseMessageForCurrentNutrient = $"{recipeNutrient.Name} is below your preferences. " +
+                                                    $"You have to consume {Math.Abs(userPreferenceForCurrentNutrient.MinValue - recipeNutrient.Amount)} more.";
             }
             else if (recipeNutrient.Amount > userPreferenceForCurrentNutrient.MaxValue)
             {
                 responseMessageForCurrentNutrient =
-                    $"{recipeNutrient.Name} is above your preferences. You have to consume less.";
+                    $"{recipeNutrient.Name} is above your preferences." +
+                    $" You have to consume {Math.Abs(recipeNutrient.Amount - userPreferenceForCurrentNutrient.MaxValue)} less.";
             }
         
             response.AppendLine(responseMessageForCurrentNutrient);
