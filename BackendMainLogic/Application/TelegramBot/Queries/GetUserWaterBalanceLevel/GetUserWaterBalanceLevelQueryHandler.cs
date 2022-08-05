@@ -22,7 +22,13 @@ public class GetUserWaterBalanceLevelQueryHandler : IRequestHandler<GetUserWater
     {
         var user = await _userManager.FindByNameAsync(request.Username);
 
-        var currentWaterLevelOfUser = await _ctx.WaterLevelOfUsers.FirstOrDefaultAsync(x => x.AppUserId == user.Id, cancellationToken);
+        if (user is null)
+        {
+            return "Please, authorize to be able to make actions.";
+        }
+        
+        var currentWaterLevelOfUser = await _ctx.WaterLevelOfUsers
+            .FirstOrDefaultAsync(x => x.AppUserId == user.Id, cancellationToken);
 
         if (currentWaterLevelOfUser?.ExpiryDateTime < DateTime.Now)
         {
@@ -30,7 +36,8 @@ public class GetUserWaterBalanceLevelQueryHandler : IRequestHandler<GetUserWater
             await _ctx.SaveChangesAsync(cancellationToken);
         }
 
-        if (request.QueryExecutingType.Equals(QueryExecutingTypes.QueryAsResponseForCommand) || currentWaterLevelOfUser is null)
+        if (request.QueryExecutingType.Equals(QueryExecutingTypes.QueryAsResponseForCommand) 
+            || currentWaterLevelOfUser is null)
         {
             return "Please, set amount of consumed water during current day in milliliters before getting it.";
         }
@@ -39,7 +46,7 @@ public class GetUserWaterBalanceLevelQueryHandler : IRequestHandler<GetUserWater
             user.Weight - Math.Abs(currentWaterLevelOfUser.Amount);
         
         return  waterLevelMargin <= 0 ? 
-            $"You have consumed enough water for the current day" : 
+            $"You have consumed enough water for the current day ({currentWaterLevelOfUser.Amount} ml)" : 
             $"You've already consumed {currentWaterLevelOfUser.Amount} and yet have to consume {waterLevelMargin} milliliters more";
     }
 }

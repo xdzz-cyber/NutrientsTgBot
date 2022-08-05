@@ -25,7 +25,8 @@ public class UpdateAppUserWeightCommandHandler : IRequestHandler<UpdateAppUserWe
 
         if (appUser is null)
         {
-            throw new NotFoundException(nameof(AppUser), request.ChatId);
+            return "Please, authorize to be able to make actions.";
+            //throw new NotFoundException(nameof(AppUser), request.ChatId);
         }
 
         if (request.Weight <= 0)

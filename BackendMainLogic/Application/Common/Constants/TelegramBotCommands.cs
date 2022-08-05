@@ -71,6 +71,8 @@ public static class TelegramBotCommands
         _commands.Add("AddAllRecipesAsPartOfMeal", new TelegramBotCommand(typeof(AddAllRecipesAsPartOfMealCommand), false));
         _commands.Add("GetUserNutrientsPlanReport", new TelegramBotCommand(typeof(GetUserNutrientsPlanReportQuery), true));
         // Filters, find by nutrients, get meal and get fat,carbohydrates,protein for period of time will be here
+        
+        // 26 queries and commands
     }
     
 }

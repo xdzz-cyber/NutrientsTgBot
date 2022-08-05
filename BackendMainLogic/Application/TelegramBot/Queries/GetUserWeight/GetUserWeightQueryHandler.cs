@@ -17,6 +17,11 @@ public class GetUserWeightQueryHandler : IRequestHandler<GetUserWeightQuery, str
     {
         var user = await _userManager.FindByNameAsync(request.Username);
 
+        if (user is null)
+        {
+            return "Please, authorize to be able to make actions.";
+        }
+
         if (user.Weight <= 0 || request.QueryExecutingType.Equals(QueryExecutingTypes.QueryAsResponseForCommand))
         {
             return "Please, set your weight before getting it."; 
