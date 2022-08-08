@@ -26,6 +26,11 @@ public class GetUserRecipeListQueryHandler : IRequestHandler<GetUserRecipeListQu
         var recipes = await _ctx.Recipes.Where(recipe => _ctx.RecipesUsers
             .Where(ru => ru.AppUserId == userInfo.Id).Any(r => r.RecipeId == recipe.Id)).ToListAsync(cancellationToken);
 
+        if (recipes.Count == 0)
+        {
+            return "No recipes found.";
+        }
+        
         var response = new StringBuilder();
         
         foreach (var recipe in recipes)

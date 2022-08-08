@@ -1,4 +1,5 @@
 ﻿using System.Text;
+using System.Text.RegularExpressions;
 using Application.Common.Constants;
 using Application.Interfaces;
 using Application.TelegramBot.Queries.Dtos;
@@ -33,9 +34,16 @@ public class GetRecipesByIngredientsQueryHandler : IRequestHandler<GetRecipesByI
         {
             return "Please, enter an ingredients with comma as separator";
         }
+
+        var matchPattern = TelegramBotRecipeCommandsNQueriesDataPatterns.IngredientsCommaSeparated;
+
+        var ingredients = string.Join("",Regex.Matches(request.Ingredients, matchPattern)
+            .Select(m => m.Value)
+            .ToArray());
         
         var recipes =
-           await _httpClient.GetAsync($"{TelegramBotRecipesHttpPaths.GetRecipes}{request.Ingredients}", cancellationToken: cancellationToken);
+           await _httpClient.GetAsync($"{TelegramBotRecipesHttpPaths.GetRecipes}{ingredients}", 
+               cancellationToken: cancellationToken);
 
         var userInfo = await _userManager.FindByNameAsync(request.Username);
         

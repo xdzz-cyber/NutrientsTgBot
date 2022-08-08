@@ -32,7 +32,7 @@ public class TelegramBotController : BaseController
 
         if (chat == null)
         {
-            return BadRequest("No chat found");
+            return Ok(); //BadRequest("No chat found");
         }
         
         try
@@ -170,7 +170,7 @@ public class TelegramBotController : BaseController
             i += 1;
         }
 
-        var minimalLengthToBeEqual = s1.Length > s2.Length ? s1.Length * 0.95 : s2.Length * 0.95;
+        var minimalLengthToBeEqual = s1.Length > s2.Length ? s1.Length * 0.65 : s2.Length * 0.65;
         return sameLengthCounter >= minimalLengthToBeEqual;
     }
     
