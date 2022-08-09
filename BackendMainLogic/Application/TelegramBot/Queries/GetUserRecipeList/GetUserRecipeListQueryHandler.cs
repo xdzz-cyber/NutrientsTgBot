@@ -23,6 +23,11 @@ public class GetUserRecipeListQueryHandler : IRequestHandler<GetUserRecipeListQu
     {
         var userInfo = await _userManager.FindByNameAsync(request.Username);
         
+        if (userInfo is null)
+        {
+            return "Please, authorize to be able to make actions.";
+        }
+        
         var recipes = await _ctx.Recipes.Where(recipe => _ctx.RecipesUsers
             .Where(ru => ru.AppUserId == userInfo.Id).Any(r => r.RecipeId == recipe.Id)).ToListAsync(cancellationToken);
 

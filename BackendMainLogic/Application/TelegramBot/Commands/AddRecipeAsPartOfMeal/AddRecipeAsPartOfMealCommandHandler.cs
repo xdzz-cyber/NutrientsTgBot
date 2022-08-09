@@ -23,6 +23,11 @@ public class AddRecipeAsPartOfMealCommandHandler : IRequestHandler<AddRecipeAsPa
     {
         var userInfo = await _userManager.FindByNameAsync(request.Username);
         
+        if (userInfo is null)
+        {
+            return "Please, authorize to be able to make actions.";
+        }
+        
         var matchPartOfInputData = Regex.Matches(request.RecipeId, TelegramBotRecipeCommandsNQueriesDataPatterns.InputDataPatternForSingleId);
 
         var recipe = await _ctx.RecipesUsers

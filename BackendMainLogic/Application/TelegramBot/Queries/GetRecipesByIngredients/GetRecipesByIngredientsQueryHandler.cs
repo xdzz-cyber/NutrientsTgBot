@@ -47,6 +47,11 @@ public class GetRecipesByIngredientsQueryHandler : IRequestHandler<GetRecipesByI
 
         var userInfo = await _userManager.FindByNameAsync(request.Username);
         
+        if (userInfo is null)
+        {
+            return "Please, authorize to be able to make actions.";
+        }
+        
         var content = new RecipesList();
         var response = new StringBuilder();
         var msgResponse = "";

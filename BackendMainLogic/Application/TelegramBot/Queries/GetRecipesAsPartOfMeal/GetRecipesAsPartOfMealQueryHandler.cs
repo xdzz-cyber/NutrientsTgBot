@@ -21,6 +21,11 @@ public class GetRecipesAsPartOfMealQueryHandler : IRequestHandler<GetRecipesAsPa
     public async Task<string> Handle(GetRecipesAsPartOfMealQuery request, CancellationToken cancellationToken)
     {
         var userInfo = await _userManager.FindByNameAsync(request.Username);
+        
+        if (userInfo is null)
+        {
+            return "Please, authorize to be able to make actions.";
+        }
 
         // var recipesAsPartOfMeal = await _ctx.RecipesUsers
         //     .Where(ru => ru.AppUserId == userInfo.Id).ToListAsync(cancellationToken);

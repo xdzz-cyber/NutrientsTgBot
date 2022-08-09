@@ -34,6 +34,11 @@ public class AddRecipeToUserCommandHandler : IRequestHandler<AddRecipeToUserComm
             
 
             var user = await _userManager.FindByNameAsync(request.Username);
+            
+            if (user is null)
+            {
+                return "Please, authorize to be able to make actions.";
+            }
 
             if (_ctx.RecipesUsers.Count(ru => ru.AppUserId == user.Id) == TelegramBotRecipesPerUserAmount.MaxRecipesPerUser)
             {

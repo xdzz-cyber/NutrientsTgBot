@@ -20,6 +20,11 @@ public class ClearLikedRecipesListCommandHandler : IRequestHandler<ClearLikedRec
     public async Task<string> Handle(ClearLikedRecipesListCommand request, CancellationToken cancellationToken)
     {
         var userInfo = await _userManager.FindByNameAsync(request.Username);
+        
+        if (userInfo is null)
+        {
+            return "Please, authorize to be able to make actions.";
+        }
 
         var likedRecipes = await _ctx.RecipesUsers
             .Where(ru => ru.AppUserId == userInfo.Id).ToListAsync(cancellationToken);
