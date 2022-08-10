@@ -23,6 +23,11 @@ public class GetUserFiltersForRecipesQueryHandler : IRequestHandler<GetUserFilte
     {
         var userInfo = await _userManager.FindByNameAsync(request.Username);
 
+        if (userInfo is null)
+        {
+            return "Please, authorize to be able to make actions.";
+        }
+            
         if (!_ctx.RecipeFilters.Any())
         {
             var newRecipeFilters = new List<RecipeFilters>();

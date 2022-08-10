@@ -23,6 +23,11 @@ public class TurnOffRecipeFilterOfUserCommandHandler : IRequestHandler<TurnOffRe
     {
         var userInfo = await _userManager.FindByNameAsync(request.Username);
         
+        if (userInfo is null)
+        {
+            return "Please, authorize to be able to make actions.";
+        }
+        
         var matchPartOfInputData = Regex.Matches(request.RecipeFilterId, TelegramBotRecipeCommandsNQueriesDataPatterns.InputDataPatternForRecipeFilterSingleId);
 
         var recipeFilter = await _ctx.RecipeFiltersUsers

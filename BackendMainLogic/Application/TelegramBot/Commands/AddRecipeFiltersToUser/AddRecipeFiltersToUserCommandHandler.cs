@@ -21,6 +21,11 @@ public class AddRecipeFiltersToUserCommandHandler : IRequestHandler<AddRecipeFil
     public async Task<string> Handle(AddRecipeFiltersToUserCommand request, CancellationToken cancellationToken)
     {
         var userInfo = await _userManager.FindByNameAsync(request.Username);
+
+        if (userInfo is null)
+        {
+            return "Please, authorize to be able to make actions.";
+        }
         
         var filters = request.Filters.Split(',');
 
