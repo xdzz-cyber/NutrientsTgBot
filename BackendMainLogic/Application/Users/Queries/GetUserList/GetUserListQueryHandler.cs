@@ -21,7 +21,8 @@ public class GetUserListQueryHandler : IRequestHandler<GetUserListQuery, UserLis
     
     public async Task<UserListVm> Handle(GetUserListQuery request, CancellationToken cancellationToken)
     {
-        var users = await _userManager.Users.ProjectTo<UserDto>(_mapper.ConfigurationProvider).ToListAsync(cancellationToken);
+        var users = await _userManager.Users
+            .ProjectTo<UserDto>(_mapper.ConfigurationProvider).ToListAsync(cancellationToken);
 
         if (users == null)
         {

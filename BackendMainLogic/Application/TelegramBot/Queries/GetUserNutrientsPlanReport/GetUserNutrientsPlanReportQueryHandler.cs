@@ -28,6 +28,11 @@ public class GetUserNutrientsPlanReportQueryHandler : IRequestHandler<GetUserNut
     {
         var userInfo = await _userManager.FindByNameAsync(request.Username);
         
+        if (userInfo is null)
+        {
+            return "Please, authorize to be able to make actions.";
+        }
+        
         var userMealsIds = await _ctx.RecipesUsers
             .Where(ru => ru.IsPartOfTheMeal && ru.AppUserId == userInfo.Id).Select(ru => ru.RecipeId).ToListAsync(cancellationToken);
 

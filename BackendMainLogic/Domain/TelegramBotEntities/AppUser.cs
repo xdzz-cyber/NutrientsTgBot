@@ -1,5 +1,4 @@
 ﻿using Microsoft.AspNetCore.Identity;
-
 namespace Domain.TelegramBotEntities;
 
 public class AppUser : IdentityUser

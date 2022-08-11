@@ -30,11 +30,22 @@ public class GetMealPlanForUserQueryHandler : IRequestHandler<GetMealPlanForUser
     public async Task<string> Handle(GetMealPlanForUserQuery request, CancellationToken cancellationToken)
     {
         var userInfo = await _userManager.FindByNameAsync(request.Username);
+        
+        if (userInfo is null)
+        {
+            return "Please, authorize to be able to make actions.";
+        }
 
         var caloriesNutrientId = _ctx.Nutrients.FirstOrDefault(n => n.Name.Equals("Calories"))!.Id;
         
         var userCaloriesPreferences = await _ctx.NutrientUsers
-            .FirstOrDefaultAsync(nu => nu.AppUserId == userInfo.Id && nu.NutrientId == caloriesNutrientId, cancellationToken: cancellationToken);
+            .FirstOrDefaultAsync(nu => nu.AppUserId == userInfo.Id 
+                                       && nu.NutrientId == caloriesNutrientId, cancellationToken: cancellationToken);
+
+        if (userCaloriesPreferences is null)
+        {
+            return "Please, set your nutrients preferences.";
+        }
 
         var targetCalories = (userCaloriesPreferences!.MaxValue + userCaloriesPreferences.MinValue) / 2;
 
@@ -60,7 +71,7 @@ public class GetMealPlanForUserQueryHandler : IRequestHandler<GetMealPlanForUser
             var nutrients =
                 JsonSerializer.Deserialize<NutrientsList>(nutrientsTmp);
 
-            foreach (var meal in meals.Meals)
+            foreach (var meal in meals!.Meals)
             {
                 if (_ctx.Recipes.FirstOrDefault(r => r.Id == meal.Id) is null)
                 {
@@ -70,6 +81,11 @@ public class GetMealPlanForUserQueryHandler : IRequestHandler<GetMealPlanForUser
                     var t = await recipeByIdHttpMessage.Content.ReadAsStringAsync(cancellationToken);
                     
                     var recipe = JsonSerializer.Deserialize<Recipe>(t);
+
+                    if (recipe!.SourceName is null)
+                    {
+                        recipe.SourceName = "";
+                    }
 
                     await _ctx.Recipes.AddAsync(recipe!, cancellationToken);
                     await _ctx.SaveChangesAsync(cancellationToken);

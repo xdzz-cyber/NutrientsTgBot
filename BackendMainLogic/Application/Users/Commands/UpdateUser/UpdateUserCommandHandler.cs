@@ -27,7 +27,7 @@ public class UpdateUserCommandHandler : IRequestHandler<UpdateUserCommand>
            throw new NotFoundException(nameof(AppUser), request.Username);
        }
 
-       user.UserName = request.Username;
+        user.UserName = request.Username;
         user.PasswordHash = _getSha256CodeOfString.GetHashCodeOfString(request.Password);
         user.Email = request.Email;
         user.PhoneNumber = request.Phone;

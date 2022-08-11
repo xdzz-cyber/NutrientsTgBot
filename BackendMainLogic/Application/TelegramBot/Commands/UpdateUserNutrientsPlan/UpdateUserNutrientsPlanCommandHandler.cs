@@ -21,6 +21,11 @@ public class UpdateUserNutrientsPlanCommandHandler : IRequestHandler<UpdateUserN
     public async Task<string> Handle(UpdateUserNutrientsPlanCommand request, CancellationToken cancellationToken)
     {
         var userInfo = await _userManager.FindByNameAsync(request.Username);
+        
+        if (userInfo is null)
+        {
+            return "Please, authorize to be able to make actions.";
+        }
 
         var userNutrients = await _ctx.NutrientUsers
             .Where(nu => nu.AppUserId == userInfo.Id).ToListAsync(cancellationToken);
@@ -63,7 +68,8 @@ public class UpdateUserNutrientsPlanCommandHandler : IRequestHandler<UpdateUserN
                     MaxValue = 0,
                     MinValue = 0,
                     NutrientId = nutrients
-                        .FirstOrDefault(n => userNutrientsToBeAdded.All(userNutrientToBeAdded => userNutrientToBeAdded.NutrientId != n.Id))!.Id
+                        .FirstOrDefault(n => userNutrientsToBeAdded
+                            .All(userNutrientToBeAdded => userNutrientToBeAdded.NutrientId != n.Id))!.Id
                 });
             }
             
@@ -92,7 +98,7 @@ public class UpdateUserNutrientsPlanCommandHandler : IRequestHandler<UpdateUserN
             return $"Please, enter value for min and max {nutrients[nutrientToBeUpdatedIndex].Name} with comma as separator.";
         }
 
-        StateManagement.TempData["NutrientToBeUpdatedIndex"] = "";
+        StateManagement.TempData["NutrientToBeUpdatedIndex"] = "0";
 
         return "All value have been saved successfully.";
     }

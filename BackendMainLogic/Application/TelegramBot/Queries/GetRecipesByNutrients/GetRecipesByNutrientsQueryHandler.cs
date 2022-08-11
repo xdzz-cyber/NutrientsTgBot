@@ -34,6 +34,11 @@ public class GetRecipesByNutrientsQueryHandler : IRequestHandler<GetRecipesByNut
         //     return "Please, enter nutrients with comma as separator";
         // }
         var userInfo = await _userManager.FindByNameAsync(request.Username);
+        
+        if (userInfo is null)
+        {
+            return "Please, authorize to be able to make actions.";
+        }
 
         if (!_ctx.NutrientUsers.Any(nu => nu.AppUserId == userInfo.Id))
         {
