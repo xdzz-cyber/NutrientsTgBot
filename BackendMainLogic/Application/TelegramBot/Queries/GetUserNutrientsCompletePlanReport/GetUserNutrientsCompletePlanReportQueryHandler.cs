@@ -8,15 +8,15 @@ using MediatR;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
-namespace Application.TelegramBot.Queries.GetUserNutrientsPlanReport;
+namespace Application.TelegramBot.Queries.GetUserNutrientsCompletePlanReport;
 
-public class GetUserNutrientsPlanReportQueryHandler : IRequestHandler<GetUserNutrientsPlanReportQuery, string>
+public class GetUserNutrientsCompletePlanReportQueryHandler : IRequestHandler<GetUserNutrientsCompletePlanReportQuery, string>
 {
     private readonly ITelegramBotDbContext _ctx;
     private readonly UserManager<AppUser> _userManager;
     private readonly HttpClient _httpClient;
 
-    public GetUserNutrientsPlanReportQueryHandler(ITelegramBotDbContext ctx, 
+    public GetUserNutrientsCompletePlanReportQueryHandler(ITelegramBotDbContext ctx, 
         UserManager<AppUser> userManager, HttpClient httpClient)
     {
         _ctx = ctx;
@@ -24,7 +24,7 @@ public class GetUserNutrientsPlanReportQueryHandler : IRequestHandler<GetUserNut
         _httpClient = httpClient;
     }
     
-    public async Task<string> Handle(GetUserNutrientsPlanReportQuery request, CancellationToken cancellationToken)
+    public async Task<string> Handle(GetUserNutrientsCompletePlanReportQuery request, CancellationToken cancellationToken)
     {
         var userInfo = await _userManager.FindByNameAsync(request.Username);
         
@@ -34,15 +34,18 @@ public class GetUserNutrientsPlanReportQueryHandler : IRequestHandler<GetUserNut
         }
         
         var userMealsIds = await _ctx.RecipesUsers
-            .Where(ru => ru.IsPartOfTheMeal && ru.AppUserId == userInfo.Id).Select(ru => ru.RecipeId).ToListAsync(cancellationToken);
+            .Where(ru => ru.IsPartOfTheMeal && ru.AppUserId == userInfo.Id)
+            .Select(ru => ru.RecipeId).ToListAsync(cancellationToken);
+
+        if (!userMealsIds.Any())
+        {
+            return "You have no meals.";
+        }
 
         var recipesNutritionHttpMessage = await _httpClient
             .GetAsync(string.Format(TelegramBotRecipesHttpPaths.GetRecipesWithNutrition, string.Join(",", userMealsIds)), cancellationToken);
 
         var recipesNutritionData = await recipesNutritionHttpMessage.Content.ReadAsStringAsync(cancellationToken);
-        
-        // var recipesNutrition = JsonSerializer
-        //     .Deserialize<RecipesNutrition>(recipesNutritionData);
 
         var recipes = JsonSerializer.Deserialize<List<RecipesNutrition>>(recipesNutritionData);
         
@@ -70,34 +73,24 @@ public class GetUserNutrientsPlanReportQueryHandler : IRequestHandler<GetUserNut
                     recipeNutrients.Add(neededNutrient);
                 }
             }
-            //recipeNutrients.AddRange();
         }
-
-        // var recipeNutrientsCombined = new List<RecipeNutrientViewDto>();
-        //
-        // foreach (var recipeNutrient in recipeNutrients)
-        // {
-        //     recipeNutrientsCombined.Add(new RecipeNutrientViewDto
-        //     {
-        //         Amount = recipeNutrient.Amount + ,
-        //         Name = recipeNutrient.Name,
-        //         Unit = recipeNutrient.Unit
-        //     });
-        // }
-        
-        //var recipesNutrients = JsonSerializer.Deserialize<RecipesNutrientsList>(recipesNutritionData);
-        
         
         foreach (var recipeNutrient in recipeNutrients)
         {
             var nutrientByName = nutrients.FirstOrDefault(n => n.Name.Equals(recipeNutrient.Name));
             
             var userPreferenceForCurrentNutrient = await _ctx.NutrientUsers
-                .FirstOrDefaultAsync(nu => nu.NutrientId == nutrientByName!.Id, cancellationToken: cancellationToken);
+                .FirstOrDefaultAsync(nu => nu.NutrientId == nutrientByName!.Id, 
+                    cancellationToken: cancellationToken);
+
+            if (userPreferenceForCurrentNutrient is null)
+            {
+                return "Cannot create nutrients report because of absence of needed nutrient(s).";
+            }
         
             var responseMessageForCurrentNutrient = "";
         
-            if (recipeNutrient.Amount <= userPreferenceForCurrentNutrient!.MaxValue
+            if (recipeNutrient.Amount <= userPreferenceForCurrentNutrient.MaxValue
                 && recipeNutrient.Amount >= userPreferenceForCurrentNutrient.MinValue)
             {
                 responseMessageForCurrentNutrient = $"{recipeNutrient.Name}: " +

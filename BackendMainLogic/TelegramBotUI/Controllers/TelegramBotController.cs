@@ -32,7 +32,7 @@ public class TelegramBotController : BaseController
 
         if (chat == null)
         {
-            return Ok(); //BadRequest("No chat found");
+            return BadRequest("No chat found");
         }
         
         try

@@ -19,8 +19,10 @@ public class RemoveRecipeFromTheMealCommandHandler : IRequestHandler<RemoveRecip
     {
         var matchPartOfInputData = Regex.Matches(request.RecipeId, TelegramBotRecipeCommandsNQueriesDataPatterns.InputDataPatternForSingleId);
 
+        var recipeId = string.Join("", matchPartOfInputData);
+
         var recipe = await _ctx.RecipesUsers
-            .FirstOrDefaultAsync(ru => ru.RecipeId.ToString() == matchPartOfInputData.First().Value, cancellationToken: cancellationToken);
+            .FirstOrDefaultAsync(ru => ru.RecipeId.ToString() == recipeId, cancellationToken: cancellationToken);
 
         if (recipe is null)
         {

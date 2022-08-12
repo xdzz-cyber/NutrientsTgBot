@@ -31,7 +31,7 @@ public class TurnOnAllRecipeFiltersOfUserCommandHandler : IRequestHandler<TurnOn
 
         if (!recipeFilters.Any())
         {
-            return "No saved filter found.";
+            return "All filters have already been saved found.";
         }
 
         foreach (var recipeFilter in recipeFilters)

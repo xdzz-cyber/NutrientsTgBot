@@ -25,6 +25,11 @@ public class AddAllRecipesAsPartOfMealCommandHandler : IRequestHandler<AddAllRec
     {
         var mealsIds = StateManagement.TempData["MealsIds"].Split(',');
 
+        if (!mealsIds.Any())
+        {
+            return "Please, get meal plan before saving meals.";
+        }
+
         var userInfo = await _userManager.FindByNameAsync(request.Username);
         
         if (userInfo is null)
@@ -37,7 +42,8 @@ public class AddAllRecipesAsPartOfMealCommandHandler : IRequestHandler<AddAllRec
             if (await _ctx.RecipesUsers
                     .FirstOrDefaultAsync(ru => ru.RecipeId.ToString() == mealId && ru.AppUserId 
                         == userInfo.Id, cancellationToken) is null 
-                && await _ctx.Recipes.FirstOrDefaultAsync(r => r.Id.ToString() == mealId, cancellationToken: cancellationToken) is null)
+                && await _ctx.Recipes.FirstOrDefaultAsync(r => r.Id.ToString() == mealId,
+                    cancellationToken: cancellationToken) is null)
             {
                 var recipeToBeAddedHttpMessage = await _httpClient
                     .GetAsync(TelegramBotRecipesHttpPaths.GetRecipeById.Replace("id", mealId), cancellationToken);

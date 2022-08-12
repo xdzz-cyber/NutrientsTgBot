@@ -30,8 +30,10 @@ public class AddRecipeAsPartOfMealCommandHandler : IRequestHandler<AddRecipeAsPa
         
         var matchPartOfInputData = Regex.Matches(request.RecipeId, TelegramBotRecipeCommandsNQueriesDataPatterns.InputDataPatternForSingleId);
 
+        var recipeId = string.Join("", matchPartOfInputData);
+
         var recipe = await _ctx.RecipesUsers
-            .FirstOrDefaultAsync(ru => ru.RecipeId.ToString() == matchPartOfInputData.First().Value, cancellationToken: cancellationToken);
+            .FirstOrDefaultAsync(ru => ru.RecipeId.ToString() == recipeId, cancellationToken: cancellationToken);
 
         if (recipe is null && _ctx.RecipesUsers.Count(ru => ru.AppUserId == userInfo.Id) 
             <= TelegramBotRecipesPerUserAmount.MaxRecipesPerUser)
@@ -40,16 +42,16 @@ public class AddRecipeAsPartOfMealCommandHandler : IRequestHandler<AddRecipeAsPa
             {
                 AppUserId = userInfo.Id,
                 IsPartOfTheMeal = true,
-                RecipeId = Convert.ToInt32(matchPartOfInputData.First().Value)
+                RecipeId = Convert.ToInt32(recipeId)
             }, cancellationToken);
             await _ctx.SaveChangesAsync(cancellationToken);
             //return "Recipe doesn't exist.";
         }
-        else if(_ctx.RecipesUsers.Count(ru => ru.AppUserId == userInfo.Id) 
-                == TelegramBotRecipesPerUserAmount.MaxRecipesPerUser)
-        {
-            return "Limit of saved recipes has been exceeded. Please, remove some to add new ones.";
-        }
+        // else if(_ctx.RecipesUsers.Count(ru => ru.AppUserId == userInfo.Id) 
+        //         == TelegramBotRecipesPerUserAmount.MaxRecipesPerUser)
+        // {
+        //     return "Limit of saved recipes has been exceeded. Please, remove some to add new ones.";
+        // }
 
         if (recipe!.IsPartOfTheMeal)
         {

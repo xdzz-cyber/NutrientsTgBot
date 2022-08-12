@@ -2,7 +2,7 @@
 
 public static class TelegramBotRecipeCommandsNQueriesDataPatterns
 {
-    public static readonly string InputDataPatternForSingleId = "\\d{6}";
+    public static readonly string InputDataPatternForSingleId = "\\d+";
     
     public static readonly string InputDataPatternForRecipeFilterSingleId = "\\d";
     

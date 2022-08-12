@@ -2,5 +2,5 @@
 
 public static class TelegramBotRecipesPerUserAmount
 {
-    public const int MaxRecipesPerUser = 12;
+    public const int MaxRecipesPerUser = 11;
 }
