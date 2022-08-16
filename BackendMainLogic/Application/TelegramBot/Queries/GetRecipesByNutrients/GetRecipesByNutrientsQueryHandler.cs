@@ -134,7 +134,9 @@ public class GetRecipesByNutrientsQueryHandler : IRequestHandler<GetRecipesByNut
                 if (doesRecipeFitUserFilters)
                 {
                     var tmp = _mapper.Map<RecipeViewDto>(recipe);
-                    var msg = $"<strong>Title: {tmp.Title}, Vegetarian: {tmp.Vegetarian}, GlutenFree: {tmp.GlutenFree}, PricePerServing: {tmp.PricePerServing}, Link: {tmp.SpoonacularSourceUrl} Save recipe(/AddRecipeToUser_{tmp.Id})</strong>";
+                    var msg = $"<strong>Title: {tmp.Title}, Vegetarian: {tmp.Vegetarian}, GlutenFree: {tmp.GlutenFree}," +
+                              $" PricePerServing: {tmp.PricePerServing}, " +
+                              $"Link: {tmp.SpoonacularSourceUrl} \nSave recipe(/AddRecipeToUser_{tmp.Id})</strong>\n";
                     response.AppendLine(msg);
                     msgResponse += msg;
                     recipesIds.Add(recipe.Id.ToString());

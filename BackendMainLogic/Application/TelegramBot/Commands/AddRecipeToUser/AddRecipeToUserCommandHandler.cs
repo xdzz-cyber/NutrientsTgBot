@@ -42,7 +42,7 @@ public class AddRecipeToUserCommandHandler : IRequestHandler<AddRecipeToUserComm
 
             if (_ctx.RecipesUsers.Count(ru => ru.AppUserId == user.Id) == TelegramBotRecipesPerUserAmount.MaxRecipesPerUser)
             {
-                return "Max limit of saved recipes is exceeded(12 at most).";
+                return $"Max limit of saved recipes is exceeded({TelegramBotRecipesPerUserAmount.MaxRecipesPerUser} at most).";
             }
 
             if (dataFilterForSingleId.Any() && _ctx.RecipesUsers.Any(recipesUsers => recipesUsers.RecipeId.ToString() ==

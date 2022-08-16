@@ -1,4 +1,5 @@
-﻿using Application.Users.Commands.CreateUser;
+﻿using System.Text;
+using Application.Users.Commands.CreateUser;
 using Domain.TelegramBotEntities;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
@@ -27,7 +28,7 @@ public class StartApplicationQueryHandler : IRequestHandler<StartApplicationQuer
                 userId = await _mediator.Send(new CreateUserCommand(username: request.Username, chatId: request.ChatId), cancellationToken);
             }
             
-            return string.IsNullOrEmpty(userId.ToString()) ? "Bad data given. Try to start again" 
-                : "You've been successfully logged in";
+            return string.IsNullOrEmpty(userId.ToString())
+                ? "Bad data given. Try to start again" : "You've been successfully logged in.";
     }
 }

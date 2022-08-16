@@ -94,12 +94,13 @@ public class TelegramBotController : BaseController
 
             var instance = ctor.Invoke(ctorParams.ToArray());
 
-            var queryResult =
-                JsonConvert.SerializeObject(await Mediator?.Send(instance ?? throw new InvalidOperationException())!);
+            // var queryResult =
+            //     JsonConvert.SerializeObject();
+
+            var queryResult = await Mediator?.Send(instance ?? throw new InvalidOperationException())!;
             
-            
-            await _telegramBotClient.SendTextMessageAsync(chat.Id, queryResult,
-                ParseMode.Html, replyMarkup: GetButton());
+            await _telegramBotClient.SendTextMessageAsync(chat.Id, queryResult!.ToString()!,
+                parseMode: ParseMode.Html, replyMarkup: GetButton());
 
             if (_telegramBotCommands.Any(c => AreTwoStringsHaveCommonSubstring(c.Key, command)))
             {

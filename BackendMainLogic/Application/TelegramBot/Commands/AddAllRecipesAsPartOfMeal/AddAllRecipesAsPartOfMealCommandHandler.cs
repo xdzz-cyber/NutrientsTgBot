@@ -25,6 +25,8 @@ public class AddAllRecipesAsPartOfMealCommandHandler : IRequestHandler<AddAllRec
     {
         var mealsIds = StateManagement.TempData["MealsIds"].Split(',');
 
+        var recipesOfUserToBeAddedCounter = 0;
+        
         if (!mealsIds.Any())
         {
             return "Please, get meal plan before saving meals.";
@@ -61,22 +63,27 @@ public class AddAllRecipesAsPartOfMealCommandHandler : IRequestHandler<AddAllRec
             {
                 var mealInfoFromRecipeWithSameId = await _ctx.Recipes
                     .FirstOrDefaultAsync(r => r.Id.ToString() == mealId, cancellationToken: cancellationToken);
-                
-                await _ctx.RecipesUsers.AddAsync(new RecipesUsers
-                {
-                    AppUserId = userInfo.Id,
-                    RecipeId = mealInfoFromRecipeWithSameId!.Id,
-                    IsPartOfTheMeal = true
-                }, cancellationToken);
 
-                await _ctx.SaveChangesAsync(cancellationToken);
+                if (_ctx.RecipesUsers.Count() + recipesOfUserToBeAddedCounter < 
+                    TelegramBotRecipesPerUserAmount.MaxRecipesPerUser)
+                {
+                    await _ctx.RecipesUsers.AddAsync(new RecipesUsers
+                    {
+                        AppUserId = userInfo.Id,
+                        RecipeId = mealInfoFromRecipeWithSameId!.Id,
+                        IsPartOfTheMeal = true
+                    }, cancellationToken);
+
+                    recipesOfUserToBeAddedCounter += 1;
+                    //await _ctx.SaveChangesAsync(cancellationToken);
+                }
             }
 
-            var meal = await _ctx.RecipesUsers
-                .FirstOrDefaultAsync(ru => ru.RecipeId.ToString() == mealId && ru.AppUserId
-                    == userInfo.Id, cancellationToken);
-            
-            meal!.IsPartOfTheMeal = true;
+            // var meal = await _ctx.RecipesUsers
+            //     .FirstOrDefaultAsync(ru => ru.RecipeId.ToString() == mealId && ru.AppUserId
+            //         == userInfo.Id, cancellationToken);
+            //
+            // meal!.IsPartOfTheMeal = true;
         }
 
         await _ctx.SaveChangesAsync(cancellationToken);

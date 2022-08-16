@@ -48,32 +48,37 @@ public class GetUserFiltersForRecipesQueryHandler : IRequestHandler<GetUserFilte
             .ToListAsync(cancellationToken);
 
         var response = new StringBuilder();
+
+        var existingFilters = new List<string>();
         
-        response.AppendLine("Filters available go below:");
+        response.Append("Filters available are: ");
         
         foreach (var recipe in _ctx.RecipeFilters)
         {
-            response.AppendLine($"{recipe.Name}");
+            //response.Append($"{recipe.Name}");
+            existingFilters.Add($"<strong>{recipe.Name}</strong>");
         }
 
-        response.AppendLine($"If you want to add a new one, please, click here(/AddRecipeFiltersToUser)");
+        response.Append(string.Join(",", existingFilters));
+
+        response.AppendLine($"\n\nIf you want to add a new one, please, click here(/AddRecipeFiltersToUser)");
         response.AppendLine("Turn on all filters(/TurnOnAllRecipeFiltersOfUser)");
         
         if (!recipeFilters.Any())
         {
-            response.AppendLine("You have no filters selected.");
+            response.AppendLine("\n<strong>You have no filters selected.</strong>");
             return response.ToString();
         }
 
-        response.AppendLine("Your filters:");
+        response.AppendLine("\nYour filters:");
 
         foreach (var recipeFilter in recipeFilters)
         {
-            response.AppendLine($"<strong>{recipeFilter.Name}</strong>");
-            response.AppendLine($"<strong>Turn off filter(/TurnOffRecipeFilterOfUser_{recipeFilter.Id})</strong>");
+            response.Append($"<strong>{recipeFilter.Name}</strong> - ");
+            response.AppendLine($"Turn off filter(/TurnOffRecipeFilterOfUser_{recipeFilter.Id})");
         }
 
-        response.AppendLine("Clear all filters(/TurnOffAllRecipeFiltersOfUser)");
+        response.AppendLine("\nClear all filters(/TurnOffAllRecipeFiltersOfUser)");
         
 
         return response.ToString();

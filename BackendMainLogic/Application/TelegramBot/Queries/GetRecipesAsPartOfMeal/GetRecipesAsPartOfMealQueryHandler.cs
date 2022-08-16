@@ -38,7 +38,7 @@ public class GetRecipesAsPartOfMealQueryHandler : IRequestHandler<GetRecipesAsPa
         foreach (var recipe in recipes)
         {
             var msg = $"<strong>Title: {recipe.Title}, Vegetarian: {recipe.Vegetarian}, GlutenFree: {recipe.GlutenFree}, " + 
-                      $"PricePerServing: {recipe.PricePerServing}, Link: {recipe.SpoonacularSourceUrl}</strong>";
+                      $"PricePerServing: {recipe.PricePerServing}, Link: {recipe.SpoonacularSourceUrl}</strong>\n";
             response.AppendLine(msg);
         }
 

@@ -34,7 +34,7 @@ public class GetUserNutrientsPlanQueryHandler : IRequestHandler<GetUserNutrients
 
         if (!userNutrients.Any())
         {
-            return "You have no nutrients plan.";
+            return "<strong>You have no nutrients plan.</strong>";
         }
 
         var response = new StringBuilder();
@@ -42,7 +42,7 @@ public class GetUserNutrientsPlanQueryHandler : IRequestHandler<GetUserNutrients
         foreach (var userNutrient in userNutrients)
         {
             var nutrientName = nutrients.FirstOrDefault(n => n.Id == userNutrient.NutrientId)?.Name;
-            response.AppendLine($"Nutrient name = {nutrientName},Max value = {userNutrient.MaxValue}, Min Value = {userNutrient.MinValue};");
+            response.AppendLine($"Nutrient name = <strong>{nutrientName}</strong> ,Max value = {userNutrient.MaxValue}, Min Value = {userNutrient.MinValue};");
         }
 
         return response.ToString();

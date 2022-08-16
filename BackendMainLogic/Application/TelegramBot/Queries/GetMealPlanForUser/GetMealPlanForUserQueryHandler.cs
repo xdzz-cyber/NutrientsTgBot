@@ -94,22 +94,28 @@ public class GetMealPlanForUserQueryHandler : IRequestHandler<GetMealPlanForUser
                 var tmp = await _ctx.Recipes.FirstOrDefaultAsync(r => r.Id == meal.Id, cancellationToken: cancellationToken); //_mapper.Map<RecipeViewDto>(meal);
 
                 var msg =
-                    $"<strong>Title: {tmp!.Title}, Vegetarian: {tmp.Vegetarian}, GlutenFree: {tmp.GlutenFree}, PricePerServing: {tmp.PricePerServing}, Link: {(tmp.SpoonacularSourceUrl.Length > 0 ? tmp.SpoonacularSourceUrl : tmp.SourceUrl)} Save recipe(/AddRecipeToUser_{tmp.Id})</strong>";
+                    $"<strong>Title: {tmp!.Title}, Vegetarian: {tmp.Vegetarian}, GlutenFree: {tmp.GlutenFree}," +
+                    $" PricePerServing: {tmp.PricePerServing}, " +
+                    $"Link: {(tmp.SpoonacularSourceUrl.Length > 0 ? tmp.SpoonacularSourceUrl : tmp.SourceUrl)} </strong>" +
+                    $"\nSave recipe(/AddRecipeToUser_{tmp.Id})";
                 response.AppendLine(msg);
-                response.AppendLine($"Save as a part of the meal(/AddRecipeAsPartOfMeal_{tmp.Id})");
+                response.AppendLine($"Save as a part of the meal(/AddRecipeAsPartOfMeal_{tmp.Id})\n");
                 mealsIds.Add(meal.Id.ToString());
             }
+
+            response.AppendLine("<strong>Nutrients report go below:</strong>");
             
-            response.AppendLine("Add everything as part of the meal(/AddAllRecipesAsPartOfMeal)");
-           
             var nutrientMessage = $"Calories = {nutrients!.Nutrients.Calories}, Fat = {nutrients.Nutrients.Fat}, " +
-                                  $"Carbohydrates = {nutrients.Nutrients.Carbohydrates}, Protein = {nutrients.Nutrients.Protein}";
+                                  $"Carbohydrates = {nutrients.Nutrients.Carbohydrates}, " +
+                                  $"Protein = {nutrients.Nutrients.Protein}";
 
             response.AppendLine(nutrientMessage);
             
+            response.AppendLine("\nAdd everything as part of the meal(/AddAllRecipesAsPartOfMeal)");
+            
             if (string.IsNullOrEmpty(response.ToString()))
             {
-                return "No meals found.";
+                return "<strong>No meals found.</strong>";
             }
 
             if (!StateManagement.TempData.ContainsKey("MealsIds"))
