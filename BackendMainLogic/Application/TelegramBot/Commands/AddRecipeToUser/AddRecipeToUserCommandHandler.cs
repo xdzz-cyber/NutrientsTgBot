@@ -111,7 +111,7 @@ public class AddRecipeToUserCommandHandler : IRequestHandler<AddRecipeToUserComm
                     }
                     
                     if (!_ctx.RecipesUsers.Any(ru => ru.RecipeId.ToString() == id) 
-                        && _ctx.RecipesUsers.Count() + addedDataToRecipeUsersCounter <= TelegramBotRecipesPerUserAmount.MaxRecipesPerUser)
+                        && _ctx.RecipesUsers.Count() + addedDataToRecipeUsersCounter < TelegramBotRecipesPerUserAmount.MaxRecipesPerUser)
                     {
                         await _ctx.RecipesUsers.AddAsync(new RecipesUsers
                         {

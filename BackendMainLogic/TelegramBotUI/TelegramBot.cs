@@ -1,4 +1,6 @@
-﻿using Telegram.Bot;
+﻿using Application.Common.Constants;
+using Telegram.Bot;
+
 
 namespace TelegramBotUI;
 
@@ -19,6 +21,15 @@ public class TelegramBot
         
         await telegramBotClient.SetWebhookAsync(hook);
 
-        return telegramBotClient;
+        // var myCommands = await telegramBotClient.GetMyCommandsAsync();
+        // var constantCommandsDictionary = TelegramBotCommands.GetCommands();
+        // if (myCommands.Length == 0)
+        // {
+            await telegramBotClient
+                .SetMyCommandsAsync(TelegramBotListOfCommandsWIthDescriptionsForSetCommands.GetCommandsList());
+       // }
+
+
+       return telegramBotClient;
     }
 }

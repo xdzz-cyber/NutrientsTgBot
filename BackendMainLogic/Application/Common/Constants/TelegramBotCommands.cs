@@ -19,9 +19,9 @@ using Application.TelegramBot.Queries.GetRecipesAsPartOfMeal;
 using Application.TelegramBot.Queries.GetRecipesByIngredients;
 using Application.TelegramBot.Queries.GetRecipesByNutrients;
 using Application.TelegramBot.Queries.GetUserFiltersForRecipes;
-using Application.TelegramBot.Queries.GetUserNutrientsCompletePlanReport;
 using Application.TelegramBot.Queries.GetUserNutrientsPlan;
 using Application.TelegramBot.Queries.GetUserRecipeList;
+using Application.TelegramBot.Queries.GetUserSupplementsOutline;
 using Application.TelegramBot.Queries.GetUserWaterBalanceLevel;
 using Application.TelegramBot.Queries.GetUserWeight;
 using Domain.TelegramBotEntities;
@@ -69,7 +69,7 @@ public static class TelegramBotCommands
         _commands.Add("GetUserNutrientsPlan", new TelegramBotCommand(typeof(GetUserNutrientsPlanQuery), true));
         _commands.Add("GetMealPlanForUser", new TelegramBotCommand(typeof(GetMealPlanForUserQuery), true));
         _commands.Add("AddAllRecipesAsPartOfMeal", new TelegramBotCommand(typeof(AddAllRecipesAsPartOfMealCommand), false));
-        _commands.Add("GetUserNutrientsCompletePlanReport", new TelegramBotCommand(typeof(GetUserNutrientsCompletePlanReportQuery), true));
+        _commands.Add("GetUserSupplementsOutline", new TelegramBotCommand(typeof(GetUserSupplementsOutlineQuery), true));
         // Filters, find by nutrients, get meal and get fat,carbohydrates,protein for period of time will be here
         
         // 26 queries and commands

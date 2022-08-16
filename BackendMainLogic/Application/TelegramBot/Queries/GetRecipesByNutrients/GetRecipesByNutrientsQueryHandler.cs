@@ -29,10 +29,7 @@ public class GetRecipesByNutrientsQueryHandler : IRequestHandler<GetRecipesByNut
     
     public async Task<string> Handle(GetRecipesByNutrientsQuery request, CancellationToken cancellationToken)
     {
-        // if (request.Nutrients.Split(",").Select(ing => ing.Trim()).ToArray().Length < 2)
-        // {
-        //     return "Please, enter nutrients with comma as separator";
-        // }
+     
         var userInfo = await _userManager.FindByNameAsync(request.Username);
         
         if (userInfo is null)

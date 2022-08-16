@@ -35,8 +35,8 @@ public class AddRecipeAsPartOfMealCommandHandler : IRequestHandler<AddRecipeAsPa
         var recipe = await _ctx.RecipesUsers
             .FirstOrDefaultAsync(ru => ru.RecipeId.ToString() == recipeId, cancellationToken: cancellationToken);
 
-        if (recipe is null && _ctx.RecipesUsers.Count(ru => ru.AppUserId == userInfo.Id) 
-            <= TelegramBotRecipesPerUserAmount.MaxRecipesPerUser)
+        if (recipe is null && _ctx.RecipesUsers.Count() 
+            < TelegramBotRecipesPerUserAmount.MaxRecipesPerUser)
         {
             await _ctx.RecipesUsers.AddAsync(new RecipesUsers
             {
@@ -47,18 +47,16 @@ public class AddRecipeAsPartOfMealCommandHandler : IRequestHandler<AddRecipeAsPa
             await _ctx.SaveChangesAsync(cancellationToken);
             //return "Recipe doesn't exist.";
         }
-        // else if(_ctx.RecipesUsers.Count(ru => ru.AppUserId == userInfo.Id) 
-        //         == TelegramBotRecipesPerUserAmount.MaxRecipesPerUser)
-        // {
-        //     return "Limit of saved recipes has been exceeded. Please, remove some to add new ones.";
-        // }
-
-        if (recipe!.IsPartOfTheMeal)
+        else if (recipe is not null && recipe.IsPartOfTheMeal)
         {
             return "Recipe has already been added as part of the meal.";
         }
+        else if (recipe is not null)
+        {
+            recipe.IsPartOfTheMeal = true;
+        }
 
-        recipe.IsPartOfTheMeal = true;
+        
         await _ctx.SaveChangesAsync(cancellationToken);
 
         return "Recipe has been successfully added as part of the meal";

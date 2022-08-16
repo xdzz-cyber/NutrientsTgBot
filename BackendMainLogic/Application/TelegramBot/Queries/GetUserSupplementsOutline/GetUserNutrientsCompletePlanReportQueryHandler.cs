@@ -8,15 +8,15 @@ using MediatR;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
-namespace Application.TelegramBot.Queries.GetUserNutrientsCompletePlanReport;
+namespace Application.TelegramBot.Queries.GetUserSupplementsOutline;
 
-public class GetUserNutrientsCompletePlanReportQueryHandler : IRequestHandler<GetUserNutrientsCompletePlanReportQuery, string>
+public class GetUserSupplementsOutlineQueryHandler : IRequestHandler<GetUserSupplementsOutlineQuery, string>
 {
     private readonly ITelegramBotDbContext _ctx;
     private readonly UserManager<AppUser> _userManager;
     private readonly HttpClient _httpClient;
 
-    public GetUserNutrientsCompletePlanReportQueryHandler(ITelegramBotDbContext ctx, 
+    public GetUserSupplementsOutlineQueryHandler(ITelegramBotDbContext ctx, 
         UserManager<AppUser> userManager, HttpClient httpClient)
     {
         _ctx = ctx;
@@ -24,7 +24,7 @@ public class GetUserNutrientsCompletePlanReportQueryHandler : IRequestHandler<Ge
         _httpClient = httpClient;
     }
     
-    public async Task<string> Handle(GetUserNutrientsCompletePlanReportQuery request, CancellationToken cancellationToken)
+    public async Task<string> Handle(GetUserSupplementsOutlineQuery request, CancellationToken cancellationToken)
     {
         var userInfo = await _userManager.FindByNameAsync(request.Username);
         

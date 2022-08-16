@@ -1,4 +1,5 @@
 ﻿using Application.Common.Constants;
+using Application.Common.Exceptions;
 using Application.Interfaces;
 using Domain.TelegramBotEntities;
 using Microsoft.AspNetCore.Mvc;
@@ -32,19 +33,22 @@ public class TelegramBotController : BaseController
 
         if (chat == null)
         {
-            return BadRequest("No chat found");
+            
+             //BadRequest("No chat found");
+             throw new NotFoundException("Telegram bot chat was not found.", upd.Id);
+             //return Ok("No chat found");
         }
-        
+
         try
         {
-            var command = $"{upd.Message?.Text!.Replace("/", "").Trim().FirstCharToUpper()}";
+            var command = $"{upd.Message?.Text!.Replace("/", "").Replace("_", "").Trim().FirstCharToUpper()}";
 
             if (!_telegramBotCommands.Any(c => AreTwoStringsHaveCommonSubstring(c.Key, command)) && !_lastExecutedCommandsTypes.Any()) //command.All(char.IsDigit)
             {
                 await _telegramBotClient.SendTextMessageAsync(chat.Id, "Bad request.",
                     ParseMode.Markdown, replyMarkup: GetButton());
                 
-                return Ok();
+                throw new NotFoundException("No command that satisfies conditions was found.", upd.Id); //return Ok("No commands found");
             }
 
             var queryType = _telegramBotCommands.Any(c => AreTwoStringsHaveCommonSubstring(c.Key, command))
