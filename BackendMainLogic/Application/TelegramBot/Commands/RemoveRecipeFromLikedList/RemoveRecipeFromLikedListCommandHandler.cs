@@ -17,7 +17,8 @@ public class RemoveRecipeFromLikedListCommandHandler : IRequestHandler<RemoveRec
     
     public async Task<string> Handle(RemoveRecipeFromLikedListCommand request, CancellationToken cancellationToken)
     {
-        var matchPartOfInputData = Regex.Matches(request.RecipeId, TelegramBotRecipeCommandsNQueriesDataPatterns.InputDataPatternForSingleId);
+        var matchPartOfInputData = Regex.Matches(request.RecipeId, 
+            TelegramBotRecipeCommandsNQueriesDataPatterns.InputDataPatternForSingleId);
 
         var recipeId = string.Join("", matchPartOfInputData);
         

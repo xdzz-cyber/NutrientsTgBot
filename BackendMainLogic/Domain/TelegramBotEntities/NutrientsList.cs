@@ -1,7 +1,6 @@
 ﻿using System.Text.Json.Serialization;
-using Domain.TelegramBotEntities;
 
-namespace Application.TelegramBot.Queries.Dtos;
+namespace Domain.TelegramBotEntities;
 
 public class NutrientsList
 {

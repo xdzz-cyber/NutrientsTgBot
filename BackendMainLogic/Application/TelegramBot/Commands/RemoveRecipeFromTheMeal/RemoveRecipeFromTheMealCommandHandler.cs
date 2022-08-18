@@ -35,6 +35,7 @@ public class RemoveRecipeFromTheMealCommandHandler : IRequestHandler<RemoveRecip
         }
 
         recipe.IsPartOfTheMeal = false;
+        
         await _ctx.SaveChangesAsync(cancellationToken);
 
         return "Recipe has been successfully removed as part of the meal.";

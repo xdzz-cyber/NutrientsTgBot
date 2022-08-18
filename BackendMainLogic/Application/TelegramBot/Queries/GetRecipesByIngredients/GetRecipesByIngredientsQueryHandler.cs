@@ -1,8 +1,8 @@
 ﻿using System.Text;
 using System.Text.RegularExpressions;
 using Application.Common.Constants;
+using Application.Common.Mappings;
 using Application.Interfaces;
-using Application.TelegramBot.Queries.Dtos;
 using Domain.TelegramBotEntities;
 using AutoMapper;
 using MediatR;
@@ -52,24 +52,32 @@ public class GetRecipesByIngredientsQueryHandler : IRequestHandler<GetRecipesByI
             return "Please, authorize to be able to make actions.";
         }
         
-        var content = new RecipesList();
+        RecipesList? content;
+        
         var response = new StringBuilder();
+        
         var msgResponse = "";
+        
         var recipesIds = new List<string>();
+        
         if (recipes.IsSuccessStatusCode)
         {
-            var r = await recipes.Content.ReadAsStringAsync(cancellationToken);
-            content = JsonSerializer.Deserialize<RecipesList>(r);
-            //var recipeFilters = _ctx.RecipeFiltersUsers.Where(rfu => rf.)
-            var finalRecipes = content.Recipes.ToList();
+            var _ = await recipes.Content.ReadAsStringAsync(cancellationToken);
+            
+            content = JsonSerializer.Deserialize<RecipesList>(_);
+            
+            var finalRecipes = content!.Recipes.ToList();
+            
             foreach (var recipe in finalRecipes)
             {
 
                 var recipeFilters = await _ctx.RecipeFilters
-                    .Where(rf => rf.RecipeFiltersUsers.Any(rfu => rfu.RecipeFiltersId == rf.Id && rfu.IsTurnedIn))
+                    .Where(rf => rf.RecipeFiltersUsers
+                        .Any(rfu => rfu.RecipeFiltersId == rf.Id && rfu.IsTurnedIn))
                     .ToListAsync(cancellationToken);
                 
                 var satisfiesFiltersCount = 0;
+                
                 foreach (var recipeFilter in recipeFilters)
                 {
                     if ((nameof(recipe.Vegetarian).Equals(recipeFilter.Name) && recipe.Vegetarian)
@@ -83,10 +91,16 @@ public class GetRecipesByIngredientsQueryHandler : IRequestHandler<GetRecipesByI
 
                 if (doesRecipeFitUserFilters)
                 {
-                    var tmp = _mapper.Map<RecipeViewDto>(recipe);
-                    var msg = $"<strong>Title: {tmp.Title}, Vegetarian: {tmp.Vegetarian}, GlutenFree: {tmp.GlutenFree}, PricePerServing: {tmp.PricePerServing}, Link: {tmp.SpoonacularSourceUrl} Save recipe(/AddRecipeToUser_{tmp.Id})</strong>\n";
+                    var mappedRecipe = _mapper.Map<RecipeViewDto>(recipe);
+                    
+                    var msg = $"<strong>Title: {mappedRecipe.Title}, Vegetarian: {mappedRecipe.Vegetarian}, GlutenFree: {mappedRecipe.GlutenFree}, " +
+                              $"PricePerServing: {mappedRecipe.PricePerServing}, Link: {mappedRecipe.SpoonacularSourceUrl} " +
+                              $"Save recipe(/AddRecipeToUser_{mappedRecipe.Id})</strong>\n";
+                    
                     response.AppendLine(msg);
+                    
                     msgResponse += msg;
+                    
                     recipesIds.Add(recipe.Id.ToString());
                 }
             }

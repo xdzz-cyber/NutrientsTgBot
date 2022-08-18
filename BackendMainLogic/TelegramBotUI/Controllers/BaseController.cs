@@ -12,6 +12,9 @@ namespace TelegramBotUI.Controllers;
 
 public abstract class BaseController : ControllerBase
 {
+    /// <summary>
+    /// 
+    /// </summary>
     protected IMediator? Mediator => HttpContext.RequestServices.GetService<IMediator>();
 
     internal Guid UserId => !User.Identity!.IsAuthenticated

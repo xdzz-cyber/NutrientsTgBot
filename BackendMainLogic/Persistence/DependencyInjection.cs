@@ -1,7 +1,6 @@
 ﻿using Application.Interfaces;
 using Domain.TelegramBotEntities;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -11,10 +10,6 @@ public static class DependencyInjection
 {
     public static IServiceCollection AddPersistence(this IServiceCollection services, IConfiguration configuration)
     {
-        // services.AddDbContext<TelegramBotDbContext>(options =>
-        // {
-        //     options.UseSqlServer(configuration.GetConnectionString("DefaultConnection"));
-        // });
         services.AddDbContext<TelegramBotDbContext>();
         services.AddScoped<ITelegramBotDbContext>(provider => provider.GetService<TelegramBotDbContext>());
         services.AddIdentity<AppUser, IdentityRole>(options =>

@@ -1,7 +1,7 @@
 ﻿using System.Text;
 using Application.Common.Constants;
+using Application.Common.Mappings;
 using Application.Interfaces;
-using Application.TelegramBot.Queries.Dtos;
 using AutoMapper;
 using Domain.TelegramBotEntities;
 using MediatR;
@@ -63,8 +63,11 @@ public class GetRecipesByNutrientsQueryHandler : IRequestHandler<GetRecipesByNut
         }
 
         var userNutrientsCarbs = userNutrientsValues.First(x => x.Name.Equals("Carbohydrates"));
+        
         var userNutrientsProtein = userNutrientsValues.First(x => x.Name.Equals("Protein"));
+       
         var userNutrientsFat = userNutrientsValues.First(x => x.Name.Equals("Fat"));
+        
         var userNutrientsCalories = userNutrientsValues.First(x => x.Name.Equals("Calories"));
 
         var tmpString = string.Format(TelegramBotRecipesHttpPaths.GetRecipesByNutrients,
@@ -75,24 +78,30 @@ public class GetRecipesByNutrientsQueryHandler : IRequestHandler<GetRecipesByNut
         var recipes =
            await _httpClient.GetAsync(tmpString, cancellationToken);
 
+        List<RecipeViewDto>? listOfRecipes;
         
-        var content = new List<RecipeViewDto>();
         var response = new StringBuilder();
+        
         var msgResponse = "";
+        
         var recipesIds = new List<string>();
+        
         if (recipes.IsSuccessStatusCode)
         {
-            var r = await recipes.Content.ReadAsStringAsync(cancellationToken);
-            content = JsonSerializer.Deserialize<List<RecipeViewDto>>(r);
-            //var recipeFilters = _ctx.RecipeFiltersUsers.Where(rfu => rf.)
-            var finalRecipes = content;
-            foreach (var recipe in finalRecipes)
+            var _ = await recipes.Content.ReadAsStringAsync(cancellationToken);
+            
+            listOfRecipes = JsonSerializer.Deserialize<List<RecipeViewDto>>(_);
+
+            foreach (var recipe in listOfRecipes!)
             {
                 var currentRecipeDiets = new Recipe();
 
                 if (_ctx.Recipes.FirstOrDefault(r => r.Id == recipe.Id) is null)
                 {
-                    var currentRecipeDietsRecipe = await _httpClient.GetAsync(TelegramBotRecipesHttpPaths.GetRecipeById.Replace("id", recipe.Id.ToString()), cancellationToken);
+                    var currentRecipeDietsRecipe = await _httpClient
+                        .GetAsync(TelegramBotRecipesHttpPaths.GetRecipeById
+                            .Replace("id", recipe.Id.ToString()), cancellationToken);
+                    
                     var currentRecipeDietsRecipeContent = JsonSerializer
                         .Deserialize<RecipeViewDto>(await currentRecipeDietsRecipe.Content.ReadAsStringAsync(cancellationToken));
 
@@ -106,17 +115,21 @@ public class GetRecipesByNutrientsQueryHandler : IRequestHandler<GetRecipesByNut
                     currentRecipeDiets = _ctx.Recipes.FirstOrDefault(r => r.Id == recipe.Id);
                 }
                 
-
                 recipe.Vegetarian = currentRecipeDiets!.Vegetarian;
+                
                 recipe.GlutenFree = currentRecipeDiets.GlutenFree;
+                
                 recipe.PricePerServing = currentRecipeDiets.PricePerServing;
+                
                 recipe.SpoonacularSourceUrl = currentRecipeDiets.SpoonacularSourceUrl;
                 
                 var recipeFilters = await _ctx.RecipeFilters
-                    .Where(rf => rf.RecipeFiltersUsers.Any(rfu => rfu.RecipeFiltersId == rf.Id && rfu.IsTurnedIn))
+                    .Where(rf => rf.RecipeFiltersUsers.Any(rfu => rfu.RecipeFiltersId == rf.Id 
+                                                                  && rfu.IsTurnedIn))
                     .ToListAsync(cancellationToken);
                 
                 var satisfiesFiltersCount = 0;
+                
                 foreach (var recipeFilter in recipeFilters)
                 {
                     if ((nameof(recipe.Vegetarian).Equals(recipeFilter.Name) && recipe.Vegetarian)

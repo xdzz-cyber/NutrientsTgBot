@@ -14,7 +14,8 @@ public class AddAllRecipesAsPartOfMealCommandHandler : IRequestHandler<AddAllRec
     private readonly UserManager<AppUser> _userManager;
     private readonly HttpClient _httpClient;
 
-    public AddAllRecipesAsPartOfMealCommandHandler(ITelegramBotDbContext ctx, UserManager<AppUser> userManager, HttpClient httpClient)
+    public AddAllRecipesAsPartOfMealCommandHandler(ITelegramBotDbContext ctx, UserManager<AppUser> userManager, 
+        HttpClient httpClient)
     {
         _ctx = ctx;
         _userManager = userManager;
@@ -48,7 +49,8 @@ public class AddAllRecipesAsPartOfMealCommandHandler : IRequestHandler<AddAllRec
                     cancellationToken: cancellationToken) is null)
             {
                 var recipeToBeAddedHttpMessage = await _httpClient
-                    .GetAsync(TelegramBotRecipesHttpPaths.GetRecipeById.Replace("id", mealId), cancellationToken);
+                    .GetAsync(TelegramBotRecipesHttpPaths.GetRecipeById.Replace("id", mealId),
+                        cancellationToken);
 
                 var recipeToBeAdded = JsonSerializer
                     .Deserialize<Recipe>(await recipeToBeAddedHttpMessage.Content.ReadAsStringAsync(cancellationToken));
@@ -75,15 +77,8 @@ public class AddAllRecipesAsPartOfMealCommandHandler : IRequestHandler<AddAllRec
                     }, cancellationToken);
 
                     recipesOfUserToBeAddedCounter += 1;
-                    //await _ctx.SaveChangesAsync(cancellationToken);
                 }
             }
-
-            // var meal = await _ctx.RecipesUsers
-            //     .FirstOrDefaultAsync(ru => ru.RecipeId.ToString() == mealId && ru.AppUserId
-            //         == userInfo.Id, cancellationToken);
-            //
-            // meal!.IsPartOfTheMeal = true;
         }
 
         await _ctx.SaveChangesAsync(cancellationToken);

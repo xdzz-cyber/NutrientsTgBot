@@ -1,5 +1,4 @@
 ﻿using Application.Common.Constants;
-using Application.Common.Exceptions;
 using Application.TelegramBot.Queries.GetUserWeight;
 using Domain.TelegramBotEntities;
 using MediatR;
@@ -26,7 +25,6 @@ public class UpdateAppUserWeightCommandHandler : IRequestHandler<UpdateAppUserWe
         if (appUser is null)
         {
             return "Please, authorize to be able to make actions.";
-            //throw new NotFoundException(nameof(AppUser), request.ChatId);
         }
 
         if (request.Weight <= 0)

@@ -4,15 +4,26 @@ using Telegram.Bot;
 
 namespace TelegramBotUI;
 
+/// <summary>
+/// 
+/// </summary>
 public class TelegramBot
 {
     private readonly IConfiguration _config;
 
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="configuration"></param>
     public TelegramBot(IConfiguration configuration)
     {
         _config = configuration;
     }
 
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <returns></returns>
     public async Task<TelegramBotClient> GetBot()
     {
         var telegramBotClient = new TelegramBotClient(_config["Token"] ?? string.Empty);
@@ -21,15 +32,8 @@ public class TelegramBot
         
         await telegramBotClient.SetWebhookAsync(hook);
 
-        // var myCommands = await telegramBotClient.GetMyCommandsAsync();
-        // var constantCommandsDictionary = TelegramBotCommands.GetCommands();
-        // if (myCommands.Length == 0)
-        // {
-            await telegramBotClient
-                .SetMyCommandsAsync(TelegramBotListOfCommandsWIthDescriptionsForSetCommands.GetCommandsList());
-       // }
-
-
-       return telegramBotClient;
+        await telegramBotClient.SetMyCommandsAsync(TelegramBotListOfCommandsWIthDescriptionsForSetCommands.GetCommandsList());
+        
+        return telegramBotClient;
     }
 }

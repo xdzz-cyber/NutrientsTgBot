@@ -43,8 +43,9 @@ public class AddRecipeFiltersToUserCommandHandler : IRequestHandler<AddRecipeFil
             if (_ctx.RecipeFiltersUsers.Any(rfu => rfu.AppUserId == userInfo.Id
                                                    && rfu.RecipeFiltersId == recipeFilter.Id))
             {
-                var rf = await _ctx.RecipeFiltersUsers.FirstAsync(rfu => rfu.AppUserId == userInfo.Id
-                                                            && rfu.RecipeFiltersId == recipeFilter.Id, cancellationToken: cancellationToken);
+                var rf = await _ctx.RecipeFiltersUsers
+                    .FirstAsync(rfu => rfu.AppUserId == userInfo.Id && rfu.RecipeFiltersId == recipeFilter.Id,
+                        cancellationToken: cancellationToken);
                 rf.IsTurnedIn = true;
             }
             else

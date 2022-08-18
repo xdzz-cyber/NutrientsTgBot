@@ -27,11 +27,9 @@ public class GetRecipesAsPartOfMealQueryHandler : IRequestHandler<GetRecipesAsPa
             return "Please, authorize to be able to make actions.";
         }
 
-        // var recipesAsPartOfMeal = await _ctx.RecipesUsers
-        //     .Where(ru => ru.AppUserId == userInfo.Id).ToListAsync(cancellationToken);
-        
         var recipes = await _ctx.Recipes.Where(recipe => _ctx.RecipesUsers
-            .Where(ru => ru.AppUserId == userInfo.Id).Any(r => r.RecipeId == recipe.Id && r.IsPartOfTheMeal)).ToListAsync(cancellationToken);
+            .Where(ru => ru.AppUserId == userInfo.Id)
+            .Any(r => r.RecipeId == recipe.Id && r.IsPartOfTheMeal)).ToListAsync(cancellationToken);
         
         var response = new StringBuilder();
         

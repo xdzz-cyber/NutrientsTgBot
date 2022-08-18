@@ -1,8 +1,8 @@
-﻿namespace Application.TelegramBot.Queries.Dtos;
+﻿namespace Domain.TelegramBotEntities;
 
 public class UserNutrientPlanDto
 {
-    public string Name { get; set; }
+    public string Name { get; set; } = null!;
 
     public int MinValue { get; set; }
     

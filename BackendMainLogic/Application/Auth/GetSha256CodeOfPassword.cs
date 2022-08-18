@@ -15,9 +15,9 @@ public class GetSha256CodeOfPassword : IGetHashCodeOfString
   
             // Convert byte array to a string   
             var builder = new StringBuilder();  
-            for (var i = 0; i < bytes.Length; i++)  
-            {  
-                builder.Append(bytes[i].ToString("x2"));  
+            foreach (var t in bytes)
+            {
+                builder.Append(t.ToString("x2"));
             }  
             return builder.ToString();  
         }

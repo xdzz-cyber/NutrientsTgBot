@@ -24,7 +24,7 @@ public class CreateUserCommandHandler : IRequestHandler<CreateUserCommand, Guid>
     {
         request.Password = _getSha256CodeOfString.GetHashCodeOfString(request.Password);
         
-        if (!_roleManager.Roles.Any(x => x.Name.Equals(AuthRoles.User.ToString())))
+        if (!_roleManager.Roles.Any(x => x.Name.Equals(AuthRoles.User.ToString(), StringComparison.Ordinal)))
         {
             var userRole = new IdentityRole(AuthRoles.User.ToString());
 

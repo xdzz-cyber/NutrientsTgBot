@@ -6,5 +6,6 @@ public class TelegramBotCommand
 
     public bool IsVisibleAsPartOfUserInterface { get; set; }
 
-    public TelegramBotCommand(Type type, bool isVisibleAsPartOfUserInterface) => (Type, IsVisibleAsPartOfUserInterface) = (type, isVisibleAsPartOfUserInterface);
+    public TelegramBotCommand(Type type, bool isVisibleAsPartOfUserInterface) 
+        => (Type, IsVisibleAsPartOfUserInterface) = (type, isVisibleAsPartOfUserInterface);
 }

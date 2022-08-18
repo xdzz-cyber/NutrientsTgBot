@@ -2,8 +2,8 @@
 using System.Text.Json;
 using Application.Common.Constants;
 using Application.Interfaces;
-using Application.TelegramBot.Queries.Dtos.RecipesNutrition;
 using Domain.TelegramBotEntities;
+using Domain.TelegramBotEntities.RecipesNutrition;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -43,7 +43,8 @@ public class GetUserSupplementsOutlineQueryHandler : IRequestHandler<GetUserSupp
         }
 
         var recipesNutritionHttpMessage = await _httpClient
-            .GetAsync(string.Format(TelegramBotRecipesHttpPaths.GetRecipesWithNutrition, string.Join(",", userMealsIds)), cancellationToken);
+            .GetAsync(string.Format(TelegramBotRecipesHttpPaths.GetRecipesWithNutrition, 
+                string.Join(",", userMealsIds)), cancellationToken);
 
         var recipesNutritionData = await recipesNutritionHttpMessage.Content.ReadAsStringAsync(cancellationToken);
 
@@ -57,7 +58,8 @@ public class GetUserSupplementsOutlineQueryHandler : IRequestHandler<GetUserSupp
         foreach (var recipe in recipes!)
         {
             var neededNutrients = recipe.Nutrition.Nutrients
-                .Where(rn => nutrients.FirstOrDefault(n => n.Name.Equals(rn.Name)) != null).ToList();
+                .Where(rn => nutrients.FirstOrDefault(n => 
+                    n.Name.Equals(rn.Name)) != null).ToList();
 
             foreach (var neededNutrient in neededNutrients)
             {
@@ -77,7 +79,8 @@ public class GetUserSupplementsOutlineQueryHandler : IRequestHandler<GetUserSupp
         
         foreach (var recipeNutrient in recipeNutrients)
         {
-            var nutrientByName = nutrients.FirstOrDefault(n => n.Name.Equals(recipeNutrient.Name));
+            var nutrientByName = nutrients.FirstOrDefault(n => n.Name
+                .Equals(recipeNutrient.Name));
 
             var nutrientMeasurementUnit = nutrientByName!.Name.Equals("Calories") ? "k" : "g";
             
@@ -113,9 +116,5 @@ public class GetUserSupplementsOutlineQueryHandler : IRequestHandler<GetUserSupp
         }
 
         return response.ToString();
-        // 1) get fat,carbo,protein and calories of each recipe
-        // 2) compare them with data from nutrientsUsers table by user id and each nutrient's one (id)
-        // 3) make a response for each type of nutri
-        // 4) return response
     }
 }

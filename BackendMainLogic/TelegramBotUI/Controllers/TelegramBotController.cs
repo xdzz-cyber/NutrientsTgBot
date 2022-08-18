@@ -11,6 +11,7 @@ using Telegram.Bot.Types.ReplyMarkups;
 
 namespace TelegramBotUI.Controllers;
 
+/// <inheritdoc />
 [Route("api/[controller]")]
 public class TelegramBotController : BaseController
 {
@@ -18,12 +19,20 @@ public class TelegramBotController : BaseController
     private readonly Dictionary<string, TelegramBotCommand> _telegramBotCommands;
     private static readonly List<Type> _lastExecutedCommandsTypes = new ();
 
+    /// <inheritdoc />
     public TelegramBotController(TelegramBot telegramBot)
     {
         _telegramBotClient = telegramBot.GetBot().Result;
         _telegramBotCommands = TelegramBotCommands.GetCommands();
     }
 
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="update"></param>
+    /// <returns></returns>
+    /// <exception cref="NotFoundException"></exception>
+    /// <exception cref="InvalidOperationException"></exception>
     [HttpPost]
     public async Task<IActionResult> Update([FromBody] object update)
     {
@@ -33,10 +42,7 @@ public class TelegramBotController : BaseController
 
         if (chat == null)
         {
-            
-             //BadRequest("No chat found");
-             throw new NotFoundException("Telegram bot chat was not found.", upd.Id);
-             //return Ok("No chat found");
+            throw new NotFoundException("Telegram bot chat was not found.", upd.Id);
         }
 
         try
@@ -48,22 +54,14 @@ public class TelegramBotController : BaseController
                 await _telegramBotClient.SendTextMessageAsync(chat.Id, "Bad request.",
                     ParseMode.Markdown, replyMarkup: GetButton());
                 
-                throw new NotFoundException("No command that satisfies conditions was found.", upd.Id); //return Ok("No commands found");
+                throw new NotFoundException("No command that satisfies conditions was found.", upd.Id);
             }
 
             var queryType = _telegramBotCommands.Any(c => AreTwoStringsHaveCommonSubstring(c.Key, command))
-                ? _telegramBotCommands.First(c => AreTwoStringsHaveCommonSubstring(c.Key, command)).Value.Type //_telegramBotCommands[Regex.Replace(command, @"[0-9_]+", string.Empty)]
+                ? _telegramBotCommands.First(c => AreTwoStringsHaveCommonSubstring(c.Key, command)).Value.Type
                 : _lastExecutedCommandsTypes.Last(x =>
-                    x != null && x.GetInterfaces().Any(i => i.Name == nameof(ICommand) || i.Name == nameof(IQuery))); //GetInterface(nameof(ICommand)) != null || x.GetInterface(nameof(IQuery)) != null
-                
-
-            // var queryType = _telegramBotCommands.FirstOrDefault(c => AreTwoStringsHaveCommonSubstring(c.Key, command));
-            //
-            // if (!string.IsNullOrEmpty(queryType.Key))
-            // {
-            //     queryType = _telegramBotCommands[queryType.Key];
-            // }
-            //      _lastExecutedCommandsTypes.Last(x => x != null && x.GetInterfaces().Any(i => i.Name == nameof(ICommand) || i.Name == nameof(IQuery)));
+                    x != null && x.GetInterfaces().Any(i => i.Name == nameof(ICommand) || i.Name == nameof(IQuery)));
+            
 
             var ctorParamsTypes = new List<object>();
 
@@ -82,24 +80,12 @@ public class TelegramBotController : BaseController
 
             foreach (var ctorParamType in ctorParamsTypes)
             {
-                ctorParams.Add(allParams.FirstOrDefault(x => x.GetType().Equals(ctorParamType) && !ctorParams.Any(ctp => ctp!.GetHashCode().Equals(x.GetHashCode()))) ?? GetDefault((Type) ctorParamType));
-                //     &&
-                // !ctorParams.Any(element => element != null && element.GetHashCode() == x.GetHashCode())) ?? GetDefault((Type) ctorParamType)
-                //var f = GetDefaultValue((ctorParamType as Type)!);
-                //var s = allParams.FirstOrDefault(x => x.GetType().Equals(ctorParamType)) ?? GetDefault((Type) ctorParamType);
-                // var el = allParams.FirstOrDefault(x =>
-                //     GetDefaultValue((x as Type)) == GetDefaultValue((ctorParamType as Type)) &&
-                //     !ctorParams.Any(element => element != null && element.GetHashCode() == x.GetHashCode()));
-                // ctorParams.Add(el); 
-                
-                //x.GetType().Equals(ctorParamType))
-                // ?? GetDefault(ctorParamType)
+                ctorParams.Add(allParams.FirstOrDefault(x => x.GetType()
+                    .Equals(ctorParamType) && !ctorParams.Any(ctp => ctp!.GetHashCode()
+                    .Equals(x.GetHashCode()))) ?? GetDefault((Type) ctorParamType));
             }
 
             var instance = ctor.Invoke(ctorParams.ToArray());
-
-            // var queryResult =
-            //     JsonConvert.SerializeObject();
 
             var queryResult = await Mediator?.Send(instance ?? throw new InvalidOperationException())!;
             
@@ -108,12 +94,9 @@ public class TelegramBotController : BaseController
 
             if (_telegramBotCommands.Any(c => AreTwoStringsHaveCommonSubstring(c.Key, command)))
             {
-                // _lastExecutedCommandsTypes.AddRange(new []{_telegramBotCommands[command].Type,
-                //     _telegramBotCommands.FirstOrDefault(x => 
-                //         AreTwoStringsHaveCommonSubstring(x.Key, command) && 
-                //         x.Value.Type.GetInterface(nameof(ICommand)) != null)
-                //         .Value.Type});
-                _lastExecutedCommandsTypes.Add(_telegramBotCommands.FirstOrDefault(c => AreTwoStringsHaveCommonSubstring(c.Key, command)).Value.Type);
+                _lastExecutedCommandsTypes.Add(_telegramBotCommands
+                    .FirstOrDefault(c 
+                        => AreTwoStringsHaveCommonSubstring(c.Key, command)).Value.Type);
             }
         }
         catch (Exception e)
@@ -129,9 +112,12 @@ public class TelegramBotController : BaseController
     private IReplyMarkup GetButton()
     {
         var keyboardCommands = new List<List<KeyboardButton>>();
+        
         var keyboardsCommandsCount = _telegramBotCommands
             .Count(command => command.Value.IsVisibleAsPartOfUserInterface);
-        var visibleTelegramBotCommands = _telegramBotCommands.Keys.Where(key => _telegramBotCommands[key].IsVisibleAsPartOfUserInterface).ToList();
+        
+        var visibleTelegramBotCommands = _telegramBotCommands.Keys.Where(key
+            => _telegramBotCommands[key].IsVisibleAsPartOfUserInterface).ToList();
         
         for (var i = 0; i < keyboardsCommandsCount; i+=2) //_telegramBotCommands.Keys.Count
         {
@@ -140,23 +126,6 @@ public class TelegramBotController : BaseController
                 new(visibleTelegramBotCommands[i]),
                 new(visibleTelegramBotCommands[i + 1])
             } : new List<KeyboardButton>{visibleTelegramBotCommands[i]});
-           
-            // if (_telegramBotCommands[_telegramBotCommands.Keys.ToArray()[i]].IsVisibleAsPartOfUserInterface)
-            // {
-            //     keyboardCommands.Add(_telegramBotCommands.Keys.Count == i + 1
-            //         ? new List<KeyboardButton> {new(_telegramBotCommands.Keys.ToArray()[i])}
-            //         : (_telegramBotCommands[_telegramBotCommands.Keys.ToArray()[i + 1]].IsVisibleAsPartOfUserInterface
-            //             ? new List<KeyboardButton>
-            //             {
-            //                 new(_telegramBotCommands.Keys.ToArray()[i]),
-            //                 new(_telegramBotCommands.Keys.ToArray()[i + 1])
-            //             }
-            //             : new List<KeyboardButton>{new(_telegramBotCommands.Keys.ToArray()[i])}));
-            // }
-            // else
-            // {
-            //     i -= 1;
-            // }
         }
         
         return new ReplyKeyboardMarkup(keyboardCommands){ResizeKeyboard = true};
@@ -176,25 +145,28 @@ public class TelegramBotController : BaseController
         }
 
         var minimalLengthToBeEqual = s1.Length > s2.Length ? s1.Length * 0.65 : s2.Length * 0.65;
+        
         return sameLengthCounter >= minimalLengthToBeEqual;
     }
     
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    /// <returns></returns>
     public T GetDefaultGeneric<T>()
     {
-        return default(T);
+        return default(T)!;
     }
     
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="t"></param>
+    /// <returns></returns>
     public object GetDefault(Type t)
     {
-        return this.GetType().GetMethod("GetDefaultGeneric").MakeGenericMethod(t).Invoke(this, null);
-    }
-    
-    public object GetDefaultValue(Type t)
-    {
-        if (t.IsValueType)
-            return Activator.CreateInstance(t);
-
-        return null;
+        return this.GetType().GetMethod("GetDefaultGeneric")!.MakeGenericMethod(t).Invoke(this, null)!;
     }
 }
 

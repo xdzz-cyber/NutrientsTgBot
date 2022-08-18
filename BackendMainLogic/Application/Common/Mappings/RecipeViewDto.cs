@@ -1,25 +1,28 @@
 using System.Text.Json.Serialization;
-using Application.Common.Mappings;
 using AutoMapper;
 using Domain.TelegramBotEntities;
 
-namespace Application.TelegramBot.Queries.Dtos;
+namespace Application.Common.Mappings;
 
 public class RecipeViewDto : IMapWith<Recipe>
 {
     [JsonPropertyName("id")]
     public int Id { get; set; }
+    
     [JsonPropertyName("title")]
     public string Title { get; set; } = null!;
+    
     [JsonPropertyName("spoonacularSourceUrl")]
     public string SpoonacularSourceUrl { get; set; } = null!;
+    
     [JsonPropertyName("pricePerServing")]
     public double PricePerServing { get; set; }
+    
     [JsonPropertyName("glutenFree")]
     public bool GlutenFree { get; set; }
+    
     [JsonPropertyName("vegetarian")]
     public bool Vegetarian { get; set; }
-
     public void Mapping(Profile profile) => profile.CreateMap<Recipe, RecipeViewDto>()
         .ForMember(x => x.Id,
             opt => opt.MapFrom(x => x.Id)).ForMember(x => x.Title, opt => opt.MapFrom(x => x.Title))

@@ -1,7 +1,7 @@
 ﻿using Application.Interfaces;
 using MediatR;
 
-namespace Application.TelegramBot.Queries;
+namespace Application.TelegramBot.Queries.StartApplication;
 
 public class StartApplicationQuery : IRequest<string>, IQuery
 {

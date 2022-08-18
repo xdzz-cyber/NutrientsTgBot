@@ -27,7 +27,8 @@ public class AddRecipeToUserCommandHandler : IRequestHandler<AddRecipeToUserComm
 
         try
         {
-            var dataFilterForSingleId = string.Join("", Regex.Matches(request.RecipeId, TelegramBotRecipeCommandsNQueriesDataPatterns.InputDataPatternForSingleId));
+            var dataFilterForSingleId = string.Join("", Regex.Matches(request.RecipeId, 
+                TelegramBotRecipeCommandsNQueriesDataPatterns.InputDataPatternForSingleId));
 
             var dataFilterForIds = Regex.Matches(request.RecipeId,
                 TelegramBotRecipeCommandsNQueriesDataPatterns.InputDataPatternForIds);
@@ -40,7 +41,8 @@ public class AddRecipeToUserCommandHandler : IRequestHandler<AddRecipeToUserComm
                 return "Please, authorize to be able to make actions.";
             }
 
-            if (_ctx.RecipesUsers.Count(ru => ru.AppUserId == user.Id) == TelegramBotRecipesPerUserAmount.MaxRecipesPerUser)
+            if (_ctx.RecipesUsers.Count(ru => ru.AppUserId == user.Id) == TelegramBotRecipesPerUserAmount
+                    .MaxRecipesPerUser)
             {
                 return $"Max limit of saved recipes is exceeded({TelegramBotRecipesPerUserAmount.MaxRecipesPerUser} at most).";
             }
@@ -55,11 +57,8 @@ public class AddRecipeToUserCommandHandler : IRequestHandler<AddRecipeToUserComm
                 null)
             {
                 var rawNotSavedInDbRecipe = await _httpClient.GetAsync(TelegramBotRecipesHttpPaths.GetRecipeById.Replace("id",dataFilterForSingleId), cancellationToken);
-                //var notSavedInDbRecipe = new Recipe();
-                
-                // if (rawNotSavedInDbRecipe.IsSuccessStatusCode && !_ctx.RecipesUsers.Any(ru => ru.RecipeId.ToString() == dataFilterForSingleId))
-                // {
-                    var notSavedInDbRecipe = JsonSerializer.Deserialize<Recipe>(await rawNotSavedInDbRecipe.Content.ReadAsStringAsync(cancellationToken));
+
+                var notSavedInDbRecipe = JsonSerializer.Deserialize<Recipe>(await rawNotSavedInDbRecipe.Content.ReadAsStringAsync(cancellationToken));
                     
                     await _ctx.Recipes.AddAsync(new Recipe
                     {
@@ -74,8 +73,6 @@ public class AddRecipeToUserCommandHandler : IRequestHandler<AddRecipeToUserComm
                         Title = notSavedInDbRecipe.Title,
                         Vegetarian = notSavedInDbRecipe.Vegetarian
                     }, cancellationToken);
-                    //await _ctx.SaveChangesAsync(cancellationToken);
-              //  }
             }
 
             if (dataFilterForSingleId.Any() && _ctx.RecipesUsers.Count() < TelegramBotRecipesPerUserAmount.MaxRecipesPerUser)
@@ -92,7 +89,7 @@ public class AddRecipeToUserCommandHandler : IRequestHandler<AddRecipeToUserComm
                 var recipesIds = StateManagement.TempData["RecipesIds"].Split(',');
 
                 var addedDataToRecipeUsersCounter = 0;
-                //var recipesToAdd = new List<Recipe>();
+   
                 foreach (var id in recipesIds)
                 {
                     if (!_ctx.Recipes.Any(r => r.Id.ToString() == id))

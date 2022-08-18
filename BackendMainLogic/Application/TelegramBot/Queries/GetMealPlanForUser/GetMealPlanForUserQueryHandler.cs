@@ -2,7 +2,6 @@
 using System.Text.Json;
 using Application.Common.Constants;
 using Application.Interfaces;
-using Application.TelegramBot.Queries.Dtos;
 using AutoMapper;
 using Domain.TelegramBotEntities;
 using MediatR;
@@ -76,7 +75,8 @@ public class GetMealPlanForUserQueryHandler : IRequestHandler<GetMealPlanForUser
                 if (_ctx.Recipes.FirstOrDefault(r => r.Id == meal.Id) is null)
                 {
                     var recipeByIdHttpMessage = await _httpClient
-                        .GetAsync(TelegramBotRecipesHttpPaths.GetRecipeById.Replace("id", meal.Id.ToString()), cancellationToken);
+                        .GetAsync(TelegramBotRecipesHttpPaths.GetRecipeById
+                            .Replace("id", meal.Id.ToString()), cancellationToken);
 
                     var t = await recipeByIdHttpMessage.Content.ReadAsStringAsync(cancellationToken);
                     
@@ -87,11 +87,12 @@ public class GetMealPlanForUserQueryHandler : IRequestHandler<GetMealPlanForUser
                         recipe.SourceName = "";
                     }
 
-                    await _ctx.Recipes.AddAsync(recipe!, cancellationToken);
+                    await _ctx.Recipes.AddAsync(recipe, cancellationToken);
                     await _ctx.SaveChangesAsync(cancellationToken);
                 }
                 
-                var tmp = await _ctx.Recipes.FirstOrDefaultAsync(r => r.Id == meal.Id, cancellationToken: cancellationToken); //_mapper.Map<RecipeViewDto>(meal);
+                var tmp = await _ctx.Recipes.FirstOrDefaultAsync(r => r.Id == meal.Id, 
+                    cancellationToken: cancellationToken);
 
                 var msg =
                     $"<strong>Title: {tmp!.Title}, Vegetarian: {tmp.Vegetarian}, GlutenFree: {tmp.GlutenFree}," +

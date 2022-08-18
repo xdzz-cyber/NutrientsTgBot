@@ -39,12 +39,10 @@ public class GetUserFiltersForRecipesQueryHandler : IRequestHandler<GetUserFilte
             await _ctx.RecipeFilters.AddRangeAsync(newRecipeFilters, cancellationToken);
             await _ctx.SaveChangesAsync(cancellationToken);
         }
-        
-        // var recipeFiltersChosenByUser = await _ctx.RecipeFiltersUsers
-        //     .Where(rfu => rfu.AppUserId == userInfo.Id).ToListAsync(cancellationToken);
-        
+
         var recipeFilters = await _ctx.RecipeFilters
-            .Where(rf => _ctx.RecipeFiltersUsers.Any(rfu => rfu.RecipeFiltersId == rf.Id && rfu.AppUserId == userInfo.Id && rfu.IsTurnedIn))
+            .Where(rf => _ctx.RecipeFiltersUsers.Any(rfu => rfu.RecipeFiltersId == rf.Id 
+                                                            && rfu.AppUserId == userInfo.Id && rfu.IsTurnedIn))
             .ToListAsync(cancellationToken);
 
         var response = new StringBuilder();
@@ -55,13 +53,13 @@ public class GetUserFiltersForRecipesQueryHandler : IRequestHandler<GetUserFilte
         
         foreach (var recipe in _ctx.RecipeFilters)
         {
-            //response.Append($"{recipe.Name}");
             existingFilters.Add($"<strong>{recipe.Name}</strong>");
         }
 
         response.Append(string.Join(",", existingFilters));
 
         response.AppendLine($"\n\nIf you want to add a new one, please, click here(/AddRecipeFiltersToUser)");
+        
         response.AppendLine("Turn on all filters(/TurnOnAllRecipeFiltersOfUser)");
         
         if (!recipeFilters.Any())
@@ -80,7 +78,6 @@ public class GetUserFiltersForRecipesQueryHandler : IRequestHandler<GetUserFilte
 
         response.AppendLine("\nClear all filters(/TurnOffAllRecipeFiltersOfUser)");
         
-
         return response.ToString();
     }
 }

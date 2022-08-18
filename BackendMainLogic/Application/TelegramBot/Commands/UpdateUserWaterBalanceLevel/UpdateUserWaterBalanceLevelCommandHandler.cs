@@ -60,6 +60,7 @@ public class UpdateUserWaterBalanceLevelCommandHandler : IRequestHandler<UpdateU
         }
         catch (Exception e)
         {
+            Console.WriteLine(e.Message);
             return "An error occured during saving new value. Please, try again";
         }
 

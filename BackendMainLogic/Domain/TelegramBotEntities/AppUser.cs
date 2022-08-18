@@ -5,8 +5,7 @@ public class AppUser : IdentityUser
 {
     public long ChatId { get; set; }
     public double Weight { get; set; }
-    public ICollection<RecipesUsers> RecipesUsers { get; set; }
-    public ICollection<RecipeFiltersUsers> RecipeFiltersUsers { get; set; }
-    
-    public ICollection<NutrientUser> NutrientUsers { get; set; }
+    public ICollection<RecipesUsers> RecipesUsers { get; set; } = null!;
+    public ICollection<RecipeFiltersUsers> RecipeFiltersUsers { get; set; } = null!;
+    public ICollection<NutrientUser> NutrientUsers { get; set; } = null!;
 }

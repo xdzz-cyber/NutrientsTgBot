@@ -1,4 +1,5 @@
-﻿using System.Text.RegularExpressions;
+﻿using System.Globalization;
+using System.Text.RegularExpressions;
 using Application.Common.Constants;
 using Application.Interfaces;
 using Domain.TelegramBotEntities;
@@ -45,7 +46,6 @@ public class AddRecipeAsPartOfMealCommandHandler : IRequestHandler<AddRecipeAsPa
                 RecipeId = Convert.ToInt32(recipeId)
             }, cancellationToken);
             await _ctx.SaveChangesAsync(cancellationToken);
-            //return "Recipe doesn't exist.";
         }
         else if (recipe is not null && recipe.IsPartOfTheMeal)
         {
@@ -55,7 +55,6 @@ public class AddRecipeAsPartOfMealCommandHandler : IRequestHandler<AddRecipeAsPa
         {
             recipe.IsPartOfTheMeal = true;
         }
-
         
         await _ctx.SaveChangesAsync(cancellationToken);
 

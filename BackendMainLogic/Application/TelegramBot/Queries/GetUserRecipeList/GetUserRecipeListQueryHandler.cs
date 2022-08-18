@@ -1,5 +1,4 @@
 ﻿using System.Text;
-using System.Text.Json;
 using Application.Interfaces;
 using Domain.TelegramBotEntities;
 using MediatR;
@@ -29,7 +28,8 @@ public class GetUserRecipeListQueryHandler : IRequestHandler<GetUserRecipeListQu
         }
         
         var recipes = await _ctx.Recipes.Where(recipe => _ctx.RecipesUsers
-            .Where(ru => ru.AppUserId == userInfo.Id).Any(r => r.RecipeId == recipe.Id)).ToListAsync(cancellationToken);
+            .Where(ru => ru.AppUserId == userInfo.Id)
+            .Any(r => r.RecipeId == recipe.Id)).ToListAsync(cancellationToken);
 
         if (recipes.Count == 0)
         {
@@ -49,7 +49,9 @@ public class GetUserRecipeListQueryHandler : IRequestHandler<GetUserRecipeListQu
         }
 
         response.AppendLine("Clear liked list(/ClearLikedRecipesList)");
+        
         response.AppendLine("Remove all from meal(/ClearRecipesAsPartOfMeal)");
+        
         response.AppendLine("Add all liked recipes as part of the meal(/AddAllLikedRecipesAsMeal)");
         
         return response.ToString();
