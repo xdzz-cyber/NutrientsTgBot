@@ -46,7 +46,7 @@ public class GetMealPlanForUserQueryHandler : IRequestHandler<GetMealPlanForUser
             return "Please, set your nutrients preferences.";
         }
 
-        var targetCalories = (userCaloriesPreferences!.MaxValue + userCaloriesPreferences.MinValue) / 2;
+        var targetCalories = (userCaloriesPreferences.MaxValue + userCaloriesPreferences.MinValue) / 2;
 
         var userRecipeFiltersIds = await _ctx.RecipeFiltersUsers
             .Where(rfu => rfu.AppUserId == userInfo.Id).Select(rfu => rfu.RecipeFiltersId).ToListAsync(cancellationToken);

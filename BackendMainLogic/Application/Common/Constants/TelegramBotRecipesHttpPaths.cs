@@ -6,7 +6,7 @@ public static class TelegramBotRecipesHttpPaths
     
     public static readonly string GetFullRecipesData = $"https://api.spoonacular.com/recipes/id/information?includeNutrition=true&";
 
-    public static readonly string GetRecipes = $"https://api.spoonacular.com/recipes/random?number=5&";
+    public static readonly string GetRecipes = $"https://api.spoonacular.com/recipes/random?number=5&&tags=";
     
     public static readonly string GetAllRandomRecipes = $"https://api.spoonacular.com/recipes/random?number=100&";
     

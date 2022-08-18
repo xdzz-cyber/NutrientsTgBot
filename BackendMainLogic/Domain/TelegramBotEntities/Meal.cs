@@ -12,7 +12,7 @@ public class Meal
 
     public string Protein { get; set; } = null!;
 
-    public AppUser AppUser = null!;
+    public Recipe Recipe = null!;
 
-    public string AppUserId { get; set; } = null!;
+    public int RecipeId { get; set; }
 }

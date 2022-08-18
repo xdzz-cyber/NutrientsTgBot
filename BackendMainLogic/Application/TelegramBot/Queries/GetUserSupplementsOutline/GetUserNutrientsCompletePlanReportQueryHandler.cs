@@ -53,6 +53,7 @@ public class GetUserSupplementsOutlineQueryHandler : IRequestHandler<GetUserSupp
         var recipeNutrients = new List<RecipeNutrientViewDto>();
         
         var response = new StringBuilder();
+        
         var nutrients = await _ctx.Nutrients.ToListAsync(cancellationToken);
         
         foreach (var recipe in recipes!)

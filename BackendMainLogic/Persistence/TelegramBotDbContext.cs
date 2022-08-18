@@ -71,7 +71,6 @@ public class TelegramBotDbContext : IdentityDbContext<AppUser>, ITelegramBotDbCo
     public DbSet<RecipesUsers> RecipesUsers { get; set; }
     public DbSet<RecipeFilters> RecipeFilters { get; set; }
     public DbSet<RecipeFiltersUsers> RecipeFiltersUsers { get; set; }
-    
     public DbSet<Nutrient> Nutrients { get; set; }
     
     public DbSet<NutrientUser> NutrientUsers { get; set; }
