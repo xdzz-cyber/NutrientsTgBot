@@ -26,80 +26,92 @@ public class DbSeed
 
     private async Task SeedRandomRecipes(CancellationToken cancellationToken)
     {
-        var rawRandomRecipes = await _httpClient
-            .GetAsync(TelegramBotRecipesHttpPaths.GetAllRandomRecipes, cancellationToken);
-
-        var randomRecipes = new RecipesList();
-
-        if (rawRandomRecipes.IsSuccessStatusCode)
+        for (var i = 0; i < 15; i++)
         {
-            randomRecipes = JsonSerializer
-                .Deserialize<RecipesList>(await rawRandomRecipes.Content.ReadAsStringAsync(cancellationToken));
-        }
+            var rawRandomRecipes = await _httpClient
+                .GetAsync(TelegramBotRecipesHttpPaths.GetAllRandomRecipes, cancellationToken);
 
-        foreach (var recipe in randomRecipes!.Recipes)
-        {
-            if (!_ctx.Recipes.Any(r => r.Id == recipe.Id))
+            var randomRecipes = new RecipesList();
+
+            if (rawRandomRecipes.IsSuccessStatusCode)
             {
-                var newRecipe = new Recipe
-                {
-                    Id = recipe.Id,
-                    AggregateLikes = recipe.AggregateLikes,
-                    CookingMinutes = recipe.CookingMinutes,
-                    GlutenFree = recipe.GlutenFree,
-                    HealthScore = recipe.HealthScore,
-                    PricePerServing = recipe.PricePerServing,
-                    SourceName = recipe.SourceName ?? string.Empty,
-                    SpoonacularSourceUrl = recipe.SpoonacularSourceUrl,
-                    Title = recipe.Title,
-                    Vegetarian = recipe.Vegetarian,
-                    SourceUrl = recipe.SourceUrl
-                };
-                await _ctx.Recipes.AddAsync(newRecipe, cancellationToken);
+                randomRecipes = JsonSerializer
+                    .Deserialize<RecipesList>(await rawRandomRecipes.Content.ReadAsStringAsync(cancellationToken));
             }
-        }
 
-        await _ctx.SaveChangesAsync(cancellationToken);
+            foreach (var recipe in randomRecipes!.Recipes)
+            {
+                if (!_ctx.Recipes.Any(r => r.Id == recipe.Id))
+                {
+                    var newRecipe = new Recipe
+                    {
+                        Id = recipe.Id,
+                        AggregateLikes = recipe.AggregateLikes,
+                        CookingMinutes = recipe.CookingMinutes,
+                        GlutenFree = recipe.GlutenFree,
+                        HealthScore = recipe.HealthScore,
+                        PricePerServing = recipe.PricePerServing,
+                        SourceName = recipe.SourceName ?? string.Empty,
+                        SpoonacularSourceUrl = recipe.SpoonacularSourceUrl,
+                        Title = recipe.Title,
+                        Vegetarian = recipe.Vegetarian,
+                        SourceUrl = recipe.SourceUrl
+                    };
+                    await _ctx.Recipes.AddAsync(newRecipe, cancellationToken);
+                }
+            }
+            
+            await _ctx.SaveChangesAsync(cancellationToken);
+            
+            Thread.Sleep(1000);
+        }
+        
     }
 
     private async Task SeedRandomRecipesNutrients(CancellationToken cancellationToken)
     {
-        var recipesToBeUpdatedWithNutrients = await _ctx.Recipes
-            .Where(recipe => _ctx.Meals.Any(meal => meal.RecipeId == recipe.Id) == false)
-            .Select(r => r.Id).Take(100).ToListAsync(cancellationToken: cancellationToken);
-
-        var _ = string.Format(TelegramBotRecipesHttpPaths.GetRecipesWithNutrition,
-            string.Join(",", recipesToBeUpdatedWithNutrients));
-
-        var recipesNutritionHttpMessage = await _httpClient
-            .GetAsync(_, cancellationToken);
-
-        var recipesNutritionData = await recipesNutritionHttpMessage.Content.ReadAsStringAsync(cancellationToken);
-
-        var recipes = JsonSerializer.Deserialize<List<RecipesNutrition>>(recipesNutritionData);
-
-        var nutrients = await _ctx.Nutrients.ToListAsync(cancellationToken);
-
-        foreach (var recipe in recipes!)
+        for (var i = 0; i < 15; i++)
         {
-            var neededNutrients = recipe.Nutrition.Nutrients
-                .Where(rn => nutrients.FirstOrDefault(n =>
-                    n.Name.Equals(rn.Name)) != null).ToList();
+            var recipesToBeUpdatedWithNutrients = await _ctx.Recipes
+                .Where(recipe => _ctx.Meals.Any(meal => meal.RecipeId == recipe.Id) == false)
+                .Select(r => r.Id).Take(100).ToListAsync(cancellationToken: cancellationToken);
 
-            await _ctx.Meals.AddAsync(new Meal
+            var _ = string.Format(TelegramBotRecipesHttpPaths.GetRecipesWithNutrition,
+                string.Join(",", recipesToBeUpdatedWithNutrients));
+
+            var recipesNutritionHttpMessage = await _httpClient
+                .GetAsync(_, cancellationToken);
+
+            var recipesNutritionData = await recipesNutritionHttpMessage.Content.ReadAsStringAsync(cancellationToken);
+
+            var recipes = JsonSerializer.Deserialize<List<RecipesNutrition>>(recipesNutritionData);
+
+            var nutrients = await _ctx.Nutrients.ToListAsync(cancellationToken);
+
+            foreach (var recipe in recipes!)
             {
-                Calories = neededNutrients
-                    .FirstOrDefault(nu => nu.Name.Equals("Calories"))!.Amount.ToString(),
-                Carbs = neededNutrients
-                    .FirstOrDefault(nu => nu.Name.Equals("Carbohydrates"))!.Amount.ToString(),
-                Fat = neededNutrients
-                    .FirstOrDefault(nu => nu.Name.Equals("Fat"))!.Amount.ToString(),
-                Protein = neededNutrients
-                    .FirstOrDefault(nu => nu.Name.Equals("Protein"))!.Amount.ToString(),
-                RecipeId = recipe.Id
-            }, cancellationToken);
-        }
+                var neededNutrients = recipe.Nutrition.Nutrients
+                    .Where(rn => nutrients.FirstOrDefault(n =>
+                        n.Name.Equals(rn.Name)) != null).ToList();
 
-        await _ctx.SaveChangesAsync(cancellationToken);
+                await _ctx.Meals.AddAsync(new Meal
+                {
+                    Calories = neededNutrients
+                        .FirstOrDefault(nu => nu.Name.Equals("Calories"))!.Amount.ToString(),
+                    Carbs = neededNutrients
+                        .FirstOrDefault(nu => nu.Name.Equals("Carbohydrates"))!.Amount.ToString(),
+                    Fat = neededNutrients
+                        .FirstOrDefault(nu => nu.Name.Equals("Fat"))!.Amount.ToString(),
+                    Protein = neededNutrients
+                        .FirstOrDefault(nu => nu.Name.Equals("Protein"))!.Amount.ToString(),
+                    RecipeId = recipe.Id
+                }, cancellationToken);
+            }
+            
+            await _ctx.SaveChangesAsync(cancellationToken);
+            
+            Thread.Sleep(1000);
+        }
+        
     }
 }
