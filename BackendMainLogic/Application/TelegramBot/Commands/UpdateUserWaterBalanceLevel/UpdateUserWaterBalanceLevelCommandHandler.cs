@@ -24,7 +24,7 @@ public class UpdateUserWaterBalanceLevelCommandHandler : IRequestHandler<UpdateU
     {
         try
         {
-            if (request.AmountOfWater <= 0)
+            if (!request.AmountOfWater.All(char.IsDigit) || double.Parse(request.AmountOfWater) <= 0)
             {
                 return await _mediator.Send(new GetUserWaterBalanceLevelQuery(username: request.Username, 
                     chatId: request.ChatId, QueryExecutingTypes.QueryAsResponseForCommand), cancellationToken);
@@ -43,7 +43,7 @@ public class UpdateUserWaterBalanceLevelCommandHandler : IRequestHandler<UpdateU
             {
                 _ctx.WaterLevelOfUsers.Add(new WaterLevelOfUser()
                 {
-                    Amount = request.AmountOfWater,
+                    Amount = double.Parse(request.AmountOfWater),
                     AppUserId = user.Id,
                     Id = Guid.NewGuid(),
                     ExpiryDateTime = DateTime.Now.AddDays(1)
@@ -53,7 +53,7 @@ public class UpdateUserWaterBalanceLevelCommandHandler : IRequestHandler<UpdateU
                 return "New value has been successfully saved";
             }
 
-            currentWaterLevelBalance.Amount += request.AmountOfWater;
+            currentWaterLevelBalance.Amount += double.Parse(request.AmountOfWater);
             
             _ctx.WaterLevelOfUsers.Update(currentWaterLevelBalance);
             await _ctx.SaveChangesAsync(cancellationToken);

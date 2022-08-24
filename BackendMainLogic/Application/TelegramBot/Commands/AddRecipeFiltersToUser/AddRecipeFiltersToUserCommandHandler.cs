@@ -33,8 +33,15 @@ public class AddRecipeFiltersToUserCommandHandler : IRequestHandler<AddRecipeFil
         {
             return "Please, enter one filter or many with comma as a separator.";
         }
+        
         var recipeFiltersChosenByUser = await _ctx.RecipeFilters
             .Where(rf => filters.Contains(rf.Name)).ToListAsync(cancellationToken);
+
+        if (recipeFiltersChosenByUser.All(r => _ctx.RecipeFiltersUsers
+                .FirstOrDefault(rfu => rfu.IsTurnedIn && rfu.RecipeFiltersId == r.Id) != null))
+        {
+            return "Filters have been already saved.";
+        }
 
         var recipeFiltersUsers = new List<RecipeFiltersUsers>();
         

@@ -10,15 +10,19 @@ using Application.TelegramBot.Commands.RemoveRecipeFromTheMeal;
 using Application.TelegramBot.Commands.TurnOffAllRecipeFiltersOfUser;
 using Application.TelegramBot.Commands.TurnOffRecipeFilterOfUser;
 using Application.TelegramBot.Commands.TurnOnAllRecipeFiltersOfUser;
+using Application.TelegramBot.Commands.UpdateUserAge;
+using Application.TelegramBot.Commands.UpdateUserGender;
 using Application.TelegramBot.Commands.UpdateUserNutrientsPlan;
+using Application.TelegramBot.Commands.UpdateUserTallness;
 using Application.TelegramBot.Commands.UpdateUserWaterBalanceLevel;
 using Application.TelegramBot.Commands.UpdateUserWeight;
-using Application.TelegramBot.Queries;
+using Application.TelegramBot.Queries.GetApprovedAmountOfNutrients;
 using Application.TelegramBot.Queries.GetMealPlanForUser;
 using Application.TelegramBot.Queries.GetRecipesAsPartOfMeal;
 using Application.TelegramBot.Queries.GetRecipesByIngredients;
 using Application.TelegramBot.Queries.GetRecipesByNutrients;
 using Application.TelegramBot.Queries.GetUserFiltersForRecipes;
+using Application.TelegramBot.Queries.GetUserInfo;
 using Application.TelegramBot.Queries.GetUserNutrientsPlan;
 using Application.TelegramBot.Queries.GetUserRecipeList;
 using Application.TelegramBot.Queries.GetUserSupplementsOutline;
@@ -46,7 +50,12 @@ public static class TelegramBotCommands
     private static void InitializeCommands()
     {
         _commands.Add("Start", new TelegramBotCommand(typeof(StartApplicationQuery), true));
+        _commands.Add("GetApprovedAmountOfNutrients", new TelegramBotCommand(typeof(GetApprovedAmountOfNutrientsQuery), true));
         _commands.Add("GetMyWeight", new TelegramBotCommand(typeof(GetUserWeightQuery), true));
+        _commands.Add("GetUserInfo", new TelegramBotCommand(typeof(GetUserInfoQuery), true));
+        _commands.Add("UpdateUserAge", new TelegramBotCommand(typeof(UpdateUserAgeCommand), true));
+        _commands.Add("UpdateUserGender", new TelegramBotCommand(typeof(UpdateUserGenderCommand), true));
+        _commands.Add("UpdateUserTallness", new TelegramBotCommand(typeof(UpdateUserTallnessCommand), true));
         _commands.Add("UpdateMyWeight", new TelegramBotCommand(typeof(UpdateAppUserWeightCommand), true));
         _commands.Add("GetUserWaterBalanceLevel", new TelegramBotCommand(typeof(GetUserWaterBalanceLevelQuery), true));
         _commands.Add("UpdateUserWaterBalanceLevel", new TelegramBotCommand(typeof(UpdateUserWaterBalanceLevelCommand), true));

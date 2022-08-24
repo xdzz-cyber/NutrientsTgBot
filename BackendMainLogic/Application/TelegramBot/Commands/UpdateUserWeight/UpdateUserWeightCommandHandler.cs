@@ -27,13 +27,13 @@ public class UpdateAppUserWeightCommandHandler : IRequestHandler<UpdateAppUserWe
             return "Please, authorize to be able to make actions.";
         }
 
-        if (request.Weight <= 0)
+        if (!request.Weight.All(char.IsDigit) ||  double.Parse(request.Weight) <= 0)
         {
             return await _mediator.Send(new GetUserWeightQuery(username: request.Username, 
                 chatId: request.ChatId, QueryExecutingTypes.QueryAsResponseForCommand), cancellationToken);
         }
         
-        appUser.Weight = request.Weight;
+        appUser.Weight = double.Parse(request.Weight);
 
         var _ = await _userManager.UpdateAsync(appUser);
 

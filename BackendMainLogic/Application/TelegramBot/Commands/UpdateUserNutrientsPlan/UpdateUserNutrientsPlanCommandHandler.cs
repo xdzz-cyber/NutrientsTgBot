@@ -95,7 +95,7 @@ public class UpdateUserNutrientsPlanCommandHandler : IRequestHandler<UpdateUserN
         
         if (nutrientToBeUpdatedIndex != nutrients.Count)
         {
-            return $"Please, enter value for min and max {nutrients[nutrientToBeUpdatedIndex].Name} with comma as separator.";
+            return $"Please, enter value for min and max {nutrients.Skip(nutrientToBeUpdatedIndex).Take(1).ToList().First().Name} with comma as separator."; //nutrients[nutrientToBeUpdatedIndex].Name
         }
 
         StateManagement.TempData["NutrientToBeUpdatedIndex"] = "0";

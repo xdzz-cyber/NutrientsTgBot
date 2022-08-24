@@ -31,8 +31,8 @@ public class CreateUserCommandHandler : IRequestHandler<CreateUserCommand, Guid>
             await _roleManager.CreateAsync(userRole);
         }
         
-        var newUser = new AppUser() { UserName = request.Username, 
-            Email = request.Email, PhoneNumber = request.Phone, ChatId = request.ChatId};
+        var newUser = new AppUser { UserName = request.Username, 
+            Email = request.Email, PhoneNumber = request.Phone, ChatId = request.ChatId, Age = 0, Sex = "", Height = 0};
         
         await _userManager.CreateAsync(newUser, request.Password);
 

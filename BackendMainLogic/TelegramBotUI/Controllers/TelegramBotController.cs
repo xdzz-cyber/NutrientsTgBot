@@ -1,4 +1,5 @@
-﻿using Application.Common.Constants;
+﻿using System.Text.RegularExpressions;
+using Application.Common.Constants;
 using Application.Common.Exceptions;
 using Application.Interfaces;
 using Domain.TelegramBotEntities;
@@ -49,7 +50,8 @@ public class TelegramBotController : BaseController
         {
             var command = $"{upd.Message?.Text!.Replace("/", "").Replace("_", "").Trim().FirstCharToUpper()}";
 
-            if (!_telegramBotCommands.Any(c => AreTwoStringsHaveCommonSubstring(c.Key, command)) && !_lastExecutedCommandsTypes.Any()) //command.All(char.IsDigit)
+            if (!_telegramBotCommands.Any(c 
+                    => AreTwoStringsHaveCommonSubstring(c.Key, command)) && !_lastExecutedCommandsTypes.Any())
             {
                 await _telegramBotClient.SendTextMessageAsync(chat.Id, "Bad request.",
                     ParseMode.Markdown, replyMarkup: GetButton());
@@ -65,7 +67,8 @@ public class TelegramBotController : BaseController
 
             var ctorParamsTypes = new List<object>();
 
-            var allParams = new List<object> {chat.Username!, chat.Id, command.All(char.IsDigit) ? double.Parse(command) : command};
+            var allParams = new List<object> {chat.Username!, chat.Id, 
+                command}; //command.All(char.IsDigit) ? double.Parse(command) : command
             
             var ctors = queryType.GetConstructors();
             // assuming class A has only one constructor
@@ -133,20 +136,35 @@ public class TelegramBotController : BaseController
 
     private bool AreTwoStringsHaveCommonSubstring(string s1, string s2)
     {
-        var sameLengthCounter = 0;
+        s1 = Regex.Replace(s1, "[0-9]","").ToLower();
+        s2 = Regex.Replace(s2, "[0-9]","").ToLower();
+
+        var sameLengthCounter = 0;//s1.Length > s2.Length ? s1.Count(s2.Contains) : s2.Count(s1.Contains);
         var i = 1;
         while (!(s1.Length - i < 0 || s2.Length- i < 0))
         {
-            if(s1[i-1] == s2[i-1]){
+            if(s1[^i] == s2[^i]){
                 sameLengthCounter += 1;
             }
-            
+             
             i += 1;
         }
-
-        var minimalLengthToBeEqual = s1.Length > s2.Length ? s1.Length * 0.65 : s2.Length * 0.65;
         
-        return sameLengthCounter >= minimalLengthToBeEqual;
+        // if(s1.Length > s2.Length)
+        // {
+        //     sameLengthCounter += s1.Count(s2.Contains);
+        // } else
+        // {
+        //     sameLengthCounter += s2.Count(s1.Contains);
+        // }
+
+        var minimalLengthToBeEqual = s1.Length > s2.Length ? s1.Length * 0.80 : s2.Length * 0.80;
+            // s1.Length > s2.Length ? s1.Length * 0.61 
+            // : s1.Length == s2.Length ? s1.Length : s2.Length * 0.61;
+
+        //var smallerLength = s1.Length < s2.Length ? s1.Length : s2.Length;
+
+        return sameLengthCounter >= minimalLengthToBeEqual; //&& sameLengthCounter <= smallerLength;
     }
     
     /// <summary>

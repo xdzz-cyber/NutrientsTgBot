@@ -1,4 +1,5 @@
-﻿using Application.Interfaces;
+﻿using Application.Common.Constants;
+using Application.Interfaces;
 using Domain.TelegramBotEntities;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
@@ -26,21 +27,39 @@ public class TurnOnAllRecipeFiltersOfUserCommandHandler : IRequestHandler<TurnOn
             return "Please, authorize to be able to make actions.";
         }
         
-        var recipeFilters = await _ctx.RecipeFiltersUsers
-            .Where(rfu => rfu.AppUserId == userInfo.Id && !rfu.IsTurnedIn).ToListAsync(cancellationToken);
+        var recipeFiltersOfUser = await _ctx.RecipeFiltersUsers
+            .Where(rfu => rfu.AppUserId == userInfo.Id).ToListAsync(cancellationToken); //&& !rfu.IsTurnedIn
 
-        if (!recipeFilters.Any())
+        if (recipeFiltersOfUser.All(rf => rf.IsTurnedIn) 
+            && recipeFiltersOfUser.Count == TelegramBotRecipeFilters.RecipeFilters.Count)
         {
-            return "All filters have already been saved found.";
+            return "All filters have already been saved.";
         }
 
-        foreach (var recipeFilter in recipeFilters)
+        if (!recipeFiltersOfUser.Any())
         {
-            recipeFilter.IsTurnedIn = true;
+            var recipeFiltersNames = TelegramBotRecipeFilters.RecipeFilters;
+
+            foreach (var recipeFilterName in recipeFiltersNames)
+            {
+                await _ctx.RecipeFiltersUsers.AddAsync(new RecipeFiltersUsers
+                {
+                    AppUserId = userInfo.Id,
+                    IsTurnedIn = true,
+                    RecipeFiltersId = _ctx.RecipeFilters.First(rf => rf.Name.Equals(recipeFilterName)).Id 
+                }, cancellationToken);
+            }
+        }
+        else
+        {
+            foreach (var recipeFilter in recipeFiltersOfUser)
+            {
+                recipeFilter.IsTurnedIn = true;
+            }
         }
 
         await _ctx.SaveChangesAsync(cancellationToken);
 
-        return "All recipe filters have been turned off.";
+        return "All recipe filters have been turned on.";
     }
 }

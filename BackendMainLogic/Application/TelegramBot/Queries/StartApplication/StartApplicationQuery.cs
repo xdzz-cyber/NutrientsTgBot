@@ -7,7 +7,8 @@ public class StartApplicationQuery : IRequest<string>, IQuery
 {
     public string Username { get; set; }
     public long ChatId { get; set; }
+    public string UserDetailedInfo { get; set; }
 
-    public StartApplicationQuery(string username = "", long chatId = 0) => 
-        (Username, ChatId) = (username, chatId);
+    public StartApplicationQuery(string username = "", long chatId = 0, string userDetailedInfo = "") => 
+        (Username, ChatId, UserDetailedInfo) = (username, chatId, userDetailedInfo);
 }
