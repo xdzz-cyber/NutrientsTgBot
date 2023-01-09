@@ -20,8 +20,8 @@ public class DbSeed
 
     public async Task Seed(CancellationToken cancellationToken)
     {
-        await SeedRandomRecipes(cancellationToken);
-        await SeedRandomRecipesNutrients(cancellationToken);
+        //await SeedRandomRecipes(cancellationToken);
+        //await SeedRandomRecipesNutrients(cancellationToken);
     }
 
     private async Task SeedRandomRecipes(CancellationToken cancellationToken)
@@ -29,36 +29,34 @@ public class DbSeed
         for (var i = 0; i < 15; i++)
         {
             var rawRandomRecipes = await _httpClient
-                .GetAsync(TelegramBotRecipesHttpPaths.GetAllRandomRecipes, cancellationToken);
-
+                .GetAsync($"{TelegramBotRecipesHttpPaths.GetAllRandomRecipes}", cancellationToken);
+            
             var randomRecipes = new RecipesList();
-
+            
             if (rawRandomRecipes.IsSuccessStatusCode)
             {
                 randomRecipes = JsonSerializer
                     .Deserialize<RecipesList>(await rawRandomRecipes.Content.ReadAsStringAsync(cancellationToken));
             }
-
+            
             foreach (var recipe in randomRecipes!.Recipes)
             {
-                if (!_ctx.Recipes.Any(r => r.Id == recipe.Id))
+                if (_ctx.Recipes.Any(r => r.Id == recipe.Id)) continue;
+                var newRecipe = new Recipe
                 {
-                    var newRecipe = new Recipe
-                    {
-                        Id = recipe.Id,
-                        AggregateLikes = recipe.AggregateLikes,
-                        CookingMinutes = recipe.CookingMinutes,
-                        GlutenFree = recipe.GlutenFree,
-                        HealthScore = recipe.HealthScore,
-                        PricePerServing = recipe.PricePerServing,
-                        SourceName = recipe.SourceName ?? string.Empty,
-                        SpoonacularSourceUrl = recipe.SpoonacularSourceUrl,
-                        Title = recipe.Title,
-                        Vegetarian = recipe.Vegetarian,
-                        SourceUrl = recipe.SourceUrl
-                    };
-                    await _ctx.Recipes.AddAsync(newRecipe, cancellationToken);
-                }
+                    Id = recipe.Id,
+                    AggregateLikes = recipe.AggregateLikes,
+                    CookingMinutes = recipe.CookingMinutes,
+                    GlutenFree = recipe.GlutenFree,
+                    HealthScore = recipe.HealthScore,
+                    PricePerServing = recipe.PricePerServing,
+                    SourceName = recipe.SourceName ?? string.Empty,
+                    SpoonacularSourceUrl = recipe.SpoonacularSourceUrl,
+                    Title = recipe.Title,
+                    Vegetarian = recipe.Vegetarian,
+                    SourceUrl = recipe.SourceUrl
+                };
+                await _ctx.Recipes.AddAsync(newRecipe, cancellationToken);
             }
             
             await _ctx.SaveChangesAsync(cancellationToken);
