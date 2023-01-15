@@ -6,6 +6,8 @@ namespace Application.Users.Commands.CreateUser;
 public class CreateUserCommand : IRequest<Guid>, ICommand
 {
     public string Username { get; set; }
+
+    public int Age { get; set; }
     
     public long ChatId { get; set; }
     
@@ -15,6 +17,6 @@ public class CreateUserCommand : IRequest<Guid>, ICommand
     
     public string Phone { get; set; }
 
-    public CreateUserCommand(string username = "", long chatId = 0, string email = "", string password = "", string phone = "")
+    public CreateUserCommand(string username = "", int age = 0, long chatId = 0, string email = "", string password = "", string phone = "")
         => (Username, ChatId, Email, Password, Phone) = (username, chatId, email, password, phone);
 }

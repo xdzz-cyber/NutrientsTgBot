@@ -22,6 +22,11 @@ public class CreateUserCommandHandler : IRequestHandler<CreateUserCommand, Guid>
     
     public async Task<Guid> Handle(CreateUserCommand request, CancellationToken cancellationToken)
     {
+        if (_userManager.FindByNameAsync(request.Username) is not null)
+        {
+            return Guid.Parse(_userManager.FindByNameAsync(request.Username).Result.Id);
+        }
+        
         request.Password = _getSha256CodeOfString.GetHashCodeOfString(request.Password);
         
         if (!_roleManager.Roles.Any(x => x.Name.Equals(AuthRoles.User.ToString())))
