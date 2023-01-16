@@ -13,5 +13,6 @@ public class RegistrationViewModel
     [Range(1,100)]
     public int Age { get; set; }
     [Required]
+    [DataType(DataType.Password)]
     public string Password { get; set; }
 }

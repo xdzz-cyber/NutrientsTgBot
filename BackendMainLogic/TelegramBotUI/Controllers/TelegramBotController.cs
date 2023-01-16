@@ -2,6 +2,7 @@
 using Application.Common.Constants;
 using Application.Common.Exceptions;
 using Application.Interfaces;
+using Application.Users.Commands.CreateUser;
 using Domain.TelegramBotEntities;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
@@ -26,6 +27,7 @@ public class TelegramBotController : BaseController
         _telegramBotClient = telegramBot.GetBot().Result;
         _telegramBotCommands = TelegramBotCommands.GetCommands();
     }
+    
 
     /// <summary>
     /// 

@@ -13,7 +13,8 @@ public class CreateUserCommandHandler : IRequestHandler<CreateUserCommand, Guid>
     private readonly IGetHashCodeOfString _getSha256CodeOfString;
 
 
-    public CreateUserCommandHandler(UserManager<AppUser> userManager, RoleManager<IdentityRole> roleManager, IGetHashCodeOfString getSha256CodeOfString)
+    public CreateUserCommandHandler(UserManager<AppUser> userManager, RoleManager<IdentityRole> roleManager, 
+        IGetHashCodeOfString getSha256CodeOfString)
     {
         _userManager = userManager;
         _roleManager = roleManager;
@@ -22,7 +23,8 @@ public class CreateUserCommandHandler : IRequestHandler<CreateUserCommand, Guid>
     
     public async Task<Guid> Handle(CreateUserCommand request, CancellationToken cancellationToken)
     {
-        if (_userManager.FindByNameAsync(request.Username) is not null)
+
+        if (await _userManager.FindByNameAsync(request.Username) is not null)
         {
             return Guid.Parse(_userManager.FindByNameAsync(request.Username).Result.Id);
         }
@@ -36,8 +38,8 @@ public class CreateUserCommandHandler : IRequestHandler<CreateUserCommand, Guid>
             await _roleManager.CreateAsync(userRole);
         }
         
-        var newUser = new AppUser { UserName = request.Username, 
-            Email = request.Email, PhoneNumber = request.Phone, ChatId = request.ChatId, Age = 0, Sex = "", Height = 0};
+        var newUser = new AppUser { UserName = request.Username, PasswordHash = request.Password, Age = request.Age,}; 
+        //Email = "", PhoneNumber = "", ChatId = 0,  Sex = "", Height = 0
         
         await _userManager.CreateAsync(newUser, request.Password);
 
