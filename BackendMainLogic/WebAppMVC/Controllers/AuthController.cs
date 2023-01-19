@@ -1,4 +1,5 @@
 ﻿using Application.Users.Commands.CreateUser;
+using Application.Users.Queries.FindUser;
 using Domain.TelegramBotEntities;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
@@ -29,6 +30,7 @@ public class AuthController : Controller
     [HttpPost]
     public async Task<IActionResult> Registration([FromForm] RegistrationViewModel registrationViewModel)
     {
+
         var newUserId = await _mediator.Send(new CreateUserCommand(username: registrationViewModel.UserName,
             age: registrationViewModel.Age, password: registrationViewModel.Password));
         
@@ -37,14 +39,40 @@ public class AuthController : Controller
         {
             await _signInManager.SignInAsync(await _userManager.FindByIdAsync(newUserId.ToString()), 
                 false);
+            
+            return RedirectToAction("Main", "Home");
         }
 
-        return RedirectToAction("");
+        return View();
     }
 
     [HttpGet]
     public IActionResult Login()
     {
         return View();
+    }
+    
+    [HttpPost]
+    public async Task<IActionResult> Login([FromForm] LoginViewModel loginViewModel)
+    {
+        var user = await _mediator.Send(new FindUserQuery(loginViewModel.UserName));
+
+        if (user is not null && _userManager.PasswordHasher.VerifyHashedPassword(user, user.PasswordHash, loginViewModel.Password) 
+            == PasswordVerificationResult.Success)
+        {
+            await _signInManager.SignInAsync(await _userManager.FindByIdAsync(user.Id),false);
+
+            return RedirectToAction("Main", "Home");
+        }
+
+        return View();
+    }
+
+    [HttpGet]
+    public async Task<IActionResult> Logout()
+    {
+        await _signInManager.SignOutAsync();
+
+        return RedirectToAction("Login");
     }
 }

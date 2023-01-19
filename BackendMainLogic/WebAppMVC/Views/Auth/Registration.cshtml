@@ -1,3 +1,7 @@
+@{
+    Layout = "_Layout";
+}
+
 @model RegistrationViewModel
 
 <main
@@ -5,25 +9,35 @@
 >
     <!-- component -->
     <form method="post" asp-controller="Auth" asp-action="Registration">
-    <section class="flex w-[30rem] flex-col space-y-10">
+        <section class="flex w-[30rem] flex-col space-y-10">
             <div class="text-center text-4xl font-medium">Register</div>
     
-            <div class="w-full transform border-b-2 bg-transparent text-lg duration-300 focus-within:border-indigo-500">
-                <input asp-for="UserName" placeholder="Username" class="w-full border-none bg-transparent outline-none placeholder:italic focus:outline-none"/>
+            <div class="w-full transform border-b-2 bg-transparent text-lg duration-300 focus-within:border-indigo-500 mb-0">
+                <input asp-for="UserName" placeholder="Username" 
+                       class="w-full border-none bg-transparent outline-none placeholder:italic focus:outline-none text-cyan-900"/>
             </div>
+        
+            @* <span asp-validation-for="UserName" class="text-red-400" ></span> *@
+
+            <div class="w-full transform border-b-2 bg-transparent text-lg duration-300 focus-within:border-indigo-500">
+                <input asp-for="Password" placeholder="Password" 
+                       class="w-full border-none bg-transparent outline-none placeholder:italic focus:outline-none text-cyan-900"/>
+            </div>
+        
+            @* <span asp-validation-for="Password" class="text-red-400"></span> *@
     
             <div class="w-full transform border-b-2 bg-transparent text-lg duration-300 focus-within:border-indigo-500">
-                <input asp-for="Password" placeholder="Password" class="w-full border-none bg-transparent outline-none placeholder:italic focus:outline-none"/>
+                <input asp-for="Age" placeholder="Age" 
+                       class="w-full border-none bg-transparent outline-none placeholder:italic focus:outline-none text-cyan-900"/>
             </div>
-    
-            <div class="w-full transform border-b-2 bg-transparent text-lg duration-300 focus-within:border-indigo-500">
-                <input asp-for="Age" placeholder="Age" class="w-full border-none bg-transparent outline-none placeholder:italic focus:outline-none"/>
-            </div>
+        
+            @* <span asp-validation-for="Age" class="text-red-400" ></span> *@
     
             <button class="transform rounded-sm bg-indigo-600 py-2 font-bold duration-300 hover:bg-indigo-400">
                 Submit
             </button>
+            
+            <div asp-validation-summary="All" class="text-red-400"></div>
         </section>
     </form>
-    
 </main>

@@ -2,18 +2,12 @@
 
 namespace WebAppMVC.Models;
 
-public class RegistrationViewModel
+public class LoginViewModel
 {
-    
     [Required]
     [MaxLength(10)]
     public string UserName { get; set; } = null!;
-
-    [Required]
-    [Range(1,100)]
-    public int Age { get; set; }
     [Required]
     [DataType(DataType.Password)]
-    [RegularExpression("(?=.*[a-z])")]
     public string Password { get; set; } = null!;
 }
