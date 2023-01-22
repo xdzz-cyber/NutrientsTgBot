@@ -29,14 +29,15 @@ public class UpdateAppUserWeightCommandHandler : IRequestHandler<UpdateAppUserWe
 
         if (!request.Weight.All(char.IsDigit) ||  double.Parse(request.Weight) <= 0)
         {
-            return await _mediator.Send(new GetUserWeightQuery(username: request.Username, 
-                chatId: request.ChatId, QueryExecutingTypes.QueryAsResponseForCommand), cancellationToken);
+            return "Please, enter correct value";
+            // return await _mediator.Send(new GetUserWeightQuery(username: request.Username, 
+            //     chatId: request.ChatId, QueryExecutingTypes.QueryAsResponseForCommand), cancellationToken);
         }
         
         appUser.Weight = double.Parse(request.Weight);
 
-        var _ = await _userManager.UpdateAsync(appUser);
+        var identityResult = await _userManager.UpdateAsync(appUser);
 
-        return _.Succeeded ? "New weight has been successfully saved!" : "Bad data given, please try again.";
+        return identityResult.Succeeded ? "New weight has been successfully saved!" : "Bad data given, please try again.";
     }
 }

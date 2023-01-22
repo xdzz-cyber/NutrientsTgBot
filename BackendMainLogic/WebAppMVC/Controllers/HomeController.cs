@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using WebAppMVC.Models;
 
 namespace WebAppMVC.Controllers;
 
@@ -11,5 +12,15 @@ public class HomeController : Controller
     public IActionResult Main()
     {
         return View();
+    }
+
+    [HttpGet]
+    public IActionResult DefaultForm([FromQuery] ParamsForDefaultFormViewModel paramsForDefaultFormViewModel)
+    {
+        ViewData["ActionName"] = paramsForDefaultFormViewModel.ActionName;
+        
+        ViewData["ControllerName"] = paramsForDefaultFormViewModel.ControllerName;
+        
+        return View("_DefaultFormPartial");
     }
 }

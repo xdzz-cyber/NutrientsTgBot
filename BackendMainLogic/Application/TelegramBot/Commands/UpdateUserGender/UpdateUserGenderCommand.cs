@@ -11,6 +11,6 @@ public class UpdateUserGenderCommand : IRequest<string>, ICommand
 
     public string Sex { get; set; }
 
-    public UpdateUserGenderCommand(string username, long chatId, string sex)
-        => (Username, ChatId, Sex) = (username, chatId, sex);
+    public UpdateUserGenderCommand(string username, string sex, long chatId = 0)
+        => (Username, Sex, ChatId) = (username, sex, chatId);
 }

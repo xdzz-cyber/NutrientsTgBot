@@ -11,6 +11,6 @@ public class UpdateUserTallnessCommand : IRequest<string>, ICommand
 
     public string Height { get; set; }
 
-    public UpdateUserTallnessCommand(string username, long chatId, string height)
-        => (Username, ChatId, Height) = (username, chatId, height);
+    public UpdateUserTallnessCommand(string username, string height ,long chatId = 0)
+        => (Username, Height, ChatId) = (username, height, chatId);
 }
