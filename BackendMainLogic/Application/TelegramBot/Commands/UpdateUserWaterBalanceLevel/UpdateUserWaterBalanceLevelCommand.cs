@@ -9,6 +9,6 @@ public class UpdateUserWaterBalanceLevelCommand : IRequest<string>, ICommand
     public long ChatId { get; set; }
     public string AmountOfWater { get; set; }
 
-    public UpdateUserWaterBalanceLevelCommand(string username, long chatId, string amountOfWater)
-    => (Username, ChatId, AmountOfWater) = (username, chatId, amountOfWater);
+    public UpdateUserWaterBalanceLevelCommand(string username, string amountOfWater, long chatId = 0)
+    => (Username, AmountOfWater, ChatId) = (username, amountOfWater, chatId);
 }

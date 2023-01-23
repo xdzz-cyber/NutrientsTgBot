@@ -26,8 +26,9 @@ public class UpdateUserWaterBalanceLevelCommandHandler : IRequestHandler<UpdateU
         {
             if (!request.AmountOfWater.All(char.IsDigit) || double.Parse(request.AmountOfWater) <= 0)
             {
-                return await _mediator.Send(new GetUserWaterBalanceLevelQuery(username: request.Username, 
-                    chatId: request.ChatId, QueryExecutingTypes.QueryAsResponseForCommand), cancellationToken);
+                return "Please, enter correct value";
+                // return await _mediator.Send(new GetUserWaterBalanceLevelQuery(username: request.Username, 
+                //     chatId: request.ChatId, QueryExecutingTypes.QueryAsResponseForCommand), cancellationToken);
             }
             
             var user = await _userManager.FindByNameAsync(request.Username);

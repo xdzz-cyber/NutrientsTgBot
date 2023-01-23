@@ -1,6 +1,7 @@
 ﻿using Application.TelegramBot.Commands.UpdateUserAge;
 using Application.TelegramBot.Commands.UpdateUserGender;
 using Application.TelegramBot.Commands.UpdateUserTallness;
+using Application.TelegramBot.Commands.UpdateUserWaterBalanceLevel;
 using Application.TelegramBot.Commands.UpdateUserWeight;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
@@ -53,6 +54,17 @@ public class UserController : Controller
         var username = User.Identity?.Name;
         
         var result = await _mediator.Send(new UpdateUserTallnessCommand(username!, newValue));
+
+        return View("_ResponseMessageComponent", result);
+    }
+
+
+    [HttpPost]
+    public async Task<IActionResult> UpdateWaterBalance([FromForm] string newValue)
+    {
+        var username = User.Identity?.Name;
+        
+        var result = await _mediator.Send(new UpdateUserWaterBalanceLevelCommand(username!, newValue));
 
         return View("_ResponseMessageComponent", result);
     }

@@ -9,6 +9,6 @@ public class GetUserInfoQuery : IRequest<string>, IQuery
     
     public long ChatId { get; set; }
 
-    public GetUserInfoQuery(string username, long chatId)
+    public GetUserInfoQuery(string username, long chatId = 0)
         => (Username, ChatId) = (username, chatId);
 }

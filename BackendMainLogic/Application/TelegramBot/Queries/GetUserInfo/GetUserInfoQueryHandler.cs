@@ -17,10 +17,10 @@ public class GetUserInfoQueryHandler : IRequestHandler<GetUserInfoQuery, string>
     {
         var user = await _userManager.FindByNameAsync(request.Username);
 
-        if (user is null)
-        {
-            return "No data found.";
-        }
+        // if (user is null)
+        // {
+        //     return null; //"No data found.";
+        // }
 
         if (user.Height <= 0 || user.Age <= 0 || (user.Sex.ToLower() != "man" && user.Sex.ToLower() != "women"))
         {

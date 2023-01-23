@@ -1,4 +1,8 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using Application.TelegramBot.Queries.GetUserInfo;
+using Application.TelegramBot.Queries.GetUserNutrientsPlan;
+using Application.TelegramBot.Queries.GetUserWaterBalanceLevel;
+using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using WebAppMVC.Models;
 
@@ -8,10 +12,30 @@ namespace WebAppMVC.Controllers;
 [Authorize(Roles = "User")]
 public class HomeController : Controller
 {
-    [HttpGet]
-    public IActionResult Main()
+    private readonly IMediator _mediator;
+
+    public HomeController(IMediator mediator)
     {
-        return View();
+        _mediator = mediator;
+    }
+    
+    [HttpGet]
+    public async Task<ViewResult> Main()
+    {
+        var username = User.Identity?.Name;
+        
+        var userInfo = await _mediator.Send(new GetUserInfoQuery(username!));
+
+        var waterBalanceInfo = await _mediator.Send(new GetUserWaterBalanceLevelQuery(username!));
+
+        var nutrientsPlanInfo = await _mediator.Send(new GetUserNutrientsPlanQuery(username!));
+        
+        return View(new UserCompleteInfoViewModel()
+        {
+            UserInfo = userInfo,
+            WaterBalanceInfo = waterBalanceInfo,
+            NutrientsPlanInfo = nutrientsPlanInfo
+        });
     }
 
     [HttpGet]

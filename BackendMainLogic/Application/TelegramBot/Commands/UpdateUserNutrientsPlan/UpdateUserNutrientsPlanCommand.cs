@@ -1,4 +1,5 @@
 ﻿using Application.Interfaces;
+using Domain.TelegramBotEntities.NutrientsPlan;
 using MediatR;
 
 namespace Application.TelegramBot.Commands.UpdateUserNutrientsPlan;
@@ -9,8 +10,8 @@ public class UpdateUserNutrientsPlanCommand : IRequest<string>, ICommand
     
     public long ChatId { get; set; }
 
-    public string Nutrients { get; set; }
+    public NutrientsPlanFormDto Nutrients { get; set; }
 
-    public UpdateUserNutrientsPlanCommand(string username, long chatId, string nutrients)
-        => (Username, ChatId, Nutrients) = (username, chatId, nutrients);
+    public UpdateUserNutrientsPlanCommand(string username, NutrientsPlanFormDto nutrients, long chatId = 0)
+        => (Username, Nutrients, ChatId) = (username, nutrients, chatId);
 }

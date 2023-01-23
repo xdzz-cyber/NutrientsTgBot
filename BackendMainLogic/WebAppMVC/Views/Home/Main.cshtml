@@ -1,6 +1,9 @@
 @{
     Layout = "_Layout";
 }
+
+@model UserCompleteInfoViewModel
+
 <!--header begins here-->
 <partial name="_HeaderNavbarPartial"/>
 <!--header ends here-->
@@ -18,7 +21,8 @@
                             Your information
                         </h4>
                         <p class="text-md font-light mt-2 text-white">
-                            Your tallness is 170, age is 32, sex is man and weight is 80
+                            @Model.UserInfo
+                            @* Your tallness is 170, age is 32, sex is man and weight is 80 *@
                         </p>
                         <p class="text-md font-light mt-2 text-white">
                             Minimum needed amount of calories is 1770.25, protein(0.22%) = 398k, 
@@ -73,8 +77,10 @@
                                     <p>Your filters:
                                 GlutenFree - <a href="#" class="text-blue-400">Turn off</a>
                                 Vegetarian - <a href="#" class="text-blue-400">Turn off</a></p>
-
-                                    <a href="#" class="text-blue-400">Clear</a> all filters
+                                    <div class="inline-block">
+                                        <a href="#" class="text-blue-400">Clear</a> all filters
+                                        <a href="#" class="text-blue-400">Add</a> filter(s)
+                                    </div>
                                 </p>
                             </div>
                         </div>
@@ -87,10 +93,12 @@
                                 </div>
                                 <h6 class="text-xl mb-1 font-semibold">Water balance level</h6>
                                 <p class="mb-4 text-blueGray-500">
-                                    You've already consumed 70 and yet have to consume 3115 milliliters more.
+                                    @Model.WaterBalanceInfo
+                                    @* You've already consumed 70 and yet have to consume 3115 milliliters more. *@
                                 </p>
                                 <p class="mb-4 text-blueGray-500">
-                                    To update consumed amount click <a href="#" class="text-blue-400">here</a>
+                                    To update consumed amount click <a asp-action="DefaultForm" asp-route-controllerName="User" 
+                                                                       asp-route-actionName="UpdateWaterBalance" class="text-blue-400">here</a>
                                 </p>
                             </div>
                         </div>
@@ -101,11 +109,16 @@
                                 </div>
                                 <h6 class="text-xl mb-1 font-semibold">Nutrients plan</h6>
                                 <div class="mb-4 text-blueGray-500">
-                                    <div><p>Nutrient name = Fat ,Max value = 1001, Min Value = 0</p></div>
-                                    <div><p>Nutrient name = Carbohydrates ,Max value = 1002, Min Value = 0</p></div>
-                                    <div><p>Nutrient name = Protein ,Max value = 1003, Min Value = 0</p></div>
-                                    <div><p>Nutrient name = Calories ,Max value = 10004, Min Value = 0</p></div>
-                                    <div><p><a href="#" class="text-blue-400">Update plan</a></p></div>
+                                    <div>
+                                        <p>@Model.NutrientsPlanInfo</p>
+                                    </div>
+                                    @* <div><p>Nutrient name = Fat ,Max value = 1001, Min Value = 0</p></div> *@
+                                    @* <div><p>Nutrient name = Carbohydrates ,Max value = 1002, Min Value = 0</p></div> *@
+                                    @* <div><p>Nutrient name = Protein ,Max value = 1003, Min Value = 0</p></div> *@
+                                    @* <div><p>Nutrient name = Calories ,Max value = 10004, Min Value = 0</p></div> *@
+                                    <div>
+                                        <p><a asp-action="NutrientsPlanForm" asp-controller="NutrientsPlan" 
+                                              class="text-blue-400">Update plan</a></p></div>
                                 </div>
                             </div>
                         </div>

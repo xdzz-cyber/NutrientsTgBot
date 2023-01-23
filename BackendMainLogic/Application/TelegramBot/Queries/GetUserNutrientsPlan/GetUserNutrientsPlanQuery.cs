@@ -9,6 +9,6 @@ public class GetUserNutrientsPlanQuery : IRequest<string>, IQuery
     
     public long ChatId { get; set; }
 
-    public GetUserNutrientsPlanQuery(string username, long chatId)
+    public GetUserNutrientsPlanQuery(string username, long chatId = 0)
         => (Username, ChatId) = (username, chatId);
 }

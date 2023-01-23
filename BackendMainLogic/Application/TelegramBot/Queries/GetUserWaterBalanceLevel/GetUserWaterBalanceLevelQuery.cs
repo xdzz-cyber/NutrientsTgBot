@@ -9,6 +9,6 @@ public class GetUserWaterBalanceLevelQuery : IRequest<string>, IQuery
     public string Username { get; set; }
     public long ChatId { get; set; }
     public QueryExecutingTypes QueryExecutingType { get; set; }
-    public GetUserWaterBalanceLevelQuery(string username, long chatId, QueryExecutingTypes queryExecutingType = QueryExecutingTypes.Query)
+    public GetUserWaterBalanceLevelQuery(string username, long chatId = 0, QueryExecutingTypes queryExecutingType = QueryExecutingTypes.Query)
     => (Username, ChatId, QueryExecutingType) = (username, chatId, queryExecutingType);
 }
