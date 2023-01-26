@@ -21,12 +21,7 @@ public class TurnOnAllRecipeFiltersOfUserCommandHandler : IRequestHandler<TurnOn
     public async Task<string> Handle(TurnOnAllRecipeFiltersOfUserCommand request, CancellationToken cancellationToken)
     {
         var userInfo = await _userManager.FindByNameAsync(request.Username);
-        
-        if (userInfo is null)
-        {
-            return "Please, authorize to be able to make actions.";
-        }
-        
+
         var recipeFiltersOfUser = await _ctx.RecipeFiltersUsers
             .Where(rfu => rfu.AppUserId == userInfo.Id).ToListAsync(cancellationToken); //&& !rfu.IsTurnedIn
 

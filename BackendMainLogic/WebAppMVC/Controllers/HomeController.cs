@@ -1,5 +1,9 @@
-﻿using Application.TelegramBot.Queries.GetUserInfo;
+﻿using Application.TelegramBot.Queries.GetApprovedAmountOfNutrients;
+using Application.TelegramBot.Queries.GetAvailableRecipeFilters;
+using Application.TelegramBot.Queries.GetUserFiltersForRecipes;
+using Application.TelegramBot.Queries.GetUserInfo;
 using Application.TelegramBot.Queries.GetUserNutrientsPlan;
+using Application.TelegramBot.Queries.GetUserSupplementsOutline;
 using Application.TelegramBot.Queries.GetUserWaterBalanceLevel;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
@@ -29,12 +33,24 @@ public class HomeController : Controller
         var waterBalanceInfo = await _mediator.Send(new GetUserWaterBalanceLevelQuery(username!));
 
         var nutrientsPlanInfo = await _mediator.Send(new GetUserNutrientsPlanQuery(username!));
+
+        var userRecipesFilters = await _mediator.Send(new GetUserFiltersForRecipesQuery(username!));
+
+        var availableRecipesFilters = await _mediator.Send(new GetAvailableRecipeFiltersQuery(username!));
+
+        var approvedAmountOfNutrients = await _mediator.Send(new GetApprovedAmountOfNutrientsQuery(username!));
+
+        var userSupplementsOutline = await _mediator.Send(new GetUserSupplementsOutlineQuery(username!));
         
-        return View(new UserCompleteInfoViewModel()
+        return View(new UserCompleteInfoViewModel
         {
             UserInfo = userInfo,
             WaterBalanceInfo = waterBalanceInfo,
-            NutrientsPlanInfo = nutrientsPlanInfo
+            NutrientsPlanInfo = nutrientsPlanInfo,
+            UserRecipesFilters = userRecipesFilters,
+            AvailableFiltersForRecipes = availableRecipesFilters,
+            ApprovedAmountOfNutrients = approvedAmountOfNutrients,
+            UserSupplementsOutline = userSupplementsOutline
         });
     }
 

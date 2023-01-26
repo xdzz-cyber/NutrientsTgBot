@@ -4,10 +4,12 @@ using Application.TelegramBot.Commands.UpdateUserTallness;
 using Application.TelegramBot.Commands.UpdateUserWaterBalanceLevel;
 using Application.TelegramBot.Commands.UpdateUserWeight;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace WebAppMVC.Controllers;
 
+[Authorize(Roles = "User")]
 public class UserController : Controller
 {
     private readonly IMediator _mediator;

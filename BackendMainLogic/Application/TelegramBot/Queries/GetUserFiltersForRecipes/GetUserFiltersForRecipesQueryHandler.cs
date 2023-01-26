@@ -2,13 +2,14 @@
 using Application.Common.Constants;
 using Application.Interfaces;
 using Domain.TelegramBotEntities;
+using Domain.TelegramBotEntities.RecipesFilters;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
 namespace Application.TelegramBot.Queries.GetUserFiltersForRecipes;
 
-public class GetUserFiltersForRecipesQueryHandler : IRequestHandler<GetUserFiltersForRecipesQuery, string>
+public class GetUserFiltersForRecipesQueryHandler : IRequestHandler<GetUserFiltersForRecipesQuery, IList<UserRecipesFiltersViewDto>>
 {
     private readonly ITelegramBotDbContext _ctx;
     private readonly UserManager<AppUser> _userManager;
@@ -19,22 +20,14 @@ public class GetUserFiltersForRecipesQueryHandler : IRequestHandler<GetUserFilte
         _userManager = userManager;
     }
     
-    public async Task<string> Handle(GetUserFiltersForRecipesQuery request, CancellationToken cancellationToken)
+    public async Task<IList<UserRecipesFiltersViewDto>> Handle(GetUserFiltersForRecipesQuery request, CancellationToken cancellationToken)
     {
         var userInfo = await _userManager.FindByNameAsync(request.Username);
 
-        if (userInfo is null)
-        {
-            return "Please, authorize to be able to make actions.";
-        }
-            
         if (!_ctx.RecipeFilters.Any())
         {
-            var newRecipeFilters = new List<RecipeFilters>();
-            foreach (var recipeFilter in TelegramBotRecipeFilters.RecipeFilters)
-            {
-                newRecipeFilters.Add( new RecipeFilters {Name = recipeFilter});
-            }
+            var newRecipeFilters = TelegramBotRecipeFilters.RecipeFilters
+                .Select(recipeFilter => new RecipeFilters {Name = recipeFilter}).ToList();
 
             await _ctx.RecipeFilters.AddRangeAsync(newRecipeFilters, cancellationToken);
             await _ctx.SaveChangesAsync(cancellationToken);
@@ -45,39 +38,40 @@ public class GetUserFiltersForRecipesQueryHandler : IRequestHandler<GetUserFilte
                                                             && rfu.AppUserId == userInfo.Id && rfu.IsTurnedIn))
             .ToListAsync(cancellationToken);
 
-        var response = new StringBuilder();
+        //var response = new StringBuilder();
 
-        var existingFilters = new List<string>();
-        
-        response.Append("Filters available are: ");
-        
-        foreach (var recipe in _ctx.RecipeFilters)
+        //response.Append("Filters available are: ");
+
+        var existingFilters = recipeFilters.Select(recipe => new UserRecipesFiltersViewDto
         {
-            existingFilters.Add($"<strong>{recipe.Name}</strong>");
-        }
+            Id = recipe.Id,
+            Name = recipe.Name
+        }).ToList();
 
-        response.Append(string.Join(",", existingFilters));
+        return existingFilters; //string.Join(",", existingFilters);
 
-        response.AppendLine($"\n\nIf you want to add a new one, please, click here(/AddRecipeFiltersToUser)");
-        
-        response.AppendLine("Turn on all filters(/TurnOnAllRecipeFiltersOfUser)");
-        
-        if (!recipeFilters.Any())
-        {
-            response.AppendLine("\n<strong>You have no filters selected.</strong>");
-            return response.ToString();
-        }
-
-        response.AppendLine("\nYour filters:");
-
-        foreach (var recipeFilter in recipeFilters)
-        {
-            response.Append($"<strong>{recipeFilter.Name}</strong> - ");
-            response.AppendLine($"Turn off filter(/TurnOffRecipeFilterOfUser_{recipeFilter.Id})");
-        }
-
-        response.AppendLine("\nClear all filters(/TurnOffAllRecipeFiltersOfUser)");
-        
-        return response.ToString();
+        // response.Append(string.Join(",", existingFilters));
+        //
+        // response.AppendLine($"\n\nIf you want to add a new one, please, click here(/AddRecipeFiltersToUser)");
+        //
+        // response.AppendLine("Turn on all filters(/TurnOnAllRecipeFiltersOfUser)");
+        //
+        // if (!recipeFilters.Any())
+        // {
+        //     response.AppendLine("\nYou have no filters selected");
+        //     return response.ToString();
+        // }
+        //
+        // response.AppendLine("\nYour filters:");
+        //
+        // foreach (var recipeFilter in recipeFilters)
+        // {
+        //     response.Append($"{recipeFilter.Name} - ");
+        //     response.AppendLine($"Turn off filter(/TurnOffRecipeFilterOfUser_{recipeFilter.Id})");
+        // }
+        //
+        // response.AppendLine("\nClear all filters(/TurnOffAllRecipeFiltersOfUser)");
+        //
+        // return response.ToString();
     }
 }

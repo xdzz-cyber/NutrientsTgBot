@@ -9,6 +9,6 @@ public class GetApprovedAmountOfNutrientsQuery : IRequest<string>, IQuery
     
     public long ChatId { get; set; }
     
-    public GetApprovedAmountOfNutrientsQuery(string username, long chatId)
+    public GetApprovedAmountOfNutrientsQuery(string username, long chatId = 0)
         => (Username, ChatId) = (username, chatId);
 }

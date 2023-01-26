@@ -11,6 +11,6 @@ public class TurnOffRecipeFilterOfUserCommand : IRequest<string>, ICommand
 
     public string RecipeFilterId { get; set; }
 
-    public TurnOffRecipeFilterOfUserCommand(string username, long chatId, string recipeFilterId)
-        => (Username, ChatId, RecipeFilterId) = (username, chatId, recipeFilterId);
+    public TurnOffRecipeFilterOfUserCommand(string username, string recipeFilterId, long chatId = 0)
+        => (Username, RecipeFilterId, ChatId) = (username, recipeFilterId, chatId);
 }

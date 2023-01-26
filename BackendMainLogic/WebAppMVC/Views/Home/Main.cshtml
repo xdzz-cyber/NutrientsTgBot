@@ -25,14 +25,16 @@
                             @* Your tallness is 170, age is 32, sex is man and weight is 80 *@
                         </p>
                         <p class="text-md font-light mt-2 text-white">
-                            Minimum needed amount of calories is 1770.25, protein(0.22%) = 398k, 
-                            carbohydrates(0.55%) = 973k, fat(0.68%) = 1194k.
+                            @Model.ApprovedAmountOfNutrients
+                            @* Minimum needed amount of calories is 1770.25, protein(0.22%) = 398k,  *@
+                            @* carbohydrates(0.55%) = 973k, fat(0.68%) = 1194k. *@
                         </p>
                         <p class="text-md font-light mt-2 text-white">
-                            Calories: 8007.94k still need to be consumed.
-                            Fat: 839.57g still need to be consumed.
-                            Carbohydrates: 925.39g still need to be consumed.
-                            Protein: 931.26g still need to be consumed.
+                            @Model.UserSupplementsOutline
+                            @* Calories: 8007.94k still need to be consumed. *@
+                            @* Fat: 839.57g still need to be consumed. *@
+                            @* Carbohydrates: 925.39g still need to be consumed. *@
+                            @* Protein: 931.26g still need to be consumed. *@
                         </p>
                     </blockquote>
                 </div>
@@ -68,20 +70,36 @@
                                 <h6 class="text-xl mb-1 font-semibold">
                                     Recipes filters
                                 </h6>
-                                <p class="mb-4 text-blueGray-500">
-                                    Filters available are: GlutenFree,Vegetarian
-
-                                    If you want to add a new one, please, click <a href="#">here</a>
-                                    <a href="#" class="text-blue-400">Turn on</a> all filters
-
-                                    <p>Your filters:
-                                GlutenFree - <a href="#" class="text-blue-400">Turn off</a>
-                                Vegetarian - <a href="#" class="text-blue-400">Turn off</a></p>
+                                <div class="mb-4 text-blueGray-500">
+                                    <p>Filters available are: @Model.AvailableFiltersForRecipes</p>
+                                    
+                                    <p>If you want to add a new one, please, click <a class="text-blue-400" asp-action="DefaultForm"
+                                                                                      asp-route-actionName="AddRecipeFiltersToUser"
+                                                                                      asp-route-controllerName="RecipesFilters">here</a></p>
+                                    <a asp-action="TurnOnAllFilters" asp-controller="RecipesFilters" class="text-blue-400">Turn on</a> all filters
+                                    
+                                    <p>Your filters:</p>
+                                    @if (@Model.UserRecipesFilters.Any())
+                                    {
+                                        @foreach (var filter in @Model.UserRecipesFilters)
+                                        {
+                                            <p>@filter.Name - <a asp-action="TurnOffRecipeFilter" asp-controller="RecipesFilters" 
+                                                                 asp-route-recipeId="@filter.Id" class="text-blue-400">Turn off</a></p>
+                                            //      GlutenFree - <a href="#" class="text-blue-400">Turn off</a>
+                                            // Vegetarian - <a href="#" class="text-blue-400">Turn off</a>
+                                        }  
+                                    }
+                                    else
+                                    {
+                                        <p>No filters selected</p>
+                                    }
+                                    
+                                   
                                     <div class="inline-block">
-                                        <a href="#" class="text-blue-400">Clear</a> all filters
-                                        <a href="#" class="text-blue-400">Add</a> filter(s)
+                                        <a asp-action="TurnOffAllRecipeFilters" asp-controller="RecipesFilters" class="text-blue-400">Clear</a> 
+                                        all filters
                                     </div>
-                                </p>
+                                </div>
                             </div>
                         </div>
                     </div>

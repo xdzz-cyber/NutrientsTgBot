@@ -9,6 +9,6 @@ public class TurnOnAllRecipeFiltersOfUserCommand : IRequest<string>, ICommand
     
     public long ChatId { get; set; }
 
-    public TurnOnAllRecipeFiltersOfUserCommand(string username, long chatId)
+    public TurnOnAllRecipeFiltersOfUserCommand(string username, long chatId = 0)
         => (Username, ChatId) = (username, chatId);
 }

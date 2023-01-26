@@ -9,6 +9,6 @@ public class GetUserSupplementsOutlineQuery : IRequest<string>, IQuery
     
     public long ChatId { get; set; }
 
-    public GetUserSupplementsOutlineQuery(string username, long chatId)
+    public GetUserSupplementsOutlineQuery(string username, long chatId = 0)
         => (Username, ChatId) = (username, chatId);
 }

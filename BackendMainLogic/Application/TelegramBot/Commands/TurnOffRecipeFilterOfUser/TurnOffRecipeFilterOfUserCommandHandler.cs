@@ -22,23 +22,24 @@ public class TurnOffRecipeFilterOfUserCommandHandler : IRequestHandler<TurnOffRe
     public async Task<string> Handle(TurnOffRecipeFilterOfUserCommand request, CancellationToken cancellationToken)
     {
         var userInfo = await _userManager.FindByNameAsync(request.Username);
-        
-        if (userInfo is null)
-        {
-            return "Please, authorize to be able to make actions.";
-        }
-        
-        var matchPartOfInputData = Regex.Matches(request.RecipeFilterId, TelegramBotRecipeCommandsNQueriesDataPatterns.InputDataPatternForRecipeFilterSingleId);
+
+        // var matchPartOfInputData = Regex.Matches(request.RecipeFilterId, 
+        //     TelegramBotRecipeCommandsNQueriesDataPatterns.InputDataPatternForRecipeFilterSingleId);
 
         var recipeFilter = await _ctx.RecipeFiltersUsers
-            .FirstAsync(rfu => rfu.AppUserId == userInfo.Id 
-                               && rfu.RecipeFiltersId.ToString() == matchPartOfInputData.First().Value, 
+            .FirstOrDefaultAsync(rfu => rfu.AppUserId == userInfo.Id 
+                               && rfu.RecipeFiltersId.ToString() == request.RecipeFilterId, 
                 cancellationToken: cancellationToken);
+
+        if (recipeFilter is null)
+        {
+            return "Wrong recipe id given";
+        }
 
         recipeFilter.IsTurnedIn = false;
 
         await _ctx.SaveChangesAsync(cancellationToken);
 
-        return "Chosen recipe filter has been successfully turned off.";
+        return "Chosen recipe filter has been successfully turned off";
     }
 }

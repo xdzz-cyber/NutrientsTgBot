@@ -22,11 +22,6 @@ public class AddRecipeFiltersToUserCommandHandler : IRequestHandler<AddRecipeFil
     {
         var userInfo = await _userManager.FindByNameAsync(request.Username);
 
-        if (userInfo is null)
-        {
-            return "Please, authorize to be able to make actions.";
-        }
-        
         var filters = request.Filters.Split(',');
 
         if (!filters.All(f => TelegramBotRecipeFilters.RecipeFilters.Contains(f)))
@@ -38,7 +33,8 @@ public class AddRecipeFiltersToUserCommandHandler : IRequestHandler<AddRecipeFil
             .Where(rf => filters.Contains(rf.Name)).ToListAsync(cancellationToken);
 
         if (recipeFiltersChosenByUser.All(r => _ctx.RecipeFiltersUsers
-                .FirstOrDefault(rfu => rfu.IsTurnedIn && rfu.RecipeFiltersId == r.Id) != null))
+                .FirstOrDefault(rfu => rfu.AppUserId == userInfo.Id 
+                                       && rfu.IsTurnedIn && rfu.RecipeFiltersId == r.Id) != null))
         {
             return "Filters have been already saved.";
         }

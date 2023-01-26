@@ -1,14 +1,19 @@
 ﻿
 
+using Domain.TelegramBotEntities.RecipesFilters;
+
 namespace WebAppMVC.Models;
 
 public class UserCompleteInfoViewModel
 {
     public string UserInfo { get; set; } = null!;
-
     public string WaterBalanceInfo { get; set; } = null!;
-
     public string NutrientsPlanInfo { get; set; } = null!;
+    public string AvailableFiltersForRecipes { get; set; } = null!;
+    public IList<UserRecipesFiltersViewDto> UserRecipesFilters { get; set; } = null!;
+    public string ApprovedAmountOfNutrients { get; set; } = null!;
+
+    public string UserSupplementsOutline { get; set; } = null!;
     // public AppUser AppUser { get; set; } = null!;
     //
     // public WaterLevelOfUser WaterLevelOfUser { get; set; }

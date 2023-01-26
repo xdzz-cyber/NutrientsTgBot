@@ -9,6 +9,6 @@ public class AddRecipeFiltersToUserCommand : IRequest<string>, ICommand
     public long ChatId { get; set; }
     public string Filters { get; set; }
 
-    public AddRecipeFiltersToUserCommand(string username, long chatId, string filters) 
-        => (Username, ChatId, Filters) = (username, chatId, filters);
+    public AddRecipeFiltersToUserCommand(string username, string filters ,long chatId = 0) 
+        => (Username, Filters, ChatId) = (username, filters, chatId);
 }
