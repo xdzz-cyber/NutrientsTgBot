@@ -30,9 +30,15 @@ public class GetUserWaterBalanceLevelQueryHandler : IRequestHandler<GetUserWater
         var currentWaterLevelOfUser = await _ctx.WaterLevelOfUsers
             .FirstOrDefaultAsync(x => x.AppUserId == user.Id, cancellationToken);
 
-        if (currentWaterLevelOfUser?.ExpiryDateTime < DateTime.Now)
+        if (currentWaterLevelOfUser is null)
         {
-            _ctx.WaterLevelOfUsers.Remove(currentWaterLevelOfUser);
+            return "No data found.";
+        }
+
+        if (currentWaterLevelOfUser.ExpiryDateTime < DateTime.Now)
+        {
+            currentWaterLevelOfUser.Amount = 0;
+            //_ctx.WaterLevelOfUsers.Remove(currentWaterLevelOfUser);
             await _ctx.SaveChangesAsync(cancellationToken);
         }
 
@@ -43,7 +49,7 @@ public class GetUserWaterBalanceLevelQueryHandler : IRequestHandler<GetUserWater
         // }
 
         var waterLevelMargin =  WaterLevelBalanceConstants.WaterLevelBalanceFormulaConstant * 
-            user.Weight - Math.Abs(currentWaterLevelOfUser!.Amount);
+            user.Weight - Math.Abs(currentWaterLevelOfUser.Amount);
         
         return  waterLevelMargin <= 0 ? 
             $"You have consumed enough water for the current day ({currentWaterLevelOfUser.Amount} ml)" : 

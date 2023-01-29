@@ -32,17 +32,12 @@ public class UpdateUserWaterBalanceLevelCommandHandler : IRequestHandler<UpdateU
             }
             
             var user = await _userManager.FindByNameAsync(request.Username);
-            
-            if (user is null)
-            {
-                return "Please, authorize to be able to make actions.";
-            }
-            
+
             var currentWaterLevelBalance = _ctx.WaterLevelOfUsers.FirstOrDefault(x => x.AppUserId == user.Id);
 
             if (currentWaterLevelBalance is null)
             {
-                _ctx.WaterLevelOfUsers.Add(new WaterLevelOfUser()
+                _ctx.WaterLevelOfUsers.Add(new WaterLevelOfUser
                 {
                     Amount = double.Parse(request.AmountOfWater),
                     AppUserId = user.Id,

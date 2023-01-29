@@ -1,7 +1,4 @@
-﻿using System.Text;
-using System.Text.RegularExpressions;
-using Application.Common.Constants;
-using Application.Common.Mappings;
+﻿using Application.Common.Constants;
 using Application.Interfaces;
 using Domain.TelegramBotEntities;
 using AutoMapper;
@@ -12,7 +9,7 @@ using JsonSerializer = System.Text.Json.JsonSerializer;
 
 namespace Application.TelegramBot.Queries.GetRecipesByIngredients;
 
-public class GetRecipesByIngredientsQueryHandler : IRequestHandler<GetRecipesByIngredientsQuery, string>
+public class GetRecipesByIngredientsQueryHandler : IRequestHandler<GetRecipesByIngredientsQuery, List<Recipe>>
 {
     private readonly HttpClient _httpClient;
     private readonly IMapper _mapper;
@@ -28,37 +25,34 @@ public class GetRecipesByIngredientsQueryHandler : IRequestHandler<GetRecipesByI
         _userManager = userManager;
     }
     
-    public async Task<string> Handle(GetRecipesByIngredientsQuery request, CancellationToken cancellationToken)
+    public async Task<List<Recipe>> Handle(GetRecipesByIngredientsQuery request, CancellationToken cancellationToken)
     {
-        if (request.Ingredients.Split(",").Select(ing => ing.Trim()).ToArray().Length < 2)
-        {
-            return "Please, enter an ingredients with comma as separator";
-        }
+        // if (request.Ingredients.Split(",").Select(ing => ing.Trim()).ToArray().Length < 2)
+        // {
+        //     return "Please, enter an ingredients with comma as separator";
+        // }
 
-        var matchPattern = TelegramBotRecipeCommandsNQueriesDataPatterns.IngredientsCommaSeparated;
-
-        var ingredients = string.Join("",Regex.Matches(request.Ingredients, matchPattern)
-            .Select(m => m.Value)
-            .ToArray());
-        
-        var recipes =
-           await _httpClient.GetAsync($"{TelegramBotRecipesHttpPaths.GetRecipes}{ingredients}", 
-               cancellationToken: cancellationToken);
+        // var matchPattern = TelegramBotRecipeCommandsNQueriesDataPatterns.IngredientsCommaSeparated;
+        //
+        // var ingredients = string.Join("",Regex.Matches(request.Ingredients, matchPattern)
+        //     .Select(m => m.Value)
+        //     .ToArray());
 
         var userInfo = await _userManager.FindByNameAsync(request.Username);
+
+        var foundRecipes = new List<Recipe>();
         
-        if (userInfo is null)
-        {
-            return "Please, authorize to be able to make actions.";
-        }
-        
+        var recipes =
+           await _httpClient.GetAsync($"{TelegramBotRecipesHttpPaths.GetRecipes}{request.Ingredients}", 
+               cancellationToken: cancellationToken);
+
         RecipesList? content;
         
-        var response = new StringBuilder();
+        //var response = new StringBuilder();
         
-        var msgResponse = "";
+        //var msgResponse = "";
         
-        var recipesIds = new List<string>();
+        //var recipesIds = new List<string>();
         
         if (recipes.IsSuccessStatusCode)
         {
@@ -73,7 +67,8 @@ public class GetRecipesByIngredientsQueryHandler : IRequestHandler<GetRecipesByI
 
                 var recipeFilters = await _ctx.RecipeFilters
                     .Where(rf => rf.RecipeFiltersUsers
-                        .Any(rfu => rfu.RecipeFiltersId == rf.Id && rfu.IsTurnedIn))
+                        .Any(rfu => rfu.RecipeFiltersId == rf.Id && rfu.IsTurnedIn 
+                                                                 && rfu.AppUserId == userInfo.Id))
                     .ToListAsync(cancellationToken);
                 
                 var satisfiesFiltersCount = 0;
@@ -91,38 +86,39 @@ public class GetRecipesByIngredientsQueryHandler : IRequestHandler<GetRecipesByI
 
                 if (doesRecipeFitUserFilters)
                 {
-                    var mappedRecipe = _mapper.Map<RecipeViewDto>(recipe);
-                    
-                    var msg = $"<strong>Title: {mappedRecipe.Title}, Vegetarian: {mappedRecipe.Vegetarian}, GlutenFree: {mappedRecipe.GlutenFree}, " +
-                              $"PricePerServing: {mappedRecipe.PricePerServing}, Link: {mappedRecipe.SpoonacularSourceUrl} " +
-                              $"Save recipe(/AddRecipeToUser_{mappedRecipe.Id})</strong>\n";
-                    
-                    response.AppendLine(msg);
-                    
-                    msgResponse += msg;
-                    
-                    recipesIds.Add(recipe.Id.ToString());
+                    //var mappedRecipe = _mapper.Map<RecipeViewDto>(recipe);
+                    foundRecipes.Add(recipe);
+                    // var msg = $"<strong>Title: {mappedRecipe.Title}, Vegetarian: {mappedRecipe.Vegetarian}, GlutenFree: {mappedRecipe.GlutenFree}, " +
+                    //           $"PricePerServing: {mappedRecipe.PricePerServing}, Link: {mappedRecipe.SpoonacularSourceUrl} " +
+                    //           $"Save recipe(/AddRecipeToUser_{mappedRecipe.Id})</strong>\n";
+                    //
+                    // response.AppendLine(msg);
+                    //
+                    // msgResponse += msg;
+                    //
+                    // recipesIds.Add(recipe.Id.ToString());
                 }
             }
 
-            if (string.IsNullOrEmpty(response.ToString()))
-            {
-                return "No recipes found.";
-            }
-            
-            response.AppendLine("Save all(/AddRecipeToUser_All)");
-
-            if (!StateManagement.TempData.ContainsKey("RecipesIds"))
-            {
-                StateManagement.TempData.Add("RecipesIds", string.Join(",", recipesIds));
-            }
-            else
-            {
-                StateManagement.TempData["RecipesIds"] = string.Join(",", recipesIds);
-            }
+            // if (string.IsNullOrEmpty(response.ToString()))
+            // {
+            //     return "No recipes found.";
+            // }
+            //
+            // response.AppendLine("Save all(/AddRecipeToUser_All)");
+            //
+            // if (!StateManagement.TempData.ContainsKey("RecipesIds"))
+            // {
+            //     StateManagement.TempData.Add("RecipesIds", string.Join(",", recipesIds));
+            // }
+            // else
+            // {
+            //     StateManagement.TempData["RecipesIds"] = string.Join(",", recipesIds);
+            // }
             
         }
 
-        return response.ToString();
+        //return response.ToString();
+        return foundRecipes;
     }
 }
