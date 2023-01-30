@@ -9,5 +9,5 @@ public class ClearRecipesAsPartOfMealCommand : IRequest<string>, ICommand
     
     public long ChatId { get; set; }
 
-    public ClearRecipesAsPartOfMealCommand(string username, long chatId) => (Username, ChatId) = (username, chatId);
+    public ClearRecipesAsPartOfMealCommand(string username, long chatId = 0) => (Username, ChatId) = (username, chatId);
 }

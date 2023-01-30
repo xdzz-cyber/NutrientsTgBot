@@ -63,4 +63,10 @@ public class HomeController : Controller
         
         return View("_DefaultFormPartial");
     }
+
+    [HttpGet]
+    public IActionResult About()
+    {
+        return View();
+    }
 }

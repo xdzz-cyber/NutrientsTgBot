@@ -34,12 +34,7 @@ public class AddAllRecipesAsPartOfMealCommandHandler : IRequestHandler<AddAllRec
         }
 
         var userInfo = await _userManager.FindByNameAsync(request.Username);
-        
-        if (userInfo is null)
-        {
-            return "Please, authorize to be able to make actions.";
-        }
-        
+
         foreach (var mealId in mealsIds)
         {
             if (await _ctx.RecipesUsers

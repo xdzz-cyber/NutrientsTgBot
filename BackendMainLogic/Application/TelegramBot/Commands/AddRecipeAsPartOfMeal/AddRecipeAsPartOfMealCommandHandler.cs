@@ -23,18 +23,13 @@ public class AddRecipeAsPartOfMealCommandHandler : IRequestHandler<AddRecipeAsPa
     public async Task<string> Handle(AddRecipeAsPartOfMealCommand request, CancellationToken cancellationToken)
     {
         var userInfo = await _userManager.FindByNameAsync(request.Username);
-        
-        if (userInfo is null)
-        {
-            return "Please, authorize to be able to make actions.";
-        }
-        
-        var matchPartOfInputData = Regex.Matches(request.RecipeId, TelegramBotRecipeCommandsNQueriesDataPatterns.InputDataPatternForSingleId);
 
-        var recipeId = string.Join("", matchPartOfInputData);
+        // var matchPartOfInputData = Regex.Matches(request.RecipeId, TelegramBotRecipeCommandsNQueriesDataPatterns.InputDataPatternForSingleId);
+        //
+        // var recipeId = string.Join("", matchPartOfInputData);
 
         var recipe = await _ctx.RecipesUsers
-            .FirstOrDefaultAsync(ru => ru.RecipeId.ToString() == recipeId, cancellationToken: cancellationToken);
+            .FirstOrDefaultAsync(ru => ru.RecipeId.ToString() == request.RecipeId, cancellationToken);
 
         if (recipe is null && _ctx.RecipesUsers.Count() 
             < TelegramBotRecipesPerUserAmount.MaxRecipesPerUser)
@@ -43,7 +38,7 @@ public class AddRecipeAsPartOfMealCommandHandler : IRequestHandler<AddRecipeAsPa
             {
                 AppUserId = userInfo.Id,
                 IsPartOfTheMeal = true,
-                RecipeId = Convert.ToInt32(recipeId)
+                RecipeId = Convert.ToInt32(request.RecipeId)
             }, cancellationToken);
             await _ctx.SaveChangesAsync(cancellationToken);
         }

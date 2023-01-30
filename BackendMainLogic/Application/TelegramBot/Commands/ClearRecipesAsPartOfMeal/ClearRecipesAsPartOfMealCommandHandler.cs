@@ -20,11 +20,6 @@ public class ClearRecipesAsPartOfMealCommandHandler : IRequestHandler<ClearRecip
     public async Task<string> Handle(ClearRecipesAsPartOfMealCommand request, CancellationToken cancellationToken)
     {
         var userInfo = await _userManager.FindByNameAsync(request.Username);
-        
-        if (userInfo is null)
-        {
-            return "Please, authorize to be able to make actions.";
-        }
 
         var likedRecipesByCurrentUser = await _ctx.RecipesUsers
             .Where(ru => ru.AppUserId == userInfo.Id).ToListAsync(cancellationToken: cancellationToken);

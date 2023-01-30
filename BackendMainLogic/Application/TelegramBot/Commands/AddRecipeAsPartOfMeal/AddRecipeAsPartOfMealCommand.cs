@@ -11,6 +11,6 @@ public class AddRecipeAsPartOfMealCommand : IRequest<string>, ICommand
 
     public string RecipeId { get; set; }
 
-    public AddRecipeAsPartOfMealCommand(string username, long chatId, string recipeId)
-        => (Username, ChatId, RecipeId) = (username, chatId, recipeId);
+    public AddRecipeAsPartOfMealCommand(string username, string recipeId, long chatId = 0)
+        => (Username, RecipeId, ChatId) = (username, recipeId, chatId);
 }

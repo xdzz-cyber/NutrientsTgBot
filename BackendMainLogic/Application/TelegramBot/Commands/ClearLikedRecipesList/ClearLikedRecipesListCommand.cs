@@ -9,5 +9,5 @@ public class ClearLikedRecipesListCommand : IRequest<string>, ICommand
     
     public long ChatId { get; set; }
 
-    public ClearLikedRecipesListCommand(string username, long chatId) => (Username, ChatId) = (username, chatId);
+    public ClearLikedRecipesListCommand(string username, long chatId = 0) => (Username, ChatId) = (username, chatId);
 }

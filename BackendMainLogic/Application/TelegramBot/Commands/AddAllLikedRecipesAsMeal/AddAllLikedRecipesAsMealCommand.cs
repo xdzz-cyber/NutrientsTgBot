@@ -9,5 +9,5 @@ public class AddAllLikedRecipesAsMealCommand : IRequest<string>,ICommand
     
     public long ChatId { get; set; }
 
-    public AddAllLikedRecipesAsMealCommand(string username, long chatId) => (Username, ChatId) = (username, chatId);
+    public AddAllLikedRecipesAsMealCommand(string username, long chatId = 0) => (Username, ChatId) = (username, chatId);
 }
