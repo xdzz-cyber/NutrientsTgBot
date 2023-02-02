@@ -79,14 +79,35 @@ else
 @*     </div> *@
 @* </div> *@
 <div class="w-full 2xl:w-3/4 flex items-center justify-center px-8 md:px-32 lg:px-16 2xl:px-0 mx-auto -mt-8">
-        <div class="w-full grid grid-cols-1 xl:grid-cols-3 gap-8">
-            @foreach (var recipe in Model.Recipes)
-            {
-                <div class="bg-white shadow-2xl rounded-lg py-3 mt-8">
+    <div class="w-full grid grid-cols-1 xl:grid-cols-3 gap-8">
+        @if (@Model.NutrientViewDto is not null)
+        {
+            <section id="nutrientsInfo" class="absolute left-0 text-2lg right-5/6">
+                <div class="mt-8 p-8  md:flex justify-around">
+                    <div class="flex justify-between p-0 bg-white/30 rounded-lg shadow-lg shadow-indigo-500/40 hover:shadow-xl hover:shadow-blue-500/40">
+                        <div class="flex items-center space-x-4 px-2">
+                            <div class="flex flex-col m-0">
+                                <span class="font-bold">Nutrients report:
+                                </span>
+                                <span class="text-sm">Calories : @Model.NutrientViewDto.Calories</span>
+                                <span class="text-sm">Carbohydrates : @Model.NutrientViewDto.Carbohydrates</span>
+                                <span class="text-sm">Fat : @Model.NutrientViewDto.Fat</span>
+                                <span class="text-sm">Protein : @Model.NutrientViewDto.Protein </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        }
+        
+        
+        @foreach (var recipe in Model.Recipes)
+        {
+            <div class="bg-white shadow-2xl rounded-lg py-3 mt-8">
                 <p class="text-xl text-center font-bold text-blue-600">@recipe.Title</p>
                 <p class="text-center py-8">
                     <span class="text-4xl font-bold text-gray-700">
-                        $<span x-text="basicPrice">@recipe.PricePerServing</span>    
+                        $<span x-text="basicPrice">@recipe.PricePerServing</span>
                     </span>
                     <span class="text-xs uppercase text-gray-500">
                         / <span x-text="billingType">serving</span>
@@ -125,7 +146,7 @@ else
                                     <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
                                 </svg>
                             </span>
-                            <a asp-action="RemoveRecipeFromTheMeal" asp-controller="Recipes" 
+                            <a asp-action="RemoveRecipeFromTheMeal" asp-controller="Recipes"
                                asp-route-recipeId="@recipe.Id"
                                class="text-blue-600 capitalize">Remove as meal</a>
                         </li>
@@ -138,41 +159,41 @@ else
                                     <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
                                 </svg>
                             </span>
-                            <a asp-action="AddRecipeAsPartOfMeal" asp-controller="Recipes" 
+                            <a asp-action="AddRecipeAsPartOfMeal" asp-controller="Recipes"
                                asp-route-recipeId="@recipe.Id"
                                class="text-blue-600 capitalize">Add as part of the meal</a>
                         </li>
                     }
                 </ul>
-                    <div class="flex flex-row items-center gap-x-3 justify-center mt-6">
-                        @if (TelegramBotDbContext.RecipesUsers.Any(ru => ru.RecipeId == recipe.Id))
-                        {
-                            <a asp-action="RemoveRecipeFromLikedList" asp-controller="Recipes"
-                               asp-route-recipeId="@recipe.Id"
-                               class="bg-pink-600 hover:bg-pink-700 px-6 py-2 text-sm text-gray-200 uppercase rounded font-bold transition duration-150" title="Purchase">
-                                Remove as liked
-                            </a>
-                        }
-                        else
-                        {
-                            <a asp-action="AddRecipeToUser" asp-controller="Recipes"
-                               asp-route-recipeId="@recipe.Id"
-                               class="bg-blue-600 hover:bg-blue-700 px-6 py-2 text-sm text-gray-200 uppercase rounded font-bold transition duration-150" title="Purchase">
-                                Save recipe
-                            </a> 
-                        }
-                         <div class="flex items-start">
-                                    <div class="flex items-center h-5">
-                                    <input id="remember" aria-describedby="remember" type="checkbox" class="bg-gray-50 border-gray-300 focus:ring-3 focus:ring-blue-300 h-4 w-4 rounded" required="">
-                                    </div>
-                                    <div class="text-sm ml-3">
-                                    <label for="remember" class="font-medium text-gray-900">Marked as to be saved</label>
-                                    </div>
-                                </div>
+                <div class="flex flex-row items-center gap-x-3 justify-center mt-6">
+                    @if (TelegramBotDbContext.RecipesUsers.Any(ru => ru.RecipeId == recipe.Id))
+                    {
+                        <a asp-action="RemoveRecipeFromLikedList" asp-controller="Recipes"
+                           asp-route-recipeId="@recipe.Id"
+                           class="bg-pink-600 hover:bg-pink-700 px-6 py-2 text-sm text-gray-200 uppercase rounded font-bold transition duration-150" title="Purchase">
+                            Remove as liked
+                        </a>
+                    }
+                    else
+                    {
+                        <a asp-action="AddRecipeToUser" asp-controller="Recipes"
+                           asp-route-recipeId="@recipe.Id"
+                           class="bg-blue-600 hover:bg-blue-700 px-6 py-2 text-sm text-gray-200 uppercase rounded font-bold transition duration-150" title="Purchase">
+                            Save recipe
+                        </a>
+                    }
+                    <div class="flex items-start">
+                        <div class="flex items-center h-5">
+                            <input id="remember" aria-describedby="remember" type="checkbox" class="bg-gray-50 border-gray-300 focus:ring-3 focus:ring-blue-300 h-4 w-4 rounded" required="">
+                        </div>
+                        <div class="text-sm ml-3">
+                            <label for="remember" class="font-medium text-gray-900">Marked as to be saved</label>
+                        </div>
                     </div>
+                </div>
             </div>
-            }
-        </div>
+        }
+    </div>
     </div>
 </div>
 

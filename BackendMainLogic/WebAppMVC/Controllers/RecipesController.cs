@@ -5,6 +5,8 @@ using Application.TelegramBot.Commands.ClearLikedRecipesList;
 using Application.TelegramBot.Commands.ClearRecipesAsPartOfMeal;
 using Application.TelegramBot.Commands.RemoveRecipeFromLikedList;
 using Application.TelegramBot.Commands.RemoveRecipeFromTheMeal;
+using Application.TelegramBot.Queries.GetMealPlanForUser;
+using Application.TelegramBot.Queries.GetRecipesAsPartOfMeal;
 using Application.TelegramBot.Queries.GetRecipesByIngredients;
 using Application.TelegramBot.Queries.GetRecipesByNutrients;
 using Application.TelegramBot.Queries.GetUserRecipeList;
@@ -24,7 +26,7 @@ public class RecipesController : Controller
         _mediator = mediator;
     }
     [HttpGet]
-    public async Task<IActionResult> ShowRecipes(List<Recipe>? recipes)
+    public async Task<IActionResult> ShowRecipes(List<Recipe>? recipes, NutrientViewDto? nutrientViewDto = null)
     {
         var username = User.Identity?.Name;
 
@@ -33,7 +35,8 @@ public class RecipesController : Controller
         
         return View("RecipesCarousel", new RecipesCarouselViewModel
         {
-            Recipes = result
+            Recipes = result,
+            NutrientViewDto = nutrientViewDto
         });
     }
 
@@ -106,7 +109,27 @@ public class RecipesController : Controller
 
         return View("_ResponseMessageComponent", result);
     }
-    
+
+    [HttpGet]
+    public async Task<IActionResult> RecipesAsPartOfMeal()
+    {
+        var username = User.Identity?.Name;
+
+        var result = await _mediator.Send(new GetRecipesAsPartOfMealQuery(username!));
+
+        return await ShowRecipes(result);
+    }
+
+    [HttpGet]
+    public async Task<IActionResult> MealPlanForUser()
+    {
+        var username = User.Identity?.Name;
+
+        var result = await _mediator.Send(new GetMealPlanForUserQuery(username!));
+
+        return await ShowRecipes(result.Item1, result.Item2);
+    }
+
     [HttpGet]
     public async Task<IActionResult> AddAllLikedRecipesAsMeal()
     {

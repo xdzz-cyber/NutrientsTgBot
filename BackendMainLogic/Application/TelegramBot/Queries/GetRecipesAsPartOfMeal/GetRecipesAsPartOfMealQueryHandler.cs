@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Application.TelegramBot.Queries.GetRecipesAsPartOfMeal;
 
-public class GetRecipesAsPartOfMealQueryHandler : IRequestHandler<GetRecipesAsPartOfMealQuery,string>
+public class GetRecipesAsPartOfMealQueryHandler : IRequestHandler<GetRecipesAsPartOfMealQuery,List<Recipe>>
 {
     private readonly ITelegramBotDbContext _ctx;
     private readonly UserManager<AppUser> _userManager;
@@ -18,28 +18,24 @@ public class GetRecipesAsPartOfMealQueryHandler : IRequestHandler<GetRecipesAsPa
         _userManager = userManager;
     }
     
-    public async Task<string> Handle(GetRecipesAsPartOfMealQuery request, CancellationToken cancellationToken)
+    public async Task<List<Recipe>> Handle(GetRecipesAsPartOfMealQuery request, CancellationToken cancellationToken)
     {
         var userInfo = await _userManager.FindByNameAsync(request.Username);
-        
-        if (userInfo is null)
-        {
-            return "Please, authorize to be able to make actions.";
-        }
 
         var recipes = await _ctx.Recipes.Where(recipe => _ctx.RecipesUsers
             .Where(ru => ru.AppUserId == userInfo.Id)
             .Any(r => r.RecipeId == recipe.Id && r.IsPartOfTheMeal)).ToListAsync(cancellationToken);
-        
-        var response = new StringBuilder();
-        
-        foreach (var recipe in recipes)
-        {
-            var msg = $"<strong>Title: {recipe.Title}, Vegetarian: {recipe.Vegetarian}, GlutenFree: {recipe.GlutenFree}, " + 
-                      $"PricePerServing: {recipe.PricePerServing}, Link: {recipe.SpoonacularSourceUrl}</strong>\n";
-            response.AppendLine(msg);
-        }
 
-        return string.IsNullOrEmpty(response.ToString()) ? "No recipes found" : response.ToString();
+        return recipes;
+        // var response = new StringBuilder();
+
+        // foreach (var recipe in recipes)
+        // {
+        //     var msg = $"<strong>Title: {recipe.Title}, Vegetarian: {recipe.Vegetarian}, GlutenFree: {recipe.GlutenFree}, " + 
+        //               $"PricePerServing: {recipe.PricePerServing}, Link: {recipe.SpoonacularSourceUrl}</strong>\n";
+        //     response.AppendLine(msg);
+        // }
+        //
+        // return string.IsNullOrEmpty(response.ToString()) ? "No recipes found" : response.ToString();
     }
 }
