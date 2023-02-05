@@ -56,148 +56,154 @@ else
         premiumPrice: '29',
         proPrice: '39'
     }" class="min-h-full bg-gray-200 pb-12">
-@* <div class="w-full bg-blue-900 pt-16 pb-24 text-center"> *@
-@*     <h4 class="text-2xl text-gray-100">Choose the right plan for you</h4> *@
-@*     <p class="text-sm text-gray-100 mt-2">Pricing built for businesses of all sizes. Choose package that suits your needs.</p> *@
-@*     <div class="flex items-center justify-center mt-8"> *@
-@*         <button @@click=" *@
-@*                     billingType = 'month', *@
-@*                     basicPrice = '19', *@
-@*                     premiumPrice = '29', *@
-@*                     proPrice = '39' *@
-@*                 " class="text-gray-800 px-4 py-2 rounded-tl-lg rounded-bl-lg bg-gray-200" :class=" billingType === 'month' ? 'bg-blue-300' : 'bg-gray-200' " title="Choose Monthly billing"> *@
-@*             Monthly billing *@
-@*         </button> *@
-@*         <button @@click=" *@
-@*                     billingType = 'year', *@
-@*                     basicPrice = '205', *@
-@*                     premiumPrice = '313', *@
-@*                     proPrice = '421' *@
-@*                 " class="text-gray-800 px-4 py-2 rounded-tr-lg rounded-br-lg bg-gray-200" :class=" billingType === 'year' ? 'bg-blue-300' : 'bg-gray-200' " title="Choose Annual billing"> *@
-@*             Annual billing *@
-@*         </button> *@
-@*     </div> *@
-@* </div> *@
-<div class="w-full 2xl:w-3/4 flex items-center justify-center px-8 md:px-32 lg:px-16 2xl:px-0 mx-auto -mt-8">
-    <div class="w-full grid grid-cols-1 xl:grid-cols-3 gap-8">
-        @if (@Model.NutrientViewDto is not null)
-        {
-            <section id="nutrientsInfo" class="absolute left-0 text-2lg right-5/6">
-                <div class="mt-8 p-8  md:flex justify-around">
-                    <div class="flex justify-between p-0 bg-white/30 rounded-lg shadow-lg shadow-indigo-500/40 hover:shadow-xl hover:shadow-blue-500/40">
-                        <div class="flex items-center space-x-4 px-2">
-                            <div class="flex flex-col m-0">
-                                <span class="font-bold">Nutrients report:
-                                </span>
-                                <span class="text-sm">Calories : @Model.NutrientViewDto.Calories</span>
-                                <span class="text-sm">Carbohydrates : @Model.NutrientViewDto.Carbohydrates</span>
-                                <span class="text-sm">Fat : @Model.NutrientViewDto.Fat</span>
-                                <span class="text-sm">Protein : @Model.NutrientViewDto.Protein </span>
+        @* <div class="w-full bg-blue-900 pt-16 pb-24 text-center"> *@
+        @*     <h4 class="text-2xl text-gray-100">Choose the right plan for you</h4> *@
+        @*     <p class="text-sm text-gray-100 mt-2">Pricing built for businesses of all sizes. Choose package that suits your needs.</p> *@
+        @*     <div class="flex items-center justify-center mt-8"> *@
+        @*         <button @@click=" *@
+        @*                     billingType = 'month', *@
+        @*                     basicPrice = '19', *@
+        @*                     premiumPrice = '29', *@
+        @*                     proPrice = '39' *@
+        @*                 " class="text-gray-800 px-4 py-2 rounded-tl-lg rounded-bl-lg bg-gray-200" :class=" billingType === 'month' ? 'bg-blue-300' : 'bg-gray-200' " title="Choose Monthly billing"> *@
+        @*             Monthly billing *@
+        @*         </button> *@
+        @*         <button @@click=" *@
+        @*                     billingType = 'year', *@
+        @*                     basicPrice = '205', *@
+        @*                     premiumPrice = '313', *@
+        @*                     proPrice = '421' *@
+        @*                 " class="text-gray-800 px-4 py-2 rounded-tr-lg rounded-br-lg bg-gray-200" :class=" billingType === 'year' ? 'bg-blue-300' : 'bg-gray-200' " title="Choose Annual billing"> *@
+        @*             Annual billing *@
+        @*         </button> *@
+        @*     </div> *@
+        @* </div> *@
+        <div class="w-full 2xl:w-3/4 flex items-center justify-center px-8 md:px-32 lg:px-16 2xl:px-0 mx-auto -mt-8">
+            <div class="w-full grid grid-cols-1 xl:grid-cols-3 gap-8" id="gridColsParentOfCards">
+                @if (Model.NutrientViewDto is not null)
+                {
+                    <section id="nutrientsInfo" class="absolute left-0 text-2lg right-5/6">
+                        <div class="mt-8 p-8  md:flex justify-around">
+                            <div class="flex justify-between p-0 bg-white/30 rounded-lg shadow-lg shadow-indigo-500/40 hover:shadow-xl hover:shadow-blue-500/40">
+                                <div class="flex items-center space-x-4 px-2">
+                                    <div class="flex flex-col m-0">
+                                        <span class="font-bold">Nutrients report:
+                                        </span>
+                                        <span class="text-sm">Calories : @Model.NutrientViewDto.Calories</span>
+                                        <span class="text-sm">Carbohydrates : @Model.NutrientViewDto.Carbohydrates</span>
+                                        <span class="text-sm">Fat : @Model.NutrientViewDto.Fat</span>
+                                        <span class="text-sm">Protein : @Model.NutrientViewDto.Protein </span>
+                                    </div>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                </div>
-            </section>
-        }
+                    </section>
+                }
         
         
-        @foreach (var recipe in Model.Recipes)
-        {
-            <div class="bg-white shadow-2xl rounded-lg py-3 mt-8">
-                <p class="text-xl text-center font-bold text-blue-600">@recipe.Title</p>
-                <p class="text-center py-8">
-                    <span class="text-4xl font-bold text-gray-700">
-                        $<span x-text="basicPrice">@recipe.PricePerServing</span>
-                    </span>
-                    <span class="text-xs uppercase text-gray-500">
-                        / <span x-text="billingType">serving</span>
-                    </span>
-                </p>
-                <ul class="border-t border-gray-300 py-8 space-y-6">
-                    <li class="flex items-center space-x-2 px-8">
-                        <span class="bg-blue-600 rounded-full p-1">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3 text-white" viewBox="0 0 20 20" fill="currentColor">
-                                <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
-                            </svg>
-                        </span>
-                        <span class="text-gray-600 capitalize">@(recipe.Vegetarian ? "Vegetarian" : "Not vegetarian")</span>
-                    </li>
-                    <li class="flex items-center space-x-2 px-8">
-                        <span class="bg-blue-600 rounded-full p-1">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3 text-white" viewBox="0 0 20 20" fill="currentColor">
-                                <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
-                            </svg>
-                        </span>
-                        <span class="text-gray-600 capitalize">@(recipe.GlutenFree ? "Gluten-free" : "Not gluten-free")</span>
-                    </li>
-                    <li class="flex items-center space-x-2 px-8">
-                        <span class="bg-blue-600 rounded-full p-1">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3 text-white" viewBox="0 0 20 20" fill="currentColor">
-                                <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
-                            </svg>
-                        </span>
-                        <span class="text-gray-600 capitalize"><a href="@recipe.SpoonacularSourceUrl">Link</a> to original page</span>
-                    </li>
-                    @if (TelegramBotDbContext.RecipesUsers.FirstOrDefault(r => r.RecipeId == recipe.Id && r.IsPartOfTheMeal) != null)
-                    {
-                        <li class="flex items-center space-x-2 px-8">
-                            <span class="bg-blue-600 rounded-full p-1">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3 text-white" viewBox="0 0 20 20" fill="currentColor">
-                                    <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
-                                </svg>
+                @foreach (var recipe in Model.Recipes)
+                {
+                    <div class="bg-white shadow-2xl rounded-lg py-3 mt-8">
+                        <p class="text-xl text-center font-bold text-blue-600">@recipe.Title</p>
+                        <p class="text-center py-8">
+                            <span class="text-4xl font-bold text-gray-700">
+                                $<span x-text="basicPrice">@recipe.PricePerServing</span>
                             </span>
-                            <a asp-action="RemoveRecipeFromTheMeal" asp-controller="Recipes"
-                               asp-route-recipeId="@recipe.Id"
-                               class="text-blue-600 capitalize">Remove as meal</a>
-                        </li>
-                    }
-                    else
-                    {
-                        <li class="flex items-center space-x-2 px-8">
-                            <span class="bg-blue-600 rounded-full p-1">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3 text-white" viewBox="0 0 20 20" fill="currentColor">
-                                    <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
-                                </svg>
+                            <span class="text-xs uppercase text-gray-500">
+                                / <span x-text="billingType">serving</span>
                             </span>
-                            <a asp-action="AddRecipeAsPartOfMeal" asp-controller="Recipes"
-                               asp-route-recipeId="@recipe.Id"
-                               class="text-blue-600 capitalize">Add as part of the meal</a>
-                        </li>
-                    }
-                </ul>
-                <div class="flex flex-row items-center gap-x-3 justify-center mt-6">
-                    @if (TelegramBotDbContext.RecipesUsers.Any(ru => ru.RecipeId == recipe.Id))
-                    {
-                        <a asp-action="RemoveRecipeFromLikedList" asp-controller="Recipes"
-                           asp-route-recipeId="@recipe.Id"
-                           class="bg-pink-600 hover:bg-pink-700 px-6 py-2 text-sm text-gray-200 uppercase rounded font-bold transition duration-150" title="Purchase">
-                            Remove as liked
-                        </a>
-                    }
-                    else
-                    {
-                        <a asp-action="AddRecipeToUser" asp-controller="Recipes"
-                           asp-route-recipeId="@recipe.Id"
-                           class="bg-blue-600 hover:bg-blue-700 px-6 py-2 text-sm text-gray-200 uppercase rounded font-bold transition duration-150" title="Purchase">
-                            Save recipe
-                        </a>
-                    }
-                    <div class="flex items-start">
-                        <div class="flex items-center h-5">
-                            <input id="remember" aria-describedby="remember" type="checkbox" class="bg-gray-50 border-gray-300 focus:ring-3 focus:ring-blue-300 h-4 w-4 rounded" required="">
-                        </div>
-                        <div class="text-sm ml-3">
-                            <label for="remember" class="font-medium text-gray-900">Marked as to be saved</label>
+                        </p>
+                        <ul class="border-t border-gray-300 py-8 space-y-6">
+                            <li class="flex items-center space-x-2 px-8">
+                                <span class="bg-blue-600 rounded-full p-1">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3 text-white" viewBox="0 0 20 20" fill="currentColor">
+                                        <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
+                                    </svg>
+                                </span>
+                                <span class="text-gray-600 capitalize">@(recipe.Vegetarian ? "Vegetarian" : "Not vegetarian")</span>
+                            </li>
+                            <li class="flex items-center space-x-2 px-8">
+                                <span class="bg-blue-600 rounded-full p-1">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3 text-white" viewBox="0 0 20 20" fill="currentColor">
+                                        <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
+                                    </svg>
+                                </span>
+                                <span class="text-gray-600 capitalize">@(recipe.GlutenFree ? "Gluten-free" : "Not gluten-free")</span>
+                            </li>
+                            <li class="flex items-center space-x-2 px-8">
+                                <span class="bg-blue-600 rounded-full p-1">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3 text-white" viewBox="0 0 20 20" fill="currentColor">
+                                        <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
+                                    </svg>
+                                </span>
+                                <span class="text-gray-600 capitalize"><a href="@recipe.SpoonacularSourceUrl">Link</a> to original page</span>
+                            </li>
+                            @if (TelegramBotDbContext.RecipesUsers.FirstOrDefault(r => r.RecipeId == recipe.Id && r.IsPartOfTheMeal) != null)
+                            {
+                                <li class="flex items-center space-x-2 px-8">
+                                    <span class="bg-blue-600 rounded-full p-1">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3 text-white" viewBox="0 0 20 20" fill="currentColor">
+                                            <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
+                                        </svg>
+                                    </span>
+                                    <a asp-action="RemoveRecipeFromTheMeal" asp-controller="Recipes"
+                                       asp-route-recipeId="@recipe.Id"
+                                       class="text-blue-600 capitalize">Remove as meal</a>
+                                </li>
+                            }
+                            else
+                            {
+                                <li class="flex items-center space-x-2 px-8">
+                                    <span class="bg-blue-600 rounded-full p-1">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3 text-white" viewBox="0 0 20 20" fill="currentColor">
+                                            <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
+                                        </svg>
+                                    </span>
+                                    <a asp-action="AddRecipeAsPartOfMeal" asp-controller="Recipes"
+                                       asp-route-recipeId="@recipe.Id"
+                                       class="text-blue-600 capitalize">Add as part of the meal</a>
+                                </li>
+                            }
+                        </ul>
+                        <div class="flex flex-row items-center gap-x-3 justify-center mt-6">
+                            @if (TelegramBotDbContext.RecipesUsers.Any(ru => ru.RecipeId == recipe.Id))
+                            {
+                                <a asp-action="RemoveRecipeFromLikedList" asp-controller="Recipes"
+                                   asp-route-recipeId="@recipe.Id"
+                                   class="bg-pink-600 hover:bg-pink-700 px-6 py-2 text-sm text-gray-200 uppercase rounded font-bold transition duration-150" title="Purchase">
+                                    Remove as liked
+                                </a>
+                            }
+                            else
+                            {
+                                <a asp-action="AddRecipeToUser" asp-controller="Recipes"
+                                   asp-route-recipeId="@recipe.Id"
+                                   class="bg-blue-600 hover:bg-blue-700 px-6 py-2 text-sm text-gray-200 uppercase rounded font-bold transition duration-150" title="Purchase">
+                                    Save recipe
+                                </a>
+                                <div class="flex items-start">
+                                    <div class="flex items-center h-5">
+                                        <input id="remember" aria-describedby="remember" type="checkbox" class="bg-gray-50 border-gray-300 focus:ring-3 focus:ring-blue-300 h-4 w-4 rounded">
+                                        <input type="hidden" class="recipeIdToBeAdded" value="@recipe.Id">
+                                    </div>
+                                    <div class="text-sm ml-3">
+                                        <label for="remember" class="font-medium text-gray-900">Mark as to be saved</label>
+                                    </div>
+                                </div>
+                            }
                         </div>
                     </div>
-                </div>
+                }
             </div>
-        }
+        </div>
     </div>
-    </div>
-</div>
+    
+    <button onclick="addAllRecipesMarkedAsSaved()" class="group relative h-12 w-48 overflow-hidden rounded-lg bg-white text-lg shadow">
+        <div class="absolute inset-0 w-3 bg-amber-400 transition-all duration-[250ms] ease-out group-hover:w-full"></div>
+        <span class="relative text-black group-hover:text-white">Add all marked as saved!</span>
+    </button>
 
-<!--pagination goes here-->
+    <!--pagination goes here-->
 <div class="grid w-full justify-items-center align-top mb-8">
     <nav class="mb-8" aria-label="Page navigation example">
         <ul class="inline-flex -space-x-px">

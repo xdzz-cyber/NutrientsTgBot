@@ -69,4 +69,10 @@ public class HomeController : Controller
     {
         return View();
     }
+
+    [HttpGet]
+    public IActionResult ShowResult([FromQuery] string result)
+    {
+        return View("_ResponseMessageComponent", result);
+    }
 }

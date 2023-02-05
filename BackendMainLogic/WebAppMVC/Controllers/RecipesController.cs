@@ -1,5 +1,7 @@
-﻿using Application.TelegramBot.Commands.AddAllLikedRecipesAsMeal;
+﻿using System.Text.Json;
+using Application.TelegramBot.Commands.AddAllLikedRecipesAsMeal;
 using Application.TelegramBot.Commands.AddRecipeAsPartOfMeal;
+using Application.TelegramBot.Commands.AddRecipesToUser;
 using Application.TelegramBot.Commands.AddRecipeToUser;
 using Application.TelegramBot.Commands.ClearLikedRecipesList;
 using Application.TelegramBot.Commands.ClearRecipesAsPartOfMeal;
@@ -148,5 +150,15 @@ public class RecipesController : Controller
         var result = await _mediator.Send(new GetRecipesByIngredientsQuery(username!, newValue));
 
         return await ShowRecipes(result);
+    }
+    
+    [HttpPost]
+    public async Task<string> AddRecipesToUser([FromBody] string recipeIds)
+    {
+        var username = User.Identity?.Name;
+        
+        var recipeIdsList = JsonSerializer.Deserialize<List<string>>(recipeIds);
+
+        return await _mediator.Send(new AddRecipesToUserCommand(username!, recipeIdsList!));
     }
 }
