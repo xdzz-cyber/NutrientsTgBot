@@ -28,7 +28,7 @@ public class RecipesController : Controller
         _mediator = mediator;
     }
     [HttpGet]
-    public async Task<IActionResult> ShowRecipes(List<Recipe>? recipes, NutrientViewDto? nutrientViewDto = null)
+    public async Task<IActionResult> ShowRecipes(int pageNumber = 1, List<Recipe>? recipes = null ,NutrientViewDto? nutrientViewDto = null)
     {
         var username = User.Identity?.Name;
 
@@ -37,8 +37,11 @@ public class RecipesController : Controller
         
         return View("RecipesCarousel", new RecipesCarouselViewModel
         {
-            Recipes = result,
-            NutrientViewDto = nutrientViewDto
+            Recipes = result.Skip((pageNumber - 1) * 3).Take(3).ToList(),
+            NutrientViewDto = nutrientViewDto,
+            MaxRecipesPerPage = 3,
+            CurrentPageNumber = pageNumber,
+            TotalRecipesCount = result.Count
         });
     }
 
@@ -59,7 +62,7 @@ public class RecipesController : Controller
 
         var result = await _mediator.Send(new GetRecipesByNutrientsQuery(username!));
 
-        return await ShowRecipes(result);
+        return await ShowRecipes(recipes: result);
     }
 
     [HttpGet]
@@ -119,7 +122,7 @@ public class RecipesController : Controller
 
         var result = await _mediator.Send(new GetRecipesAsPartOfMealQuery(username!));
 
-        return await ShowRecipes(result);
+        return await ShowRecipes(recipes: result);
     }
 
     [HttpGet]
@@ -129,7 +132,7 @@ public class RecipesController : Controller
 
         var result = await _mediator.Send(new GetMealPlanForUserQuery(username!));
 
-        return await ShowRecipes(result.Item1, result.Item2);
+        return await ShowRecipes(recipes: result.Item1, nutrientViewDto: result.Item2);
     }
 
     [HttpGet]
@@ -149,7 +152,7 @@ public class RecipesController : Controller
 
         var result = await _mediator.Send(new GetRecipesByIngredientsQuery(username!, newValue));
 
-        return await ShowRecipes(result);
+        return await ShowRecipes(recipes: result);
     }
     
     [HttpPost]

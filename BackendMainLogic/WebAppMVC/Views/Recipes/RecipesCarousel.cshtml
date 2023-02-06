@@ -10,32 +10,32 @@
 <partial name="_HeaderNavbarPartial"/>
 
 <div class="w-full bg-blue-900 pt-8 pb-8 text-center">
-        <h4 class="text-2xl text-gray-100">Choose the right meals for you</h4>
-        <p class="text-sm text-gray-100 mt-2">There are two main filters upon which you can select ones that suits you best.
-            </p>
-        <div class="flex flex-row items-center gap-x-3 justify-center mt-8">
-            <a asp-action="DefaultForm" asp-controller="Home"
-               asp-route-actionName="RecipesByIngredients"
-               asp-route-controllerName="Recipes"
-               class="text-gray-800 px-4 py-2 rounded-tl-lg rounded-bl-lg bg-gray-200">
-                Get recipes by ingredients
-            </a>
-            <a asp-action="RecipesByNutrients" asp-controller="Recipes"
-               class="text-gray-800 px-4 py-2 rounded-tr-lg rounded-br-lg bg-gray-200">
-                Get recipes by nutrients
-            </a>
-            <a asp-action="AddAllLikedRecipesAsMeal" asp-controller="Recipes" class="text-gray-800 px-4 py-2 rounded-tr-lg rounded-br-lg bg-gray-200">Add all liked recipes as meal</a>
-        </div>
-        <div class="flex flex-row items-center gap-x-3 justify-center mt-8">
-            <a asp-action="ClearRecipesAsPartOfMeal" asp-controller="Recipes" class="bg-orange-500 hover:bg-orange-700 text-white font-bold py-2 px-4 rounded">Clear recipes as part of the meal</a>
-            <a class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" href="">Add all recipes as part of the meal</a>
-            <a asp-action="ClearLikedRecipesList" asp-controller="Recipes" class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded">Clear saved recipes list</a>
-        </div>
+    <h4 class="text-2xl text-gray-100">Choose the right meals for you</h4>
+    <p class="text-sm text-gray-100 mt-2">
+        There are two main filters upon which you can select ones that suits you best.
+    </p>
+    <div class="flex flex-row items-center gap-x-3 justify-center mt-8">
+        <a asp-action="DefaultForm" asp-controller="Home"
+           asp-route-actionName="RecipesByIngredients"
+           asp-route-controllerName="Recipes"
+           class="text-gray-800 px-4 py-2 rounded-tl-lg rounded-bl-lg bg-gray-200">
+            Get recipes by ingredients
+        </a>
+        <a asp-action="RecipesByNutrients" asp-controller="Recipes"
+           class="text-gray-800 px-4 py-2 rounded-tr-lg rounded-br-lg bg-gray-200">
+            Get recipes by nutrients
+        </a>
+        <a asp-action="AddAllLikedRecipesAsMeal" asp-controller="Recipes" class="text-gray-800 px-4 py-2 rounded-tr-lg rounded-br-lg bg-gray-200">Add all liked recipes as meal</a>
     </div>
-@if (Model.Recipes.Count == 0)
+    <div class="flex flex-row items-center gap-x-3 justify-center mt-8">
+        <a asp-action="ClearRecipesAsPartOfMeal" asp-controller="Recipes" class="bg-orange-500 hover:bg-orange-700 text-white font-bold py-2 px-4 rounded">Clear recipes as part of the meal</a>
+        <a class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" href="">Add all recipes as part of the meal</a>
+        <a asp-action="ClearLikedRecipesList" asp-controller="Recipes" class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded">Clear saved recipes list</a>
+    </div>
+</div>
+@if (Model.TotalRecipesCount == 0)
 {
-    // min-h-screen
-    <section class="flex items-center min-h-75 justify-center bg-white"> 
+    <section class="flex items-center min-h-75 justify-center bg-white">
         <div class="mx-auto max-w-[43rem] my-6">
             <div class="text-center">
                 <h1 class="mt-3 text-[3.5rem] font-bold leading-[4rem] tracking-tight text-black">
@@ -56,28 +56,6 @@ else
         premiumPrice: '29',
         proPrice: '39'
     }" class="min-h-full bg-gray-200 pb-12">
-        @* <div class="w-full bg-blue-900 pt-16 pb-24 text-center"> *@
-        @*     <h4 class="text-2xl text-gray-100">Choose the right plan for you</h4> *@
-        @*     <p class="text-sm text-gray-100 mt-2">Pricing built for businesses of all sizes. Choose package that suits your needs.</p> *@
-        @*     <div class="flex items-center justify-center mt-8"> *@
-        @*         <button @@click=" *@
-        @*                     billingType = 'month', *@
-        @*                     basicPrice = '19', *@
-        @*                     premiumPrice = '29', *@
-        @*                     proPrice = '39' *@
-        @*                 " class="text-gray-800 px-4 py-2 rounded-tl-lg rounded-bl-lg bg-gray-200" :class=" billingType === 'month' ? 'bg-blue-300' : 'bg-gray-200' " title="Choose Monthly billing"> *@
-        @*             Monthly billing *@
-        @*         </button> *@
-        @*         <button @@click=" *@
-        @*                     billingType = 'year', *@
-        @*                     basicPrice = '205', *@
-        @*                     premiumPrice = '313', *@
-        @*                     proPrice = '421' *@
-        @*                 " class="text-gray-800 px-4 py-2 rounded-tr-lg rounded-br-lg bg-gray-200" :class=" billingType === 'year' ? 'bg-blue-300' : 'bg-gray-200' " title="Choose Annual billing"> *@
-        @*             Annual billing *@
-        @*         </button> *@
-        @*     </div> *@
-        @* </div> *@
         <div class="w-full 2xl:w-3/4 flex items-center justify-center px-8 md:px-32 lg:px-16 2xl:px-0 mx-auto -mt-8">
             <div class="w-full grid grid-cols-1 xl:grid-cols-3 gap-8" id="gridColsParentOfCards">
                 @if (Model.NutrientViewDto is not null)
@@ -87,7 +65,8 @@ else
                             <div class="flex justify-between p-0 bg-white/30 rounded-lg shadow-lg shadow-indigo-500/40 hover:shadow-xl hover:shadow-blue-500/40">
                                 <div class="flex items-center space-x-4 px-2">
                                     <div class="flex flex-col m-0">
-                                        <span class="font-bold">Nutrients report:
+                                        <span class="font-bold">
+                                            Nutrients report:
                                         </span>
                                         <span class="text-sm">Calories : @Model.NutrientViewDto.Calories</span>
                                         <span class="text-sm">Carbohydrates : @Model.NutrientViewDto.Carbohydrates</span>
@@ -99,8 +78,8 @@ else
                         </div>
                     </section>
                 }
-        
-        
+
+
                 @foreach (var recipe in Model.Recipes)
                 {
                     <div class="bg-white shadow-2xl rounded-lg py-3 mt-8">
@@ -148,7 +127,9 @@ else
                                     </span>
                                     <a asp-action="RemoveRecipeFromTheMeal" asp-controller="Recipes"
                                        asp-route-recipeId="@recipe.Id"
-                                       class="text-blue-600 capitalize">Remove as meal</a>
+                                       class="text-blue-600 capitalize">
+                                        Remove as meal
+                                    </a>
                                 </li>
                             }
                             else
@@ -161,7 +142,9 @@ else
                                     </span>
                                     <a asp-action="AddRecipeAsPartOfMeal" asp-controller="Recipes"
                                        asp-route-recipeId="@recipe.Id"
-                                       class="text-blue-600 capitalize">Add as part of the meal</a>
+                                       class="text-blue-600 capitalize">
+                                        Add as part of the meal
+                                    </a>
                                 </li>
                             }
                         </ul>
@@ -197,47 +180,41 @@ else
             </div>
         </div>
     </div>
-    
-    <button onclick="addAllRecipesMarkedAsSaved()" class="group relative h-12 w-48 overflow-hidden rounded-lg bg-white text-lg shadow">
-        <div class="absolute inset-0 w-3 bg-amber-400 transition-all duration-[250ms] ease-out group-hover:w-full"></div>
-        <span class="relative text-black group-hover:text-white">Add all marked as saved!</span>
-    </button>
-
+    <div class="flex justify-center content-center mb-8">
+        <button onclick="addAllRecipesMarkedAsSaved()" class="group relative h-10 w-40 overflow-hidden rounded-lg bg-white text-sm shadow">
+            <div class="absolute inset-0 w-3 bg-amber-400 transition-all duration-[250ms] ease-out group-hover:w-full"></div>
+            <span class="relative text-black group-hover:text-white">Add all marked as saved!</span>
+        </button>
+    </div>
     <!--pagination goes here-->
-<div class="grid w-full justify-items-center align-top mb-8">
-    <nav class="mb-8" aria-label="Page navigation example">
-        <ul class="inline-flex -space-x-px">
-            <li>
-                <a href="#"
-                   class="bg-white border border-gray-300 text-gray-500 hover:bg-gray-100 hover:text-gray-700 ml-0 rounded-l-lg leading-tight py-2 px-3 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white">Previous</a>
-            </li>
-            <li>
-                <a href="#"
-                   class="bg-white border border-gray-300 text-gray-500 hover:bg-gray-100 hover:text-gray-700 leading-tight py-2 px-3 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white">1</a>
-            </li>
-            <li>
-                <a href="#"
-                   class="bg-white border border-gray-300 text-gray-500 hover:bg-gray-100 hover:text-gray-700 leading-tight py-2 px-3 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white">2</a>
-            </li>
-            <li>
-                <a href="#" aria-current="page"
-                   class="bg-blue-50 border border-gray-300 text-blue-600 hover:bg-blue-100 hover:text-blue-700  py-2 px-3 dark:border-gray-700 dark:bg-gray-700 dark:text-white">3</a>
-            </li>
-            <li>
-                <a href="#"
-                   class="bg-white border border-gray-300 text-gray-500 hover:bg-gray-100 hover:text-gray-700 leading-tight py-2 px-3 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white">4</a>
-            </li>
-            <li>
-                <a href="#"
-                   class="bg-white border border-gray-300 text-gray-500 hover:bg-gray-100 hover:text-gray-700 leading-tight py-2 px-3 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white">5</a>
-            </li>
-            <li>
-                <a href="#"
-                   class="bg-white border border-gray-300 text-gray-500 hover:bg-gray-100 hover:text-gray-700 rounded-r-lg leading-tight py-2 px-3 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white">Next</a>
-            </li>
-        </ul>
-    </nav>
-</div>
+    <div class="grid w-full justify-items-center align-top mb-8">
+        <nav class="mb-8" aria-label="Page navigation example">
+            <ul class="inline-flex -space-x-px">
+                <li>
+                    <a asp-action="ShowRecipes" asp-route-pageNumber="@(Model.CurrentPageNumber - 1)" asp-controller="Recipes" 
+                       class="@(Model.CurrentPageNumber > 1 ? "" : "pointer-events-none") bg-white border border-gray-300 text-gray-500 hover:bg-gray-100 hover:text-gray-700 ml-0 rounded-l-lg leading-tight py-2 px-3 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white">
+                        Previous
+                    </a>
+                </li>
+
+                @for (var pageNumber = Model.CurrentPageNumber; pageNumber <= (int)Math.Ceiling((double)Model.TotalRecipesCount / (double)Model.MaxRecipesPerPage); pageNumber++)
+                {
+                    <li>
+                        <a asp-action="ShowRecipes" asp-route-pageNumber="@pageNumber" asp-controller="Recipes" class="bg-white border border-gray-300 text-gray-500 hover:bg-gray-100 hover:text-gray-700 leading-tight py-2 px-3 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white">
+                            @pageNumber
+                        </a>
+                    </li>
+                }
+                <li>
+                    <a asp-action="ShowRecipes" asp-route-pageNumber="@(Model.CurrentPageNumber + 1)" asp-controller="Recipes"
+                       class="@(Model.CurrentPageNumber < (int)Math.Ceiling((double)Model.TotalRecipesCount/ (double)Model.MaxRecipesPerPage) ? "" : "pointer-events-none") bg-white border border-gray-300 text-gray-500 hover:bg-gray-100 hover:text-gray-700 rounded-r-lg leading-tight py-2 px-3 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white">
+                        Next
+                    </a>
+                </li>
+
+            </ul>
+        </nav>
+    </div>
 }
 
 <partial name="_Footer"/>
