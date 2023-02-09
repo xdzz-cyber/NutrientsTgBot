@@ -28,20 +28,34 @@ public class RecipesController : Controller
         _mediator = mediator;
     }
     [HttpGet]
-    public async Task<IActionResult> ShowRecipes(int pageNumber = 1, List<Recipe>? recipes = null ,NutrientViewDto? nutrientViewDto = null)
+    public async Task<IActionResult> ShowRecipes(int pageNumber = 1)
     {
-        var username = User.Identity?.Name;
-
-        var result = recipes is null || recipes.Count == 0 
-            ? await _mediator.Send(new GetUserRecipeListQuery(username!)) : recipes;
         
+        var username = User.Identity?.Name;
+        // var result = recipes is null || recipes.Count == 0 
+        //     ? await _mediator.Send(new GetUserRecipeListQuery(username!)) : recipes;
+
+        if (!TempData.ContainsKey("CurrentRecipes"))
+        {
+            TempData["CurrentRecipes"] = await _mediator.Send(new GetUserRecipeListQuery(username!));
+        }
+
+        if (!TempData.ContainsKey("Nutrients"))
+        {
+            TempData["Nutrients"] = new NutrientViewDto();
+        }
+
+        var recipes = TempData["CurrentRecipes"] as List<Recipe>;
+
+        var nutrients = TempData["Nutrients"] as NutrientViewDto;
+
         return View("RecipesCarousel", new RecipesCarouselViewModel
         {
-            Recipes = result.Skip((pageNumber - 1) * 3).Take(3).ToList(),
-            NutrientViewDto = nutrientViewDto,
+            Recipes = recipes!.Skip((pageNumber - 1) * 3).Take(3).ToList(),
+            NutrientViewDto = nutrients,
             MaxRecipesPerPage = 3,
             CurrentPageNumber = pageNumber,
-            TotalRecipesCount = result.Count
+            TotalRecipesCount = recipes!.Count
         });
     }
 
@@ -62,7 +76,9 @@ public class RecipesController : Controller
 
         var result = await _mediator.Send(new GetRecipesByNutrientsQuery(username!));
 
-        return await ShowRecipes(recipes: result);
+        TempData["CurrentRecipes"] = result;
+
+        return await ShowRecipes();
     }
 
     [HttpGet]
@@ -122,7 +138,9 @@ public class RecipesController : Controller
 
         var result = await _mediator.Send(new GetRecipesAsPartOfMealQuery(username!));
 
-        return await ShowRecipes(recipes: result);
+        TempData["CurrentRecipes"] = result;
+
+        return await ShowRecipes();
     }
 
     [HttpGet]
@@ -132,7 +150,11 @@ public class RecipesController : Controller
 
         var result = await _mediator.Send(new GetMealPlanForUserQuery(username!));
 
-        return await ShowRecipes(recipes: result.Item1, nutrientViewDto: result.Item2);
+        TempData["CurrentRecipes"] = result.Item1;
+
+        TempData["Nutrients"] = result.Item2;
+        
+        return await ShowRecipes();
     }
 
     [HttpGet]
@@ -151,8 +173,10 @@ public class RecipesController : Controller
         var username = User.Identity?.Name;
 
         var result = await _mediator.Send(new GetRecipesByIngredientsQuery(username!, newValue));
+        
+        TempData["CurrentRecipes"] = result;
 
-        return await ShowRecipes(recipes: result);
+        return await ShowRecipes();
     }
     
     [HttpPost]

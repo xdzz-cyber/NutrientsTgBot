@@ -1,5 +1,11 @@
 @{
     Layout = "_Layout";
+    
+    var titleMaxLength = Convert.ToInt32(Model.Recipes[0]?.Title.Length * 0.4);
+    var totalPagesNumber = (int) Math.Ceiling((double) Model.TotalRecipesCount / (double) Model.MaxRecipesPerPage);
+    var countStop = Model.CurrentPageNumber * 5 <= totalPagesNumber
+        ? Model.CurrentPageNumber * 5 : totalPagesNumber;
+    var countStart = countStop - Model.MaxRecipesPerPage - 1 > 0 ? countStop - Model.MaxRecipesPerPage - 1 : 1;
 }
 
 @inject ITelegramBotDbContext TelegramBotDbContext
@@ -58,7 +64,7 @@ else
     }" class="min-h-full bg-gray-200 pb-12">
         <div class="w-full 2xl:w-3/4 flex items-center justify-center px-8 md:px-32 lg:px-16 2xl:px-0 mx-auto -mt-8">
             <div class="w-full grid grid-cols-1 xl:grid-cols-3 gap-8" id="gridColsParentOfCards">
-                @if (Model.NutrientViewDto is not null)
+                @if (@Model.NutrientViewDto is {Calories: > 0 })
                 {
                     <section id="nutrientsInfo" class="absolute left-0 text-2lg right-5/6">
                         <div class="mt-8 p-8  md:flex justify-around">
@@ -83,7 +89,7 @@ else
                 @foreach (var recipe in Model.Recipes)
                 {
                     <div class="bg-white shadow-2xl rounded-lg py-3 mt-8">
-                        <p class="text-xl text-center font-bold text-blue-600">@recipe.Title</p>
+                        <p class="text-xl text-center font-bold text-blue-600">@recipe.Title[..titleMaxLength]</p>
                         <p class="text-center py-8">
                             <span class="text-4xl font-bold text-gray-700">
                                 $<span x-text="basicPrice">@recipe.PricePerServing</span>
@@ -180,12 +186,16 @@ else
             </div>
         </div>
     </div>
-    <div class="flex justify-center content-center mb-8">
-        <button onclick="addAllRecipesMarkedAsSaved()" class="group relative h-10 w-40 overflow-hidden rounded-lg bg-white text-sm shadow">
-            <div class="absolute inset-0 w-3 bg-amber-400 transition-all duration-[250ms] ease-out group-hover:w-full"></div>
-            <span class="relative text-black group-hover:text-white">Add all marked as saved!</span>
-        </button>
-    </div>
+    @if (!TelegramBotDbContext.RecipesUsers.Any(ru => ru.IsPartOfTheMeal 
+                                                     && TelegramBotDbContext.Recipes.FirstOrDefault(r => r.Id == ru.RecipeId) != null))
+    {
+        <div class="flex justify-center content-center mb-8">
+            <button onclick="addAllRecipesMarkedAsSaved()" class="group relative h-10 w-40 overflow-hidden rounded-lg bg-white text-sm shadow">
+                <div class="absolute inset-0 w-3 bg-amber-400 transition-all duration-[250ms] ease-out group-hover:w-full"></div>
+                <span class="relative text-black group-hover:text-white">Add all marked as saved!</span>
+            </button>
+        </div>   
+    }
     <!--pagination goes here-->
     <div class="grid w-full justify-items-center align-top mb-8">
         <nav class="mb-8" aria-label="Page navigation example">
@@ -197,17 +207,18 @@ else
                     </a>
                 </li>
 
-                @for (var pageNumber = Model.CurrentPageNumber; pageNumber <= (int)Math.Ceiling((double)Model.TotalRecipesCount / (double)Model.MaxRecipesPerPage); pageNumber++)
+                @for (var pageNumber = countStart; pageNumber <= countStop; pageNumber++)
                 {
                     <li>
-                        <a asp-action="ShowRecipes" asp-route-pageNumber="@pageNumber" asp-controller="Recipes" class="bg-white border border-gray-300 text-gray-500 hover:bg-gray-100 hover:text-gray-700 leading-tight py-2 px-3 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white">
+                        <a asp-action="ShowRecipes" asp-route-pageNumber="@pageNumber" asp-controller="Recipes" 
+                           class="@(pageNumber == Model.CurrentPageNumber ? "visited:bg-cyan-500" : "") bg-white border border-gray-300 text-gray-500 hover:bg-gray-100 hover:text-gray-700 leading-tight py-2 px-3 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white">
                             @pageNumber
                         </a>
                     </li>
                 }
                 <li>
                     <a asp-action="ShowRecipes" asp-route-pageNumber="@(Model.CurrentPageNumber + 1)" asp-controller="Recipes"
-                       class="@(Model.CurrentPageNumber < (int)Math.Ceiling((double)Model.TotalRecipesCount/ (double)Model.MaxRecipesPerPage) ? "" : "pointer-events-none") bg-white border border-gray-300 text-gray-500 hover:bg-gray-100 hover:text-gray-700 rounded-r-lg leading-tight py-2 px-3 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white">
+                       class="@(Model.CurrentPageNumber < totalPagesNumber ? "" : "pointer-events-none") bg-white border border-gray-300 text-gray-500 hover:bg-gray-100 hover:text-gray-700 rounded-r-lg leading-tight py-2 px-3 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white">
                         Next
                     </a>
                 </li>
