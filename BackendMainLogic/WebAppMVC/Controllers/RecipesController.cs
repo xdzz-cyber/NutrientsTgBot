@@ -37,17 +37,20 @@ public class RecipesController : Controller
 
         if (!TempData.ContainsKey("CurrentRecipes"))
         {
-            TempData["CurrentRecipes"] = await _mediator.Send(new GetUserRecipeListQuery(username!));
+            TempData["CurrentRecipes"] = JsonSerializer
+                .Serialize(await _mediator.Send(new GetUserRecipeListQuery(username!)));
+            TempData.Keep("CurrentRecipes");
         }
 
         if (!TempData.ContainsKey("Nutrients"))
         {
-            TempData["Nutrients"] = new NutrientViewDto();
+            TempData["Nutrients"] = JsonSerializer.Serialize(new NutrientViewDto());
+            TempData.Keep("Nutrients");
         }
 
-        var recipes = TempData["CurrentRecipes"] as List<Recipe>;
+        var recipes = JsonSerializer.Deserialize<List<Recipe>>(TempData["CurrentRecipes"] as string ?? throw new InvalidOperationException());
 
-        var nutrients = TempData["Nutrients"] as NutrientViewDto;
+        var nutrients = JsonSerializer.Deserialize<NutrientViewDto>(TempData["Nutrients"] as string ?? throw new InvalidOperationException());
 
         return View("RecipesCarousel", new RecipesCarouselViewModel
         {
@@ -76,7 +79,7 @@ public class RecipesController : Controller
 
         var result = await _mediator.Send(new GetRecipesByNutrientsQuery(username!));
 
-        TempData["CurrentRecipes"] = result;
+        TempData["CurrentRecipes"] = JsonSerializer.Serialize(result);
 
         return await ShowRecipes();
     }
@@ -138,7 +141,7 @@ public class RecipesController : Controller
 
         var result = await _mediator.Send(new GetRecipesAsPartOfMealQuery(username!));
 
-        TempData["CurrentRecipes"] = result;
+        TempData["CurrentRecipes"] = JsonSerializer.Serialize(result);
 
         return await ShowRecipes();
     }
@@ -150,9 +153,9 @@ public class RecipesController : Controller
 
         var result = await _mediator.Send(new GetMealPlanForUserQuery(username!));
 
-        TempData["CurrentRecipes"] = result.Item1;
+        TempData["CurrentRecipes"] = JsonSerializer.Serialize(result.Item1);
 
-        TempData["Nutrients"] = result.Item2;
+        TempData["Nutrients"] = JsonSerializer.Serialize(result.Item2);
         
         return await ShowRecipes();
     }
@@ -174,7 +177,7 @@ public class RecipesController : Controller
 
         var result = await _mediator.Send(new GetRecipesByIngredientsQuery(username!, newValue));
         
-        TempData["CurrentRecipes"] = result;
+        TempData["CurrentRecipes"] = JsonSerializer.Serialize(result);
 
         return await ShowRecipes();
     }
