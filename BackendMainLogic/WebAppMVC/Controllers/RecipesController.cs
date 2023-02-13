@@ -32,25 +32,21 @@ public class RecipesController : Controller
     {
         
         var username = User.Identity?.Name;
-        // var result = recipes is null || recipes.Count == 0 
-        //     ? await _mediator.Send(new GetUserRecipeListQuery(username!)) : recipes;
 
-        if (!TempData.ContainsKey("CurrentRecipes"))
+        if (HttpContext.Session.GetString("CurrentRecipes") is null)
         {
-            TempData["CurrentRecipes"] = JsonSerializer
-                .Serialize(await _mediator.Send(new GetUserRecipeListQuery(username!)));
-            TempData.Keep("CurrentRecipes");
+            HttpContext.Session.SetString("CurrentRecipes", JsonSerializer
+                .Serialize(await _mediator.Send(new GetUserRecipeListQuery(username!))));
         }
 
-        if (!TempData.ContainsKey("Nutrients"))
+        if (HttpContext.Session.GetString("Nutrients") is null)
         {
-            TempData["Nutrients"] = JsonSerializer.Serialize(new NutrientViewDto());
-            TempData.Keep("Nutrients");
+            HttpContext.Session.SetString("Nutrients",JsonSerializer.Serialize(new NutrientViewDto()));
         }
 
-        var recipes = JsonSerializer.Deserialize<List<Recipe>>(TempData["CurrentRecipes"] as string ?? throw new InvalidOperationException());
+        var recipes = JsonSerializer.Deserialize<List<Recipe>>(HttpContext.Session.GetString("CurrentRecipes") ?? throw new InvalidOperationException());
 
-        var nutrients = JsonSerializer.Deserialize<NutrientViewDto>(TempData["Nutrients"] as string ?? throw new InvalidOperationException());
+        var nutrients = JsonSerializer.Deserialize<NutrientViewDto>(HttpContext.Session.GetString("Nutrients") ?? throw new InvalidOperationException());
 
         return View("RecipesCarousel", new RecipesCarouselViewModel
         {
@@ -79,7 +75,7 @@ public class RecipesController : Controller
 
         var result = await _mediator.Send(new GetRecipesByNutrientsQuery(username!));
 
-        TempData["CurrentRecipes"] = JsonSerializer.Serialize(result);
+        HttpContext.Session.SetString("CurrentRecipes", JsonSerializer.Serialize(result));
 
         return await ShowRecipes();
     }
@@ -141,7 +137,7 @@ public class RecipesController : Controller
 
         var result = await _mediator.Send(new GetRecipesAsPartOfMealQuery(username!));
 
-        TempData["CurrentRecipes"] = JsonSerializer.Serialize(result);
+        HttpContext.Session.SetString("CurrentRecipes",JsonSerializer.Serialize(result));
 
         return await ShowRecipes();
     }
@@ -152,11 +148,11 @@ public class RecipesController : Controller
         var username = User.Identity?.Name;
 
         var result = await _mediator.Send(new GetMealPlanForUserQuery(username!));
-
-        TempData["CurrentRecipes"] = JsonSerializer.Serialize(result.Item1);
-
-        TempData["Nutrients"] = JsonSerializer.Serialize(result.Item2);
         
+        HttpContext.Session.SetString("CurrentRecipes",JsonSerializer.Serialize(result.Item1));
+        
+        HttpContext.Session.SetString("Nutrients",JsonSerializer.Serialize(result.Item2));
+
         return await ShowRecipes();
     }
 
@@ -176,8 +172,8 @@ public class RecipesController : Controller
         var username = User.Identity?.Name;
 
         var result = await _mediator.Send(new GetRecipesByIngredientsQuery(username!, newValue));
-        
-        TempData["CurrentRecipes"] = JsonSerializer.Serialize(result);
+
+        HttpContext.Session.SetString("CurrentRecipes", JsonSerializer.Serialize(result));
 
         return await ShowRecipes();
     }
