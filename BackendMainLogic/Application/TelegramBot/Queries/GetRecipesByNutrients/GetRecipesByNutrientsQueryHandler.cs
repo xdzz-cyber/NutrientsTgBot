@@ -12,7 +12,7 @@ using JsonSerializer = System.Text.Json.JsonSerializer;
 
 namespace Application.TelegramBot.Queries.GetRecipesByNutrients;
 
-public class GetRecipesByNutrientsQueryHandler : IRequestHandler<GetRecipesByNutrientsQuery, List<Recipe>>
+public class GetRecipesByNutrientsQueryHandler : IRequestHandler<GetRecipesByNutrientsQuery, List<RecipeViewDto>>
 {
     private readonly HttpClient _httpClient;
     private readonly IMapper _mapper;
@@ -28,7 +28,7 @@ public class GetRecipesByNutrientsQueryHandler : IRequestHandler<GetRecipesByNut
         _userManager = userManager;
     }
     
-    public async Task<List<Recipe>> Handle(GetRecipesByNutrientsQuery request, CancellationToken cancellationToken)
+    public async Task<List<RecipeViewDto>> Handle(GetRecipesByNutrientsQuery request, CancellationToken cancellationToken)
     {
         var foundRecipes = new List<Recipe>();
         
@@ -86,85 +86,105 @@ public class GetRecipesByNutrientsQueryHandler : IRequestHandler<GetRecipesByNut
         if (recipes.IsSuccessStatusCode)
         {
             var _ = await recipes.Content.ReadAsStringAsync(cancellationToken);
+
+            var skipFrom = new Random().Next(0, 60);
             
             listOfRecipes = JsonSerializer.Deserialize<List<RecipeViewDto>>(_);
 
-            foreach (var recipe in listOfRecipes!)
+            listOfRecipes = listOfRecipes!.Skip(skipFrom).Take(skipFrom + 20).ToList();
+
+            var getRecipesInformationBulkRequestString = string
+                .Format(TelegramBotRecipesHttpPaths.GetRecipesWithNutrition, string.Join(",", listOfRecipes.Select(r => r.Id)));
+
+            var getRecipesInformationBulkHttpMessage =
+                await _httpClient.GetAsync(getRecipesInformationBulkRequestString, cancellationToken);
+
+            if (getRecipesInformationBulkHttpMessage.IsSuccessStatusCode)
             {
-                var currentRecipeDiets = new Recipe();
-
-                if (_ctx.Recipes.FirstOrDefault(r => r.Id == recipe.Id) is null)
-                {
-                    var currentRecipeDietsRecipe = await _httpClient
-                        .GetAsync(TelegramBotRecipesHttpPaths.GetRecipeById
-                            .Replace("id", recipe.Id.ToString()), cancellationToken);
-                    
-                    var currentRecipeDietsRecipeContent = JsonSerializer
-                        .Deserialize<RecipeViewDto>(await currentRecipeDietsRecipe.Content.ReadAsStringAsync(cancellationToken));
-
-                    currentRecipeDiets.Vegetarian = currentRecipeDietsRecipeContent!.Vegetarian;
-                    currentRecipeDiets.GlutenFree = currentRecipeDietsRecipeContent.GlutenFree;
-                    currentRecipeDiets.PricePerServing = currentRecipeDietsRecipeContent.PricePerServing;
-                    currentRecipeDiets.SpoonacularSourceUrl = currentRecipeDietsRecipeContent.SpoonacularSourceUrl;
-                }
-                else
-                {
-                    currentRecipeDiets = _ctx.Recipes.FirstOrDefault(r => r.Id == recipe.Id);
-                }
-                
-                recipe.Vegetarian = currentRecipeDiets!.Vegetarian;
-                
-                recipe.GlutenFree = currentRecipeDiets.GlutenFree;
-                
-                recipe.PricePerServing = currentRecipeDiets.PricePerServing;
-                
-                recipe.SpoonacularSourceUrl = currentRecipeDiets.SpoonacularSourceUrl;
-                
-                var recipeFilters = await _ctx.RecipeFilters
-                    .Where(rf => rf.RecipeFiltersUsers.Any(rfu => rfu.RecipeFiltersId == rf.Id 
-                                                                  && rfu.IsTurnedIn && rfu.AppUserId == userInfo.Id))
-                    .ToListAsync(cancellationToken);
-                
-                var satisfiesFiltersCount = 0;
-                
-                foreach (var recipeFilter in recipeFilters)
-                {
-                    if ((nameof(recipe.Vegetarian).Equals(recipeFilter.Name) && recipe.Vegetarian)
-                        || (nameof(recipe.GlutenFree).Equals(recipeFilter.Name) && recipe.GlutenFree))
-                    {
-                        satisfiesFiltersCount += 1;
-                    }
-                }
-
-                var doesRecipeFitUserFilters = satisfiesFiltersCount == recipeFilters.Count;
-
-                if (doesRecipeFitUserFilters)
-                {
-                    foundRecipes.Add(new Recipe
-                    {
-                        Id = recipe.Id,
-                        Title = recipe.Title,
-                        Vegetarian = recipe.Vegetarian,
-                        GlutenFree = recipe.GlutenFree,
-                        PricePerServing = recipe.PricePerServing,
-                        SpoonacularSourceUrl = recipe.SpoonacularSourceUrl 
-                    });
-                     //var tmp = _mapper.Map<RecipeViewDto>(recipe);
-                     //tmp.
-                    // var msg = $"<strong>Title: {tmp.Title}, Vegetarian: {tmp.Vegetarian}, GlutenFree: {tmp.GlutenFree}," +
-                    //           $" PricePerServing: {tmp.PricePerServing}, " +
-                    //           $"Link: {tmp.SpoonacularSourceUrl} \nSave recipe(/AddRecipeToUser_{tmp.Id})</strong>\n";
-                    // response.AppendLine(msg);
-                    // msgResponse += msg;
-                    // recipesIds.Add(recipe.Id.ToString());
-                }
+                var recipesInformationBulkResponse = JsonSerializer
+                    .Deserialize<List<RecipeViewDto>>(
+                        await getRecipesInformationBulkHttpMessage.Content.ReadAsStringAsync(cancellationToken));
+                return recipesInformationBulkResponse!;
             }
+
+            
+
+            // foreach (var recipe in listOfRecipes!)
+            // {
+            //     var currentRecipeDiets = new Recipe();
+            //
+            //     if (_ctx.Recipes.FirstOrDefault(r => r.Id == recipe.Id) is null)
+            //     {
+            //         var currentRecipeDietsRecipe = await _httpClient
+            //             .GetAsync(TelegramBotRecipesHttpPaths.GetRecipeById
+            //                 .Replace("id", recipe.Id.ToString()), cancellationToken);
+            //         
+            //         var currentRecipeDietsRecipeContent = JsonSerializer
+            //             .Deserialize<RecipeViewDto>(await currentRecipeDietsRecipe.Content.ReadAsStringAsync(cancellationToken));
+            //
+            //         currentRecipeDiets.Vegetarian = currentRecipeDietsRecipeContent!.Vegetarian;
+            //         currentRecipeDiets.GlutenFree = currentRecipeDietsRecipeContent.GlutenFree;
+            //         currentRecipeDiets.PricePerServing = currentRecipeDietsRecipeContent.PricePerServing;
+            //         currentRecipeDiets.SpoonacularSourceUrl = currentRecipeDietsRecipeContent.SpoonacularSourceUrl;
+            //     }
+            //     else
+            //     {
+            //         currentRecipeDiets = _ctx.Recipes.FirstOrDefault(r => r.Id == recipe.Id);
+            //     }
+            //     
+            //     recipe.Vegetarian = currentRecipeDiets!.Vegetarian;
+            //     
+            //     recipe.GlutenFree = currentRecipeDiets.GlutenFree;
+            //     
+            //     recipe.PricePerServing = currentRecipeDiets.PricePerServing;
+            //     
+            //     recipe.SpoonacularSourceUrl = currentRecipeDiets.SpoonacularSourceUrl;
+            //     
+            //     var recipeFilters = await _ctx.RecipeFilters
+            //         .Where(rf => rf.RecipeFiltersUsers.Any(rfu => rfu.RecipeFiltersId == rf.Id 
+            //                                                       && rfu.IsTurnedIn && rfu.AppUserId == userInfo.Id))
+            //         .ToListAsync(cancellationToken);
+            //     
+            //     var satisfiesFiltersCount = 0;
+            //     
+            //     foreach (var recipeFilter in recipeFilters)
+            //     {
+            //         if ((nameof(recipe.Vegetarian).Equals(recipeFilter.Name) && recipe.Vegetarian)
+            //             || (nameof(recipe.GlutenFree).Equals(recipeFilter.Name) && recipe.GlutenFree))
+            //         {
+            //             satisfiesFiltersCount += 1;
+            //         }
+            //     }
+            //
+            //     var doesRecipeFitUserFilters = satisfiesFiltersCount == recipeFilters.Count;
+            //
+            //     if (doesRecipeFitUserFilters)
+            //     {
+            //         foundRecipes.Add(new Recipe
+            //         {
+            //             Id = recipe.Id,
+            //             Title = recipe.Title,
+            //             Vegetarian = recipe.Vegetarian,
+            //             GlutenFree = recipe.GlutenFree,
+            //             PricePerServing = recipe.PricePerServing,
+            //             SpoonacularSourceUrl = recipe.SpoonacularSourceUrl 
+            //         });
+            //          //var tmp = _mapper.Map<RecipeViewDto>(recipe);
+            //          //tmp.
+            //         // var msg = $"<strong>Title: {tmp.Title}, Vegetarian: {tmp.Vegetarian}, GlutenFree: {tmp.GlutenFree}," +
+            //         //           $" PricePerServing: {tmp.PricePerServing}, " +
+            //         //           $"Link: {tmp.SpoonacularSourceUrl} \nSave recipe(/AddRecipeToUser_{tmp.Id})</strong>\n";
+            //         // response.AppendLine(msg);
+            //         // msgResponse += msg;
+            //         // recipesIds.Add(recipe.Id.ToString());
+            //     }
+            // }
 
             // if (string.IsNullOrEmpty(response.ToString()))
             // {
             //     return "No recipes found.";
             // }
-            
+
             // response.AppendLine("Save all(/AddRecipeToUser_All)");
             //
             // if (!StateManagement.TempData.ContainsKey("RecipesIds"))
@@ -175,10 +195,11 @@ public class GetRecipesByNutrientsQueryHandler : IRequestHandler<GetRecipesByNut
             // {
             //     StateManagement.TempData["RecipesIds"] = string.Join(",", recipesIds);
             // }
-            
+
         }
 
         // return response.ToString();
-        return foundRecipes;
+        // return foundRecipes;
+        return new List<RecipeViewDto>();
     }
 }

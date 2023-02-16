@@ -1,10 +1,11 @@
-﻿using Application.Interfaces;
+﻿using Application.Common.Mappings;
+using Application.Interfaces;
 using Domain.TelegramBotEntities;
 using MediatR;
 
 namespace Application.TelegramBot.Queries.GetRecipesByNutrients;
 
-public class GetRecipesByNutrientsQuery : IRequest<List<Recipe>>, IQuery
+public class GetRecipesByNutrientsQuery : IRequest<List<RecipeViewDto>>, IQuery
 {
     public string Username { get; set; }
     public long ChatId { get; set; }
