@@ -14,11 +14,13 @@ using Application.TelegramBot.Queries.GetRecipesByNutrients;
 using Application.TelegramBot.Queries.GetUserRecipeList;
 using Domain.TelegramBotEntities;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using WebAppMVC.Models;
 
 namespace WebAppMVC.Controllers;
 
+[Authorize(Roles = "User")]
 public class RecipesController : Controller
 {
     private readonly IMediator _mediator;

@@ -24,10 +24,6 @@ public class AddRecipeAsPartOfMealCommandHandler : IRequestHandler<AddRecipeAsPa
     {
         var userInfo = await _userManager.FindByNameAsync(request.Username);
 
-        // var matchPartOfInputData = Regex.Matches(request.RecipeId, TelegramBotRecipeCommandsNQueriesDataPatterns.InputDataPatternForSingleId);
-        //
-        // var recipeId = string.Join("", matchPartOfInputData);
-
         var recipe = await _ctx.RecipesUsers
             .FirstOrDefaultAsync(ru => ru.RecipeId.ToString() == request.RecipeId, cancellationToken);
 

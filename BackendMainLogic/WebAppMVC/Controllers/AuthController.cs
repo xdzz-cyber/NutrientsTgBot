@@ -34,7 +34,6 @@ public class AuthController : Controller
         var newUserId = await _mediator.Send(new CreateUserCommand(username: registrationViewModel.UserName,
             age: registrationViewModel.Age, password: registrationViewModel.Password));
         
-        //Later: add [Authorize to controller to which we'll redirect]
         if (!string.IsNullOrEmpty(newUserId.ToString()))
         {
             await _signInManager.SignInAsync(await _userManager.FindByIdAsync(newUserId.ToString()), 

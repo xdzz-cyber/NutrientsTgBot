@@ -23,9 +23,6 @@ public class TurnOffRecipeFilterOfUserCommandHandler : IRequestHandler<TurnOffRe
     {
         var userInfo = await _userManager.FindByNameAsync(request.Username);
 
-        // var matchPartOfInputData = Regex.Matches(request.RecipeFilterId, 
-        //     TelegramBotRecipeCommandsNQueriesDataPatterns.InputDataPatternForRecipeFilterSingleId);
-
         var recipeFilter = await _ctx.RecipeFiltersUsers
             .FirstOrDefaultAsync(rfu => rfu.AppUserId == userInfo.Id 
                                && rfu.RecipeFiltersId.ToString() == request.RecipeFilterId, 

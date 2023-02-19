@@ -4,7 +4,7 @@ using MediatR;
 
 namespace Application.Users.Queries.FindUser;
 
-public class FindUserQuery : IRequest<AppUser>, IQuery
+public class FindUserQuery : IRequest<AppUser?>, IQuery
 {
     public string Username { get; set; }
 

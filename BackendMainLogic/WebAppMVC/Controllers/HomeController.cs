@@ -60,7 +60,16 @@ public class HomeController : Controller
         ViewData["ActionName"] = paramsForDefaultFormViewModel.ActionName;
         
         ViewData["ControllerName"] = paramsForDefaultFormViewModel.ControllerName;
-        
+
+        var inputDataFilterMessage = paramsForDefaultFormViewModel.ActionName switch
+        {
+            "AddRecipeFiltersToUser" => "Please, enter one filter or many with comma as a separator.",
+            "UpdateGender" => "Please, enter correct sex (man or women).",
+            _ => "Please, enter correct number"
+        };
+
+        ViewData["InputDataFilterMessage"] = inputDataFilterMessage;
+
         return View("_DefaultFormPartial");
     }
 

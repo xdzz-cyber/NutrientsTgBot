@@ -17,10 +17,6 @@ public class RemoveRecipeFromTheMealCommandHandler : IRequestHandler<RemoveRecip
     
     public async Task<string> Handle(RemoveRecipeFromTheMealCommand request, CancellationToken cancellationToken)
     {
-        // var matchPartOfInputData = Regex.Matches(request.RecipeId, TelegramBotRecipeCommandsNQueriesDataPatterns.InputDataPatternForSingleId);
-        //
-        // var recipeId = string.Join("", matchPartOfInputData);
-
         var recipe = await _ctx.RecipesUsers
             .FirstOrDefaultAsync(ru => ru.RecipeId.ToString() == request.RecipeId, cancellationToken);
 

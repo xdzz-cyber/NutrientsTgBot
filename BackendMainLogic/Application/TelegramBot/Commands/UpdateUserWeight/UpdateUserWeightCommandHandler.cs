@@ -30,8 +30,6 @@ public class UpdateAppUserWeightCommandHandler : IRequestHandler<UpdateAppUserWe
         if (!request.Weight.All(char.IsDigit) ||  double.Parse(request.Weight) <= 0)
         {
             return "Please, enter correct value";
-            // return await _mediator.Send(new GetUserWeightQuery(username: request.Username, 
-            //     chatId: request.ChatId, QueryExecutingTypes.QueryAsResponseForCommand), cancellationToken);
         }
         
         appUser.Weight = double.Parse(request.Weight);

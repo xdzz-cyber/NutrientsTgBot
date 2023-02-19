@@ -17,16 +17,11 @@ public class GetUserInfoQueryHandler : IRequestHandler<GetUserInfoQuery, string>
     {
         var user = await _userManager.FindByNameAsync(request.Username);
 
-        // if (user is null)
-        // {
-        //     return null; //"No data found.";
-        // }
-
-        if (user.Height <= 0 || user.Age <= 0 || (user.Sex.ToLower() != "man" && user.Sex.ToLower() != "women"))
+        if (user.Weight <= 0 || user.Height <= 0 || user.Age <= 0 || (user.Sex.ToLower() != "man" && user.Sex.ToLower() != "women"))
         {
-            return "Please, set all of the values (height, age and sex).";
+            return "Please, set all of the values (height, age, weight and sex).";
         }
 
-        return $"Your tallness is {user.Height}, age is {user.Age} and sex is {user.Sex.ToLower()}";
+        return $"Your tallness is {user.Height}cm, age is {user.Age}, weight is {user.Weight}kg and sex is {user.Sex.ToLower()}";
     }
 }

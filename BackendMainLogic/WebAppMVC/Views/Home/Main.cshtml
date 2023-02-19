@@ -2,6 +2,13 @@
     Layout = "_Layout";
 }
 
+@inject ITelegramBotDbContext TelegramBotDbContext
+@inject UserManager<AppUser> UserManager
+
+@using Application.Interfaces
+@using Domain.TelegramBotEntities
+@using Microsoft.AspNetCore.Identity
+@using Microsoft.AspNetCore.Mvc.TagHelpers
 @model UserCompleteInfoViewModel
 
 <!--header begins here-->
@@ -11,7 +18,7 @@
     <div class="container mx-auto">
         <div class="flex flex-wrap items-center">
             <div class="w-10/12 md:w-6/12 lg:w-4/12 px-12 md:px-4 mr-auto ml-auto -mt-78">
-                <div class="relative flex flex-col min-w-0 break-words bg-white w-full mb-6 shadow-lg rounded-lg bg-pink-500">
+                <div class="relative flex flex-col min-w-0 break-words bg-white w-full mb-6 shadow-lg rounded-lg bg-pink-500" style="background-color: rgb(236,72,153);">
                     <img alt="..." src="https://images.unsplash.com/photo-1498050108023-c5249f4df085?ixlib=rb-1.2.1&amp;ixid=eyJhcHBfaWQiOjEyMDd9&amp;auto=format&amp;fit=crop&amp;w=700&amp;q=80" class="w-full align-middle rounded-t-lg">
                     <blockquote class="relative p-8 mb-4">
                         <svg preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 583 95" class="absolute left-0 w-full block h-95-px -top-94-px">
@@ -22,7 +29,6 @@
                         </h4>
                         <p class="text-md font-light mt-2 text-white">
                             @Model.UserInfo
-                            @* Your tallness is 170, age is 32, sex is man and weight is 80 *@
                         </p>
                         <p class="text-md font-light mt-2 text-white">
                             @Model.ApprovedAmountOfNutrients
@@ -72,21 +78,21 @@
                                 </h6>
                                 <div class="mb-4 text-blueGray-500">
                                     <p>Filters available are: @Model.AvailableFiltersForRecipes</p>
-                                    
-                                    <p>If you want to add a new one, please, click <a class="text-blue-400" asp-action="DefaultForm"
-                                                                                      asp-route-actionName="AddRecipeFiltersToUser"
-                                                                                      asp-route-controllerName="RecipesFilters">here</a></p>
-                                    <a asp-action="TurnOnAllFilters" asp-controller="RecipesFilters" class="text-blue-400">Turn on</a> all filters
-                                    
-                                    <p>Your filters:</p>
-                                    @if (@Model.UserRecipesFilters.Any())
+                                    @if (TelegramBotDbContext.RecipeFiltersUsers.Count(rfu => rfu.IsTurnedIn 
+                                                                                              && rfu.AppUserId == UserManager.FindByNameAsync(User.Identity!.Name).GetAwaiter().GetResult().Id) != TelegramBotDbContext.RecipeFilters.Count())
                                     {
-                                        @foreach (var filter in @Model.UserRecipesFilters)
+                                        <p>If you want to add a new one, please, click <a class="text-blue-400" asp-action="DefaultForm"
+                                                                                          asp-route-actionName="AddRecipeFiltersToUser"
+                                                                                          asp-route-controllerName="RecipesFilters">here</a></p>
+                                        <a asp-action="TurnOnAllFilters" asp-controller="RecipesFilters" class="text-blue-400">Turn on all filters</a> 
+                                    }
+                                    <p>Your filters:</p>
+                                    @if (Model.UserRecipesFilters.Any())
+                                    {
+                                        @foreach (var filter in Model.UserRecipesFilters)
                                         {
                                             <p>@filter.Name - <a asp-action="TurnOffRecipeFilter" asp-controller="RecipesFilters" 
                                                                  asp-route-recipeId="@filter.Id" class="text-blue-400">Turn off</a></p>
-                                            //      GlutenFree - <a href="#" class="text-blue-400">Turn off</a>
-                                            // Vegetarian - <a href="#" class="text-blue-400">Turn off</a>
                                         }  
                                     }
                                     else

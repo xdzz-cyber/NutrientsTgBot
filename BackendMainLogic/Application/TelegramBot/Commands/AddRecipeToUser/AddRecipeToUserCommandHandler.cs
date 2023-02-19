@@ -27,12 +27,6 @@ public class AddRecipeToUserCommandHandler : IRequestHandler<AddRecipeToUserComm
 
         try
         {
-            // var dataFilterForSingleId = string.Join("", Regex.Matches(request.RecipeId, 
-            //     TelegramBotRecipeCommandsNQueriesDataPatterns.InputDataPatternForSingleId));
-            //
-            // var dataFilterForIds = Regex.Matches(request.RecipeId,
-            //     TelegramBotRecipeCommandsNQueriesDataPatterns.InputDataPatternForIds);
-
             var user = await _userManager.FindByNameAsync(request.Username);
 
             if (_ctx.RecipesUsers.Count(ru => ru.AppUserId == user.Id) == TelegramBotRecipesPerUserAmount
@@ -79,43 +73,6 @@ public class AddRecipeToUserCommandHandler : IRequestHandler<AddRecipeToUserComm
                         RecipeId = int.Parse(request.RecipeId, NumberStyles.Integer)
                     }, cancellationToken); 
             }
-            // else if (!string.IsNullOrEmpty(request.RecipeId))
-            // {
-            //     var recipesIds = StateManagement.TempData["RecipesIds"].Split(',');
-            //
-            //     var addedDataToRecipeUsersCounter = 0;
-            //
-            //     foreach (var id in recipesIds)
-            //     {
-            //         if (!_ctx.Recipes.Any(r => r.Id.ToString() == id))
-            //         {
-            //             var recipeToBeAddedHttpMessage = await _httpClient
-            //                 .GetAsync(TelegramBotRecipesHttpPaths.GetRecipeById.Replace("id", id),cancellationToken);
-            //             var recipeToBeAdded = JsonSerializer.Deserialize<Recipe>(
-            //                 await recipeToBeAddedHttpMessage.Content.ReadAsStreamAsync(cancellationToken));
-            //             
-            //             if (string.IsNullOrEmpty(recipeToBeAdded!.SourceName))
-            //             {
-            //                 recipeToBeAdded.SourceName = "";
-            //             }
-            //             
-            //             await _ctx.Recipes.AddAsync(recipeToBeAdded, cancellationToken);
-            //             await _ctx.SaveChangesAsync(cancellationToken);// might be shit
-            //         }
-            //         
-            //         if (!_ctx.RecipesUsers.Any(ru => ru.RecipeId.ToString() == id) 
-            //             && _ctx.RecipesUsers.Count() + addedDataToRecipeUsersCounter < TelegramBotRecipesPerUserAmount.MaxRecipesPerUser)
-            //         {
-            //             await _ctx.RecipesUsers.AddAsync(new RecipesUsers
-            //             {
-            //                 AppUserId = user.Id,
-            //                 RecipeId = Convert.ToInt32(id)
-            //             }, cancellationToken);
-            //             addedDataToRecipeUsersCounter += 1;
-            //         }
-            //     }
-            //     
-            // }
             await _ctx.SaveChangesAsync(cancellationToken);
         }
         catch (Exception e)

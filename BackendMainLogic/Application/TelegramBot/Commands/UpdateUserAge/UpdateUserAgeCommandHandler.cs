@@ -22,7 +22,7 @@ public class UpdateUserAgeCommandHandler : IRequestHandler<UpdateUserAgeCommand,
             return "Please, authorize yourself.";
         }
 
-        if (!request.Age.All(char.IsDigit))
+        if (!request.Age.All(char.IsDigit) || int.Parse(request.Age) <= 0)
         {
             return "Please, enter correct number.";
         }

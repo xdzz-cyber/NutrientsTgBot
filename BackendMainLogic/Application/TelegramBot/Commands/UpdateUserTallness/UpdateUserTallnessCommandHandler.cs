@@ -16,13 +16,8 @@ public class UpdateUserTallnessCommandHandler : IRequestHandler<UpdateUserTallne
     public async Task<string> Handle(UpdateUserTallnessCommand request, CancellationToken cancellationToken)
     {
         var user = await _userManager.FindByNameAsync(request.Username);
-        
-        if (user is null)
-        {
-            return "Please, authorize yourself.";
-        }
-        
-        if (!request.Height.All(char.IsDigit))
+
+        if (!request.Height.All(char.IsDigit) || int.Parse(request.Height) <= 0)
         {
             return "Please, enter correct number.";
         }
