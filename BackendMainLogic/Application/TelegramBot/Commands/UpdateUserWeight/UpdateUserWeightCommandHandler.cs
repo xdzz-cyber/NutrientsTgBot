@@ -22,11 +22,6 @@ public class UpdateAppUserWeightCommandHandler : IRequestHandler<UpdateAppUserWe
 
         var appUser = await _userManager.FindByNameAsync(request.Username);
 
-        if (appUser is null)
-        {
-            return "Please, authorize to be able to make actions.";
-        }
-
         if (!request.Weight.All(char.IsDigit) ||  double.Parse(request.Weight) <= 0)
         {
             return "Please, enter correct value";

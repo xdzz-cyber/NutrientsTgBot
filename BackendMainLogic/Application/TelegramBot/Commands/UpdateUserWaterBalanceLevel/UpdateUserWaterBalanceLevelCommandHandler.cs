@@ -1,6 +1,4 @@
-﻿using Application.Common.Constants;
-using Application.Interfaces;
-using Application.TelegramBot.Queries.GetUserWaterBalanceLevel;
+﻿using Application.Interfaces;
 using Domain.TelegramBotEntities;
 using MediatR;
 using Microsoft.AspNetCore.Identity;

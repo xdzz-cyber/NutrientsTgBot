@@ -16,11 +16,6 @@ public class UpdateUserAgeCommandHandler : IRequestHandler<UpdateUserAgeCommand,
     public async Task<string> Handle(UpdateUserAgeCommand request, CancellationToken cancellationToken)
     {
         var user = await _userManager.FindByNameAsync(request.Username);
-        
-        if (user is null)
-        {
-            return "Please, authorize yourself.";
-        }
 
         if (!request.Age.All(char.IsDigit) || int.Parse(request.Age) <= 0)
         {

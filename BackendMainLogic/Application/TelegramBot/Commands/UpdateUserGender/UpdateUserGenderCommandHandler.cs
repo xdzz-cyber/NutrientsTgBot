@@ -17,11 +17,6 @@ public class UpdateUserGenderCommandHandler : IRequestHandler<UpdateUserGenderCo
     {
         var user = await _userManager.FindByNameAsync(request.Username);
 
-        if (user is null)
-        {
-            return "Please, authorize yourself.";
-        }
-        
         if (request.Sex.ToLower() != "man" && request.Sex.ToLower() != "women")
         {
             return "Please, enter correct sex (man or women).";

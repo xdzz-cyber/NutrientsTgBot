@@ -21,12 +21,7 @@ public class GetUserWaterBalanceLevelQueryHandler : IRequestHandler<GetUserWater
     public async Task<string> Handle(GetUserWaterBalanceLevelQuery request, CancellationToken cancellationToken)
     {
         var user = await _userManager.FindByNameAsync(request.Username);
-        
-        // if (user is null)
-        // {
-        //     return "Please, authorize to be able to make actions.";
-        // }
-        
+
         var currentWaterLevelOfUser = await _ctx.WaterLevelOfUsers
             .FirstOrDefaultAsync(x => x.AppUserId == user.Id, cancellationToken);
 
@@ -38,15 +33,8 @@ public class GetUserWaterBalanceLevelQueryHandler : IRequestHandler<GetUserWater
         if (currentWaterLevelOfUser.ExpiryDateTime < DateTime.Now)
         {
             currentWaterLevelOfUser.Amount = 0;
-            //_ctx.WaterLevelOfUsers.Remove(currentWaterLevelOfUser);
             await _ctx.SaveChangesAsync(cancellationToken);
         }
-
-        // if (request.QueryExecutingType.Equals(QueryExecutingTypes.QueryAsResponseForCommand) 
-        //     || currentWaterLevelOfUser is null)
-        // {
-        //     return "Please, set amount of consumed water during current day in milliliters before getting it.";
-        // }
 
         var waterLevelMargin =  WaterLevelBalanceConstants.WaterLevelBalanceFormulaConstant * 
             user.Weight - Math.Abs(currentWaterLevelOfUser.Amount);

@@ -21,11 +21,6 @@ public class GetUserNutrientsPlanQueryHandler : IRequestHandler<GetUserNutrients
     public async Task<string> Handle(GetUserNutrientsPlanQuery request, CancellationToken cancellationToken)
     {
         var userInfo = await  _userManager.FindByNameAsync(request.Username);
-        
-        // if (userInfo is null)
-        // {
-        //     return "Please, authorize to be able to make actions.";
-        // }
 
         var nutrients = await _ctx.Nutrients.ToListAsync(cancellationToken);
         

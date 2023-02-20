@@ -3,12 +3,10 @@
 }
 
 @inject ITelegramBotDbContext TelegramBotDbContext
-@inject UserManager<AppUser> UserManager
 
 @using Application.Interfaces
-@using Domain.TelegramBotEntities
-@using Microsoft.AspNetCore.Identity
 @using Microsoft.AspNetCore.Mvc.TagHelpers
+@using System.Security.Claims
 @model UserCompleteInfoViewModel
 
 <!--header begins here-->
@@ -79,7 +77,7 @@
                                 <div class="mb-4 text-blueGray-500">
                                     <p>Filters available are: @Model.AvailableFiltersForRecipes</p>
                                     @if (TelegramBotDbContext.RecipeFiltersUsers.Count(rfu => rfu.IsTurnedIn 
-                                                                                              && rfu.AppUserId == UserManager.FindByNameAsync(User.Identity!.Name).GetAwaiter().GetResult().Id) != TelegramBotDbContext.RecipeFilters.Count())
+                                                                                              && rfu.AppUserId == User.FindFirst(ClaimTypes.NameIdentifier)!.Value) != TelegramBotDbContext.RecipeFilters.Count())
                                     {
                                         <p>If you want to add a new one, please, click <a class="text-blue-400" asp-action="DefaultForm"
                                                                                           asp-route-actionName="AddRecipeFiltersToUser"
@@ -100,11 +98,13 @@
                                         <p>No filters selected</p>
                                     }
                                     
-                                   
-                                    <div class="inline-block">
-                                        <a asp-action="TurnOffAllRecipeFilters" asp-controller="RecipesFilters" class="text-blue-400">Clear</a> 
-                                        all filters
-                                    </div>
+                                   @if (TelegramBotDbContext.RecipeFiltersUsers.Any(rfu => rfu.IsTurnedIn && rfu.AppUserId == User.FindFirst(ClaimTypes.NameIdentifier)!.Value))
+                                   {
+                                       <div class="inline-block">
+                                           <a asp-action="TurnOffAllRecipeFilters" asp-controller="RecipesFilters" class="text-blue-400">Clear</a> 
+                                           all filters
+                                       </div> 
+                                   }
                                 </div>
                             </div>
                         </div>

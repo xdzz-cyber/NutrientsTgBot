@@ -1,5 +1,4 @@
-﻿using System.Text;
-using Application.Common.Constants;
+﻿using Application.Common.Constants;
 using Application.Interfaces;
 using Domain.TelegramBotEntities;
 using Domain.TelegramBotEntities.RecipesFilters;
@@ -38,40 +37,12 @@ public class GetUserFiltersForRecipesQueryHandler : IRequestHandler<GetUserFilte
                                                             && rfu.AppUserId == userInfo.Id && rfu.IsTurnedIn))
             .ToListAsync(cancellationToken);
 
-        //var response = new StringBuilder();
-
-        //response.Append("Filters available are: ");
-
         var existingFilters = recipeFilters.Select(recipe => new UserRecipesFiltersViewDto
         {
             Id = recipe.Id,
             Name = recipe.Name
         }).ToList();
 
-        return existingFilters; //string.Join(",", existingFilters);
-
-        // response.Append(string.Join(",", existingFilters));
-        //
-        // response.AppendLine($"\n\nIf you want to add a new one, please, click here(/AddRecipeFiltersToUser)");
-        //
-        // response.AppendLine("Turn on all filters(/TurnOnAllRecipeFiltersOfUser)");
-        //
-        // if (!recipeFilters.Any())
-        // {
-        //     response.AppendLine("\nYou have no filters selected");
-        //     return response.ToString();
-        // }
-        //
-        // response.AppendLine("\nYour filters:");
-        //
-        // foreach (var recipeFilter in recipeFilters)
-        // {
-        //     response.Append($"{recipeFilter.Name} - ");
-        //     response.AppendLine($"Turn off filter(/TurnOffRecipeFilterOfUser_{recipeFilter.Id})");
-        // }
-        //
-        // response.AppendLine("\nClear all filters(/TurnOffAllRecipeFiltersOfUser)");
-        //
-        // return response.ToString();
+        return existingFilters;
     }
 }

@@ -25,6 +25,13 @@ public class NutrientsPlanController : Controller
     [HttpPost]
     public async Task<ViewResult> UpdateNutrientsPlan([FromForm] NutrientsPlanFormDto nutrientsPlanFormViewModel)
     {
+        if (!ModelState.IsValid)
+        {
+            return View("_ResponseMessageComponent", string.Join("; ", ModelState.Values
+                .SelectMany(x => x.Errors)
+                .Select(x => x.ErrorMessage)));
+        }
+        
         var username = User.Identity?.Name;
 
         var result = await _mediator.Send(new UpdateUserNutrientsPlanCommand(username!, new NutrientsPlanFormDto
