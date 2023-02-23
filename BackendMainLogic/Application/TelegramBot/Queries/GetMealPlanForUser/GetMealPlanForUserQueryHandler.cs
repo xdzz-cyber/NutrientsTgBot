@@ -35,12 +35,12 @@ public class GetMealPlanForUserQueryHandler : IRequestHandler<GetMealPlanForUser
             .FirstOrDefaultAsync(nu => nu.AppUserId == userInfo.Id 
                                        && nu.NutrientId == caloriesNutrientId, cancellationToken: cancellationToken);
 
-        // if (userCaloriesPreferences is null)
-        // {
-        //     return "Please, set your nutrients preferences.";
-        // }
+        if (userCaloriesPreferences is null)
+        {
+            return new Tuple<List<Recipe>, NutrientViewDto>(new List<Recipe>(),new NutrientViewDto());
+        }
 
-        var targetCalories = (userCaloriesPreferences.MaxValue + userCaloriesPreferences.MinValue) / 2;
+        var targetCalories = (userCaloriesPreferences!.MaxValue + userCaloriesPreferences.MinValue) / 2;
 
         var userRecipeFiltersIds = await _ctx.RecipeFiltersUsers
             .Where(rfu => rfu.AppUserId == userInfo.Id).Select(rfu => rfu.RecipeFiltersId).ToListAsync(cancellationToken);
@@ -53,8 +53,8 @@ public class GetMealPlanForUserQueryHandler : IRequestHandler<GetMealPlanForUser
         var mealPlanHttpResponseMessage = await _httpClient
             .GetAsync(string.Format(TelegramBotRecipesHttpPaths.GetMealPlan, targetCalories, diet), cancellationToken);
 
-        var response = new Tuple<List<Recipe>, NutrientViewDto>(new List<Recipe>(), new NutrientViewDto());//StringBuilder();
-        //var mealsIds = new List<string>();
+        var response = new Tuple<List<Recipe>, NutrientViewDto>(new List<Recipe>(), new NutrientViewDto());
+        
         if (mealPlanHttpResponseMessage.IsSuccessStatusCode)
         {
             var mealsTmp = await mealPlanHttpResponseMessage.Content.ReadAsStringAsync(cancellationToken);
@@ -89,45 +89,14 @@ public class GetMealPlanForUserQueryHandler : IRequestHandler<GetMealPlanForUser
                     cancellationToken: cancellationToken);
                 
                 response.Item1.Add(tmp!);
-                // var msg =
-                //     $"<strong>Title: {tmp!.Title}, Vegetarian: {tmp.Vegetarian}, GlutenFree: {tmp.GlutenFree}," +
-                //     $" PricePerServing: {tmp.PricePerServing}, " +
-                //     $"Link: {(tmp.SpoonacularSourceUrl.Length > 0 ? tmp.SpoonacularSourceUrl : tmp.SourceUrl)} </strong>" +
-                //     $"\nSave recipe(/AddRecipeToUser_{tmp.Id})";
-                // response.AppendLine(msg);
-                // response.AppendLine($"Save as a part of the meal(/AddRecipeAsPartOfMeal_{tmp.Id})\n");
-                // mealsIds.Add(meal.Id.ToString());
             }
 
             response.Item2.Calories = nutrients!.Nutrients.Calories;
             response.Item2.Fat = nutrients.Nutrients.Fat;
             response.Item2.Carbohydrates = nutrients.Nutrients.Carbohydrates;
             response.Item2.Protein = nutrients.Nutrients.Protein;
-            // response.AppendLine("<strong>Nutrients report go below:</strong>");
-            //
-            // var nutrientMessage = $"Calories = {nutrients!.Nutrients.Calories}, Fat = {nutrients.Nutrients.Fat}, " +
-            //                       $"Carbohydrates = {nutrients.Nutrients.Carbohydrates}, " +
-            //                       $"Protein = {nutrients.Nutrients.Protein}";
-            //
-            // response.AppendLine(nutrientMessage);
-            //
-            // response.AppendLine("\nAdd everything as part of the meal(/AddAllRecipesAsPartOfMeal)");
-            //
-            // if (string.IsNullOrEmpty(response.ToString()))
-            // {
-            //     return "<strong>No meals found.</strong>";
-            // }
-            //
-            // if (!StateManagement.TempData.ContainsKey("MealsIds"))
-            // {
-            //     StateManagement.TempData.Add("MealsIds", string.Join(",", mealsIds));
-            // }
-            // else
-            // {
-            //     StateManagement.TempData["MealsIds"] = string.Join(",", mealsIds);
-            // }
         }
 
-        return response; //response.ToString();
+        return response;
     }
 }

@@ -32,9 +32,8 @@ public class RecipesController : Controller
     [HttpGet]
     public async Task<IActionResult> ShowRecipes(int pageNumber = 1)
     {
-        
         var username = User.Identity?.Name;
-
+        
         if (HttpContext.Session.GetString("CurrentRecipes") is null)
         {
             HttpContext.Session.SetString("CurrentRecipes", JsonSerializer
@@ -61,10 +60,22 @@ public class RecipesController : Controller
     }
 
     [HttpGet]
+    public async Task<IActionResult> LikedRecipes()
+    {
+        var username = User.Identity?.Name;
+        
+        var result = await _mediator.Send(new GetUserRecipeListQuery(username!));
+        
+        HttpContext.Session.SetString("CurrentRecipes", JsonSerializer.Serialize(result));
+
+        return await ShowRecipes();
+    }
+
+    [HttpGet]
     public async Task<IActionResult> AddRecipeToUser([FromQuery] string recipeId)
     {
         var username = User.Identity?.Name;
-
+        
         var result = await _mediator.Send(new AddRecipeToUserCommand(username!, recipeId));
 
         return View("_ResponseMessageComponent", result);
@@ -74,7 +85,7 @@ public class RecipesController : Controller
     public async Task<IActionResult> RecipesByNutrients()
     {
         var username = User.Identity?.Name;
-
+        
         var result = await _mediator.Send(new GetRecipesByNutrientsQuery(username!));
 
         HttpContext.Session.SetString("CurrentRecipes", JsonSerializer.Serialize(result));
@@ -86,7 +97,7 @@ public class RecipesController : Controller
     public async Task<IActionResult> AddRecipeAsPartOfMeal([FromQuery] string recipeId)
     {
         var username = User.Identity?.Name;
-
+        
         var result = await _mediator.Send(new AddRecipeAsPartOfMealCommand(username!, recipeId));
 
         return View("_ResponseMessageComponent", result);
@@ -96,7 +107,7 @@ public class RecipesController : Controller
     public async Task<IActionResult> RemoveRecipeFromTheMeal([FromQuery] string recipeId)
     {
         var username = User.Identity?.Name;
-
+        
         var result = await _mediator.Send(new RemoveRecipeFromTheMealCommand(username!, recipeId));
 
         return View("_ResponseMessageComponent", result);
@@ -106,7 +117,7 @@ public class RecipesController : Controller
     public async Task<IActionResult> RemoveRecipeFromLikedList([FromQuery] string recipeId)
     {
         var username = User.Identity?.Name;
-
+        
         var result = await _mediator.Send(new RemoveRecipeFromLikedListCommand(username!, recipeId));
 
         return View("_ResponseMessageComponent", result);
@@ -116,7 +127,7 @@ public class RecipesController : Controller
     public async Task<IActionResult> ClearLikedRecipesList()
     {
         var username = User.Identity?.Name;
-
+        
         var result = await _mediator.Send(new ClearLikedRecipesListCommand(username!));
 
         return View("_ResponseMessageComponent", result);
@@ -126,7 +137,7 @@ public class RecipesController : Controller
     public async Task<IActionResult> ClearRecipesAsPartOfMeal()
     {
         var username = User.Identity?.Name;
-
+        
         var result = await _mediator.Send(new ClearRecipesAsPartOfMealCommand(username!));
 
         return View("_ResponseMessageComponent", result);
@@ -136,7 +147,7 @@ public class RecipesController : Controller
     public async Task<IActionResult> RecipesAsPartOfMeal()
     {
         var username = User.Identity?.Name;
-
+        
         var result = await _mediator.Send(new GetRecipesAsPartOfMealQuery(username!));
 
         HttpContext.Session.SetString("CurrentRecipes",JsonSerializer.Serialize(result));
@@ -148,7 +159,7 @@ public class RecipesController : Controller
     public async Task<IActionResult> MealPlanForUser()
     {
         var username = User.Identity?.Name;
-
+        
         var result = await _mediator.Send(new GetMealPlanForUserQuery(username!));
         
         HttpContext.Session.SetString("CurrentRecipes",JsonSerializer.Serialize(result.Item1));
@@ -162,7 +173,7 @@ public class RecipesController : Controller
     public async Task<IActionResult> AddAllLikedRecipesAsMeal()
     {
         var username = User.Identity?.Name;
-
+        
         var result = await _mediator.Send(new AddAllLikedRecipesAsMealCommand(username!));
 
         return View("_ResponseMessageComponent", result);
@@ -172,7 +183,7 @@ public class RecipesController : Controller
     public async Task<IActionResult> RecipesByIngredients([FromForm] string newValue)
     {
         var username = User.Identity?.Name;
-
+        
         var result = await _mediator.Send(new GetRecipesByIngredientsQuery(username!, newValue));
 
         HttpContext.Session.SetString("CurrentRecipes", JsonSerializer.Serialize(result));

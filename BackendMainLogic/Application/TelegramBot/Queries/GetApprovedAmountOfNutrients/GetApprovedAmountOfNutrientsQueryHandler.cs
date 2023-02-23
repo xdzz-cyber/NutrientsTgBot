@@ -18,7 +18,7 @@ public class GetApprovedAmountOfNutrientsQueryHandler : IRequestHandler<GetAppro
     {
         var user = await _userManager.FindByNameAsync(request.Username);
 
-        if (user.Weight <= 0 || user.Age <= 0 || user.Height <= 0 || string.IsNullOrEmpty(user.Sex))
+        if (user.Weight <= 0 || user.Age <= 0 || user.Height <= 0 || (user.Sex.ToLower() != "man" && user.Sex.ToLower() != "women"))
         {
             return "Please, set values of weight, sex, age and height before getting data.";
         }

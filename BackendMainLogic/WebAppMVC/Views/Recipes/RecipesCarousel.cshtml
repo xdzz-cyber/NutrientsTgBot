@@ -1,7 +1,7 @@
 @{
     Layout = "_Layout";
     
-    var titleMaxLength = Convert.ToInt32(Model.Recipes[0]?.Title.Length * 0.4);
+    var titleMaxLength = Model.Recipes.Count > 0 ? Convert.ToInt32(Model.Recipes.First().Title.Length * 0.4) : 0;
     var totalPagesNumber = (int) Math.Ceiling((double) Model.TotalRecipesCount / (double) Model.MaxRecipesPerPage);
     var countStop = Model.CurrentPageNumber * 5 <= totalPagesNumber
         ? Model.CurrentPageNumber * 5 : totalPagesNumber;

@@ -94,17 +94,17 @@ public class GetUserSupplementsOutlineQueryHandler : IRequestHandler<GetUserSupp
             if (recipeNutrient.Amount <= userPreferenceForCurrentNutrient.MaxValue
                 && recipeNutrient.Amount >= userPreferenceForCurrentNutrient.MinValue)
             {
-                responseMessageForCurrentNutrient = $"<strong>{recipeNutrient.Name}</strong>: " +
+                responseMessageForCurrentNutrient = $"{recipeNutrient.Name}: " +
                                                     $"{Math.Abs(recipeNutrient.Amount - userPreferenceForCurrentNutrient.MaxValue)}{nutrientMeasurementUnit} still need to be consumed.";
             } else if (recipeNutrient.Amount < userPreferenceForCurrentNutrient.MinValue)
             {
-                responseMessageForCurrentNutrient = $"<strong>{recipeNutrient.Name}</strong> is below your preferences. " +
+                responseMessageForCurrentNutrient = $"{recipeNutrient.Name} is below your preferences. " +
                                                     $"You have to consume {Math.Abs(userPreferenceForCurrentNutrient.MinValue - recipeNutrient.Amount)}{nutrientMeasurementUnit} more.";
             }
             else if (recipeNutrient.Amount > userPreferenceForCurrentNutrient.MaxValue)
             {
                 responseMessageForCurrentNutrient =
-                    $"<strong>{recipeNutrient.Name}</strong> is above your preferences." +
+                    $"{recipeNutrient.Name} is above your preferences." +
                     $" You have to consume {Math.Abs(recipeNutrient.Amount - userPreferenceForCurrentNutrient.MaxValue)}{nutrientMeasurementUnit} less.";
             }
         
