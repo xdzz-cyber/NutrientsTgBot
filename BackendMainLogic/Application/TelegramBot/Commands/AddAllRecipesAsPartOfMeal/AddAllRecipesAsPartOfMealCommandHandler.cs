@@ -3,6 +3,7 @@ using Application.Common.Constants;
 using Application.Interfaces;
 using Domain.TelegramBotEntities;
 using MediatR;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
@@ -13,18 +14,21 @@ public class AddAllRecipesAsPartOfMealCommandHandler : IRequestHandler<AddAllRec
     private readonly ITelegramBotDbContext _ctx;
     private readonly UserManager<AppUser> _userManager;
     private readonly HttpClient _httpClient;
+    private readonly IHttpContextAccessor _httpContextAccessor;
 
     public AddAllRecipesAsPartOfMealCommandHandler(ITelegramBotDbContext ctx, UserManager<AppUser> userManager, 
-        HttpClient httpClient)
+        HttpClient httpClient, IHttpContextAccessor httpContextAccessor)
     {
         _ctx = ctx;
         _userManager = userManager;
         _httpClient = httpClient;
+        _httpContextAccessor = httpContextAccessor;
     }
     
     public async Task<string> Handle(AddAllRecipesAsPartOfMealCommand request, CancellationToken cancellationToken)
     {
-        var mealsIds = StateManagement.TempData["MealsIds"].Split(',');
+        var mealsIds = JsonSerializer.Deserialize<List<Recipe>>(_httpContextAccessor.HttpContext!.Session
+            .GetString("CurrentRecipes")!)!.Select(r => r.Id).ToList();
 
         var recipesOfUserToBeAddedCounter = 0;
         
@@ -38,13 +42,13 @@ public class AddAllRecipesAsPartOfMealCommandHandler : IRequestHandler<AddAllRec
         foreach (var mealId in mealsIds)
         {
             if (await _ctx.RecipesUsers
-                    .FirstOrDefaultAsync(ru => ru.RecipeId.ToString() == mealId && ru.AppUserId 
+                    .FirstOrDefaultAsync(ru => ru.RecipeId == mealId && ru.AppUserId 
                         == userInfo.Id, cancellationToken) is null 
-                && await _ctx.Recipes.FirstOrDefaultAsync(r => r.Id.ToString() == mealId,
+                && await _ctx.Recipes.FirstOrDefaultAsync(r => r.Id == mealId,
                     cancellationToken: cancellationToken) is null)
             {
                 var recipeToBeAddedHttpMessage = await _httpClient
-                    .GetAsync(TelegramBotRecipesHttpPaths.GetRecipeById.Replace("id", mealId),
+                    .GetAsync(TelegramBotRecipesHttpPaths.GetRecipeById.Replace("id", mealId.ToString()),
                         cancellationToken);
 
                 var recipeToBeAdded = JsonSerializer
@@ -52,14 +56,12 @@ public class AddAllRecipesAsPartOfMealCommandHandler : IRequestHandler<AddAllRec
 
                 await _ctx.Recipes.AddAsync(recipeToBeAdded!, cancellationToken);
 
-                await _ctx.SaveChangesAsync(cancellationToken);
-                
             } else if (await _ctx.RecipesUsers
-                           .FirstOrDefaultAsync(ru => ru.RecipeId.ToString() == mealId && ru.AppUserId
+                           .FirstOrDefaultAsync(ru => ru.RecipeId == mealId && ru.AppUserId
                                == userInfo.Id, cancellationToken) is null)
             {
                 var mealInfoFromRecipeWithSameId = await _ctx.Recipes
-                    .FirstOrDefaultAsync(r => r.Id.ToString() == mealId, cancellationToken: cancellationToken);
+                    .FirstOrDefaultAsync(r => r.Id == mealId, cancellationToken: cancellationToken);
 
                 if (_ctx.RecipesUsers.Count() + recipesOfUserToBeAddedCounter < 
                     TelegramBotRecipesPerUserAmount.MaxRecipesPerUser)
@@ -73,6 +75,12 @@ public class AddAllRecipesAsPartOfMealCommandHandler : IRequestHandler<AddAllRec
 
                     recipesOfUserToBeAddedCounter += 1;
                 }
+            }
+            else
+            {
+                var recipe = _ctx.RecipesUsers.First(ru => ru.RecipeId == mealId && ru.AppUserId == userInfo.Id);
+
+                recipe.IsPartOfTheMeal = true;
             }
         }
 

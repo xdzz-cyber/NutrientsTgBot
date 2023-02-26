@@ -1,5 +1,6 @@
 ﻿using System.Text.Json;
 using Application.TelegramBot.Commands.AddAllLikedRecipesAsMeal;
+using Application.TelegramBot.Commands.AddAllRecipesAsPartOfMeal;
 using Application.TelegramBot.Commands.AddRecipeAsPartOfMeal;
 using Application.TelegramBot.Commands.AddRecipesToUser;
 using Application.TelegramBot.Commands.AddRecipeToUser;
@@ -175,6 +176,16 @@ public class RecipesController : Controller
         var username = User.Identity?.Name;
         
         var result = await _mediator.Send(new AddAllLikedRecipesAsMealCommand(username!));
+
+        return View("_ResponseMessageComponent", result);
+    }
+    
+    [HttpGet]
+    public async Task<IActionResult> AddAllRecipesAsPartOfMeal()
+    {
+        var username = User.Identity?.Name;
+        
+        var result = await _mediator.Send(new AddAllRecipesAsPartOfMealCommand(username!));
 
         return View("_ResponseMessageComponent", result);
     }
