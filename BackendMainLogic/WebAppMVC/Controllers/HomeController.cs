@@ -65,6 +65,8 @@ public class HomeController : Controller
         {
             "AddRecipeFiltersToUser" => "Please, enter one filter or many with comma as a separator.",
             "UpdateGender" => "Please, enter correct sex (man or women).",
+            "RecipesByNutrients" => "Please, enter ingredients with comma as separator and without unnecessary symbols",
+            "RecipesByIngredients" => "Please, enter ingredients with comma as separator and without unnecessary symbols",
             _ => "Please, enter correct number"
         };
 

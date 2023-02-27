@@ -1,7 +1,7 @@
 @{
     Layout = "_Layout";
     
-    var titleMaxLength = Model.Recipes.Count > 0 ? Convert.ToInt32(Model.Recipes.Average(r => r.Title.Length) * 0.4) : 0;
+    var titleMaxLength = Model.Recipes.Count > 0 ? Convert.ToInt32(Model.Recipes.Average(r => r.Title.Length) * 0.3) : 0;
     var totalPagesNumber = (int) Math.Ceiling((double) Model.TotalRecipesCount / (double) Model.MaxRecipesPerPage);
     var countStop = Model.CurrentPageNumber * 5 <= totalPagesNumber
         ? Model.CurrentPageNumber * 5 : totalPagesNumber;
@@ -186,8 +186,7 @@ else
             </div>
         </div>
     </div>
-    @if (!TelegramBotDbContext.RecipesUsers.Any(ru => ru.IsPartOfTheMeal 
-                                                     && TelegramBotDbContext.Recipes.FirstOrDefault(r => r.Id == ru.RecipeId) != null))
+    @if (Model.Recipes.Any(r => TelegramBotDbContext.RecipesUsers.FirstOrDefault(ru => ru.RecipeId == r.Id) == null))
     {
         <div class="flex justify-center content-center mb-8">
             <button onclick="addAllRecipesMarkedAsSaved()" class="group relative h-10 w-40 overflow-hidden rounded-lg bg-white text-sm shadow">
