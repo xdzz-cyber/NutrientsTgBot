@@ -14,6 +14,6 @@ public class RegistrationViewModel
     public int Age { get; set; }
     [Required]
     [DataType(DataType.Password)]
-    [RegularExpression("(?=.*[a-z])")]
+    [MaxLength(15)]
     public string Password { get; set; } = null!;
 }

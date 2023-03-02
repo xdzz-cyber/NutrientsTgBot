@@ -60,7 +60,8 @@ public class AddRecipeToUserCommandHandler : IRequestHandler<AddRecipeToUserComm
                         SourceName = notSavedInDbRecipe.SourceName,
                         SpoonacularSourceUrl = notSavedInDbRecipe.SpoonacularSourceUrl,
                         Title = notSavedInDbRecipe.Title,
-                        Vegetarian = notSavedInDbRecipe.Vegetarian
+                        Vegetarian = notSavedInDbRecipe.Vegetarian,
+                        Image = notSavedInDbRecipe.Image
                     }, cancellationToken);
             }
 

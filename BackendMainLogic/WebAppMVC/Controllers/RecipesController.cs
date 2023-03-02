@@ -31,7 +31,7 @@ public class RecipesController : Controller
         _mediator = mediator;
     }
     [HttpGet]
-    public async Task<IActionResult> ShowRecipes(int pageNumber = 1)
+    public async Task<IActionResult> ShowRecipes(int pageNumber = 1, bool isMealPlan = false)
     {
         var username = User.Identity?.Name;
         
@@ -56,7 +56,8 @@ public class RecipesController : Controller
             NutrientViewDto = nutrients,
             MaxRecipesPerPage = 3,
             CurrentPageNumber = pageNumber,
-            TotalRecipesCount = recipes!.Count
+            TotalRecipesCount = recipes!.Count,
+            IsMealPlan = isMealPlan
         });
     }
 
@@ -167,7 +168,7 @@ public class RecipesController : Controller
         
         HttpContext.Session.SetString("Nutrients",JsonSerializer.Serialize(result.Item2));
 
-        return await ShowRecipes();
+        return await ShowRecipes(isMealPlan:true);
     }
 
     [HttpGet]

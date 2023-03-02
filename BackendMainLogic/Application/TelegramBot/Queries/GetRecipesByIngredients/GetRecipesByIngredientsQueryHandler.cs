@@ -76,9 +76,12 @@ public class GetRecipesByIngredientsQueryHandler : IRequestHandler<GetRecipesByI
                     {
                         Id = recipe.Id,
                         Title = recipe.Title,
-                        Vegetarian = _ctx.RecipeFiltersUsers.First(rfu => rfu.RecipeFiltersId == vegetarianFilter.Id).IsTurnedIn,
-                        GlutenFree = _ctx.RecipeFiltersUsers.First(rfu => rfu.RecipeFiltersId == glutenFreeFilter.Id).IsTurnedIn,
-                        SourceUrl = recipe.Image
+                        Vegetarian = _ctx.RecipeFiltersUsers.FirstOrDefault(rfu => rfu.RecipeFiltersId == vegetarianFilter.Id) 
+                            is not null && _ctx.RecipeFiltersUsers.First(rfu => rfu.RecipeFiltersId == vegetarianFilter.Id).IsTurnedIn ,
+                        GlutenFree = _ctx.RecipeFiltersUsers.FirstOrDefault(rfu => rfu.RecipeFiltersId == glutenFreeFilter.Id) is not null &&
+                                     _ctx.RecipeFiltersUsers.First(rfu => rfu.RecipeFiltersId == glutenFreeFilter.Id).IsTurnedIn,
+                        SourceUrl = recipe.Image,
+                        Image = recipe.Image
                     });
                 }
             }

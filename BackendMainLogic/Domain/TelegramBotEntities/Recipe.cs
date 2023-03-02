@@ -32,5 +32,7 @@ public class Recipe
     [JsonPropertyName("glutenFree")] public bool GlutenFree { get; set; } = false;
 
     [JsonPropertyName("vegetarian")] public bool Vegetarian { get; set; } = false;
+    
+    [JsonPropertyName("image")] public string Image { get; set; } = null!;
     public ICollection<RecipesUsers> RecipesUsers { get; set; } = new List<RecipesUsers>();
 }

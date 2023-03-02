@@ -8,6 +8,7 @@ public class RecipesCarouselViewModel
     public NutrientViewDto? NutrientViewDto { get; set; }
     public int MaxRecipesPerPage { get; set; }
     public int CurrentPageNumber { get; set; }
-
     public int TotalRecipesCount { get; set; }
+
+    public bool IsMealPlan { get; set; }
 }

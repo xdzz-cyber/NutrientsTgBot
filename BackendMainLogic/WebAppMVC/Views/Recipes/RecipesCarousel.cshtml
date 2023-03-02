@@ -3,9 +3,10 @@
     
     var titleMaxLength = Model.Recipes.Count > 0 ? Convert.ToInt32(Model.Recipes.Average(r => r.Title.Length) * 0.3) : 0;
     var totalPagesNumber = (int) Math.Ceiling((double) Model.TotalRecipesCount / (double) Model.MaxRecipesPerPage);
-    var countStop = Model.CurrentPageNumber * 5 <= totalPagesNumber
-        ? Model.CurrentPageNumber * 5 : totalPagesNumber;
-    var countStart = countStop - Model.MaxRecipesPerPage - 1 > 0 ? countStop - Model.MaxRecipesPerPage - 1 : 1;
+    var countStop = Model.CurrentPageNumber + 4 <= totalPagesNumber
+        ? Model.CurrentPageNumber + 4 : totalPagesNumber;
+    var countStart = countStop - Model.CurrentPageNumber != 5 ? countStop -4 > 0 ? countStop - 4 
+        : Model.CurrentPageNumber : 1;
 }
 
 @inject ITelegramBotDbContext TelegramBotDbContext
@@ -64,7 +65,7 @@ else
     }" class="min-h-full bg-gray-200 pb-12">
         <div class="w-full 2xl:w-3/4 flex items-center justify-center px-8 md:px-32 lg:px-16 2xl:px-0 mx-auto -mt-8">
             <div class="w-full grid grid-cols-1 xl:grid-cols-3 gap-8" id="gridColsParentOfCards">
-                @if (@Model.NutrientViewDto is {Calories: > 0 })
+                @if (Model.NutrientViewDto is {Calories: > 0 } && Model.IsMealPlan)
                 {
                     <section id="nutrientsInfo" class="absolute left-0 text-2lg right-5/6">
                         <div class="mt-8 p-8  md:flex justify-around">
@@ -98,8 +99,11 @@ else
                                 / <span x-text="billingType">serving</span>
                             </span>
                         </p>
-                        <ul class="border-t border-gray-300 py-8 space-y-6">
-                            <li class="flex items-center space-x-2 px-8">
+                        <div class="grid justify-center">
+                            <img src="@recipe.Image" alt="recipe image" width="200" height="200">
+                        </div>
+                        <ul class="border-t border-gray-300 py-8 space-y-6 grid grid-cols-2 grid-rows-2 gap-0 align justify-center align-stretch">
+                            <li class="flex items-center space-x-2 px-2">
                                 <span class="bg-blue-600 rounded-full p-1">
                                     <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3 text-white" viewBox="0 0 20 20" fill="currentColor">
                                         <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
@@ -107,7 +111,7 @@ else
                                 </span>
                                 <span class="text-gray-600 capitalize">@(recipe.Vegetarian ? "Vegetarian" : "Not vegetarian")</span>
                             </li>
-                            <li class="flex items-center space-x-2 px-8">
+                            <li class="flex items-center space-x-2 px-2" style="margin-top: 0">
                                 <span class="bg-blue-600 rounded-full p-1">
                                     <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3 text-white" viewBox="0 0 20 20" fill="currentColor">
                                         <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
@@ -115,7 +119,7 @@ else
                                 </span>
                                 <span class="text-gray-600 capitalize">@(recipe.GlutenFree ? "Gluten-free" : "Not gluten-free")</span>
                             </li>
-                            <li class="flex items-center space-x-2 px-8">
+                            <li class="flex items-center space-x-2 px-2">
                                 <span class="bg-blue-600 rounded-full p-1">
                                     <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3 text-white" viewBox="0 0 20 20" fill="currentColor">
                                         <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
