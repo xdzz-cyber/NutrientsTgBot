@@ -27,29 +27,5 @@ public class GetUserRecipeListQueryHandler : IRequestHandler<GetUserRecipeListQu
             .Any(r => r.RecipeId == recipe.Id)).ToListAsync(cancellationToken);
 
         return recipes;
-        // if (recipes.Count == 0)
-        // {
-        //     return "No recipes found.";
-        // }
-        //
-        // var response = new StringBuilder();
-        //
-        // foreach (var recipe in recipes)
-        // {
-        //     var msg = $"Title: {recipe.Title}, Vegetarian: {recipe.Vegetarian}, GlutenFree: {recipe.GlutenFree}, " + 
-        //               $"PricePerServing: {recipe.PricePerServing}, Link: {recipe.SpoonacularSourceUrl}";
-        //     response.AppendLine(msg);
-        //     response.AppendLine($"Save as a part of the meal(/AddRecipeAsPartOfMeal_{recipe.Id})");
-        //     response.AppendLine($"Remove from the meal(/RemoveRecipeFromTheMeal_{recipe.Id})");
-        //     response.AppendLine($"Remove from the liked list(/RemoveRecipeFromLikedList_{recipe.Id})\n");
-        // }
-        //
-        // response.AppendLine("Clear liked list(/ClearLikedRecipesList)");
-        //
-        // response.AppendLine("Remove all from meal(/ClearRecipesAsPartOfMeal)");
-        //
-        // response.AppendLine("Add all liked recipes as part of the meal(/AddAllLikedRecipesAsMeal)");
-        //
-        // return response.ToString();
     }
 }

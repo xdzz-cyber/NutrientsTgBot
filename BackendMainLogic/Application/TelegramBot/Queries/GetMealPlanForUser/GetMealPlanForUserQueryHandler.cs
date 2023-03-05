@@ -43,7 +43,7 @@ public class GetMealPlanForUserQueryHandler : IRequestHandler<GetMealPlanForUser
         var targetCalories = (userCaloriesPreferences!.MaxValue + userCaloriesPreferences.MinValue) / 2;
 
         var userRecipeFiltersIds = await _ctx.RecipeFiltersUsers
-            .Where(rfu => rfu.AppUserId == userInfo.Id).Select(rfu => rfu.RecipeFiltersId).ToListAsync(cancellationToken);
+            .Where(rfu => rfu.AppUserId == userInfo.Id && rfu.IsTurnedIn).Select(rfu => rfu.RecipeFiltersId).ToListAsync(cancellationToken);
         
         var dietFilters = await _ctx.RecipeFilters
             .Where(rf => userRecipeFiltersIds.Contains(rf.Id)).ToListAsync(cancellationToken);

@@ -27,15 +27,5 @@ public class GetRecipesAsPartOfMealQueryHandler : IRequestHandler<GetRecipesAsPa
             .Any(r => r.RecipeId == recipe.Id && r.IsPartOfTheMeal)).ToListAsync(cancellationToken);
 
         return recipes;
-        // var response = new StringBuilder();
-
-        // foreach (var recipe in recipes)
-        // {
-        //     var msg = $"<strong>Title: {recipe.Title}, Vegetarian: {recipe.Vegetarian}, GlutenFree: {recipe.GlutenFree}, " + 
-        //               $"PricePerServing: {recipe.PricePerServing}, Link: {recipe.SpoonacularSourceUrl}</strong>\n";
-        //     response.AppendLine(msg);
-        // }
-        //
-        // return string.IsNullOrEmpty(response.ToString()) ? "No recipes found" : response.ToString();
     }
 }

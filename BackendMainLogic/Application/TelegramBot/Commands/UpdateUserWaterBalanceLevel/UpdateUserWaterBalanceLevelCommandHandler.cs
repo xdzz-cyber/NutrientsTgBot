@@ -43,6 +43,12 @@ public class UpdateUserWaterBalanceLevelCommandHandler : IRequestHandler<UpdateU
                 await _ctx.SaveChangesAsync(cancellationToken);
                 
                 return "New value has been successfully saved";
+            } 
+            
+            if (currentWaterLevelBalance.ExpiryDateTime < DateTime.Now)
+            {
+                currentWaterLevelBalance.Amount = 0;
+                currentWaterLevelBalance.ExpiryDateTime = DateTime.Now.AddDays(1); 
             }
 
             currentWaterLevelBalance.Amount += double.Parse(request.AmountOfWater);
