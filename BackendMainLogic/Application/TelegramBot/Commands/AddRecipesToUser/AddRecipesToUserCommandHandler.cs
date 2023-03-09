@@ -14,13 +14,15 @@ public class AddRecipesToUserCommandHandler : IRequestHandler<AddRecipesToUserCo
     private readonly ITelegramBotDbContext _ctx;
     private readonly UserManager<AppUser> _userManager;
     private readonly HttpClient _httpClient;
+    private readonly IMediator _mediator;
 
     public AddRecipesToUserCommandHandler(ITelegramBotDbContext ctx, UserManager<AppUser> userManager,
-        HttpClient httpClient)
+        HttpClient httpClient, IMediator mediator)
     {
         _ctx = ctx;
         _userManager = userManager;
-        _httpClient = httpClient; 
+        _httpClient = httpClient;
+        _mediator = mediator;
     }
     public async Task<string> Handle(AddRecipesToUserCommand request, CancellationToken cancellationToken)
     {
@@ -42,13 +44,15 @@ public class AddRecipesToUserCommandHandler : IRequestHandler<AddRecipesToUserCo
                 {
                     return "Not all recipes have been saved because max limit has been reached.";
                 }
+
+                await _mediator.Send(new AddRecipeToUserCommand(request.Username, recipeId), cancellationToken);
                 
-                await _ctx.RecipesUsers.AddAsync(
-                    new RecipesUsers
-                    {
-                        AppUserId = user.Id,
-                        RecipeId = int.Parse(recipeId, NumberStyles.Integer)
-                    }, cancellationToken);
+                // await _ctx.RecipesUsers.AddAsync(
+                //     new RecipesUsers
+                //     {
+                //         AppUserId = user.Id,
+                //         RecipeId = int.Parse(recipeId, NumberStyles.Integer)
+                //     }, cancellationToken);
             }
 
             // if (_ctx.RecipesUsers.Any(recipesUsers => recipesUsers.RecipeId.ToString() ==  request.RecipeId 
@@ -97,7 +101,7 @@ public class AddRecipesToUserCommandHandler : IRequestHandler<AddRecipesToUserCo
             //     }
             //     
             // }
-            await _ctx.SaveChangesAsync(cancellationToken);
+            //await _ctx.SaveChangesAsync(cancellationToken);
         }
         catch (Exception e)
         {

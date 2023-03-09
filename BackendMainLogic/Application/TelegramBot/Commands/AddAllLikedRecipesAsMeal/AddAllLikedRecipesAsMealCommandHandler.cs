@@ -22,7 +22,7 @@ public class AddAllLikedRecipesAsMealCommandHandler : IRequestHandler<AddAllLike
         var userInfo = await _userManager.FindByNameAsync(request.Username);
 
         var likedRecipes = await _ctx.RecipesUsers
-            .Where(ru => ru.AppUserId == userInfo.Id).ToListAsync(cancellationToken);
+            .Where(ru => ru.AppUserId == userInfo.Id && !ru.IsPartOfTheMeal).ToListAsync(cancellationToken);
 
         if (!likedRecipes.Any())
         {
@@ -31,10 +31,7 @@ public class AddAllLikedRecipesAsMealCommandHandler : IRequestHandler<AddAllLike
 
         foreach (var likedRecipe in likedRecipes)
         {
-            if (!likedRecipe.IsPartOfTheMeal)
-            {
-                likedRecipe.IsPartOfTheMeal = true;
-            }
+            likedRecipe.IsPartOfTheMeal = true;
         }
 
         await _ctx.SaveChangesAsync(cancellationToken);

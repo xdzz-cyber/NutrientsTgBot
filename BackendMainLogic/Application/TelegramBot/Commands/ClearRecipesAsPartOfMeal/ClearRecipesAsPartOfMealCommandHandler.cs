@@ -21,15 +21,12 @@ public class ClearRecipesAsPartOfMealCommandHandler : IRequestHandler<ClearRecip
     {
         var userInfo = await _userManager.FindByNameAsync(request.Username);
 
-        var likedRecipesByCurrentUser = await _ctx.RecipesUsers
-            .Where(ru => ru.AppUserId == userInfo.Id).ToListAsync(cancellationToken: cancellationToken);
+        var likedMealsByCurrentUser = await _ctx.RecipesUsers
+            .Where(ru => ru.AppUserId == userInfo.Id && ru.IsPartOfTheMeal).ToListAsync(cancellationToken: cancellationToken);
 
-        foreach (var recipe in likedRecipesByCurrentUser)
+        foreach (var recipe in likedMealsByCurrentUser)
         {
-            if (recipe.IsPartOfTheMeal)
-            {
-                recipe.IsPartOfTheMeal = false;
-            }
+            recipe.IsPartOfTheMeal = false;
         }
 
         await _ctx.SaveChangesAsync(cancellationToken);
