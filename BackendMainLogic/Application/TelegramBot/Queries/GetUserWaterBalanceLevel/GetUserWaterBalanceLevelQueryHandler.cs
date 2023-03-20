@@ -30,12 +30,6 @@ public class GetUserWaterBalanceLevelQueryHandler : IRequestHandler<GetUserWater
             return "No data found.";
         }
 
-        // if (currentWaterLevelOfUser.ExpiryDateTime < DateTime.Now)
-        // {
-        //     currentWaterLevelOfUser.Amount = 0;
-        //     await _ctx.SaveChangesAsync(cancellationToken);
-        // }
-
         var waterLevelMargin =  WaterLevelBalanceConstants.WaterLevelBalanceFormulaConstant * 
             user.Weight - Math.Abs(currentWaterLevelOfUser.Amount);
         

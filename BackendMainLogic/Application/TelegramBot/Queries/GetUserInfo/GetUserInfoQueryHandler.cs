@@ -1,4 +1,5 @@
-﻿using Domain.TelegramBotEntities;
+﻿using Application.TelegramBot.Queries.GetApprovedBmiValue;
+using Domain.TelegramBotEntities;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
 
@@ -7,10 +8,12 @@ namespace Application.TelegramBot.Queries.GetUserInfo;
 public class GetUserInfoQueryHandler : IRequestHandler<GetUserInfoQuery, string>
 {
     private readonly UserManager<AppUser> _userManager;
+    private readonly IMediator _mediator;
 
-    public GetUserInfoQueryHandler(UserManager<AppUser> userManager)
+    public GetUserInfoQueryHandler(UserManager<AppUser> userManager, IMediator mediator)
     {
         _userManager = userManager;
+        _mediator = mediator;
     }
     
     public async Task<string> Handle(GetUserInfoQuery request, CancellationToken cancellationToken)
@@ -22,6 +25,10 @@ public class GetUserInfoQueryHandler : IRequestHandler<GetUserInfoQuery, string>
             return "Please, set all of the values (height, age, weight and sex).";
         }
 
-        return $"Your tallness is {user.Height}cm, age is {user.Age}, weight is {user.Weight}kg and sex is {user.Sex.ToLower()}";
+        var bmiValueResponse = await _mediator
+            .Send(new GetApprovedBmiValueQuery(request.Username), cancellationToken);
+
+        return $"Your tallness is {user.Height}cm, age is {user.Age}," +
+               $" weight is {user.Weight}kg and sex is {user.Sex.ToLower()}, and BMI value is {bmiValueResponse}";
     }
 }
