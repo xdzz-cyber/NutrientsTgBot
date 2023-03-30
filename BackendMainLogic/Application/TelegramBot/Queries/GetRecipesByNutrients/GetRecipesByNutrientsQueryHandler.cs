@@ -83,6 +83,15 @@ public class GetRecipesByNutrientsQueryHandler : IRequestHandler<GetRecipesByNut
                 var recipesInformationBulkResponse = JsonSerializer
                     .Deserialize<List<RecipeViewDto>>(
                         await getRecipesInformationBulkHttpMessage.Content.ReadAsStringAsync(cancellationToken));
+                
+                var recipesSpoonacularSourceUrlHttpMessageResponse = await _httpClient
+                    .GetAsync($"{TelegramBotRecipesHttpPaths.GetFullRecipesData}{string.Join(',', recipesInformationBulkResponse!.Select(c => c.Id).ToList())}", 
+                        cancellationToken: cancellationToken);
+
+                var recipesSpoonacularSourceUrl = JsonSerializer.Deserialize<List<RecipeViewDto>>(await recipesSpoonacularSourceUrlHttpMessageResponse.Content.ReadAsStringAsync(cancellationToken));
+                
+                recipesInformationBulkResponse!.ForEach(r => r.SpoonacularSourceUrl = recipesSpoonacularSourceUrl!.First(rs => rs.Id == r.Id).SpoonacularSourceUrl);
+                
                 return recipesInformationBulkResponse!;
             }
         }

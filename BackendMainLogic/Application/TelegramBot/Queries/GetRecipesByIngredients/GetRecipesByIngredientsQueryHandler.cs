@@ -1,4 +1,5 @@
 ﻿using Application.Common.Constants;
+using Application.Common.Mappings;
 using Application.Interfaces;
 using Domain.TelegramBotEntities;
 using AutoMapper;
@@ -31,7 +32,7 @@ public class GetRecipesByIngredientsQueryHandler : IRequestHandler<GetRecipesByI
         var userInfo = await _userManager.FindByNameAsync(request.Username);
 
         var foundRecipes = new List<Recipe>();
-        
+
         var recipes =
            await _httpClient.GetAsync($"{TelegramBotRecipesHttpPaths.GetRecipesDataByIngredients}{request.Ingredients}", 
                cancellationToken: cancellationToken);
@@ -43,6 +44,12 @@ public class GetRecipesByIngredientsQueryHandler : IRequestHandler<GetRecipesByI
             var _ = await recipes.Content.ReadAsStringAsync(cancellationToken);
             
             content = JsonSerializer.Deserialize<List<RecipesNutrition>>(_);
+            
+            var recipesSpoonacularSourceUrlHttpMessageResponse = await _httpClient
+                .GetAsync($"{TelegramBotRecipesHttpPaths.GetFullRecipesData}{string.Join(',', content!.Select(c => c.Id).ToList())}", 
+                cancellationToken: cancellationToken);
+
+            var recipesSpoonacularSourceUrl = JsonSerializer.Deserialize<List<RecipeViewDto>>(await recipesSpoonacularSourceUrlHttpMessageResponse.Content.ReadAsStringAsync(cancellationToken));
 
             foreach (var recipe in content!)
             {
@@ -81,7 +88,8 @@ public class GetRecipesByIngredientsQueryHandler : IRequestHandler<GetRecipesByI
                         GlutenFree = _ctx.RecipeFiltersUsers.FirstOrDefault(rfu => rfu.RecipeFiltersId == glutenFreeFilter.Id) is not null &&
                                      _ctx.RecipeFiltersUsers.First(rfu => rfu.RecipeFiltersId == glutenFreeFilter.Id).IsTurnedIn,
                         SourceUrl = recipe.Image,
-                        Image = recipe.Image
+                        Image = recipe.Image,
+                        SpoonacularSourceUrl = recipesSpoonacularSourceUrl!.First(r => r.Id == recipe.Id).SpoonacularSourceUrl
                     });
                 }
             }
