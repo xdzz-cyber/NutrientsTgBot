@@ -18,7 +18,8 @@ public class GetApprovedAmountOfNutrientsQueryHandler : IRequestHandler<GetAppro
     {
         var user = await _userManager.FindByNameAsync(request.Username);
 
-        if (user.Weight <= 0 || user.Age <= 0 || user.Height <= 0 || (user.Sex.ToLower() != "man" && user.Sex.ToLower() != "women"))
+        if (user.Weight <= 0 || user.Age <= 0 || user.Height <= 0 || (user.Sex.ToLower() != "man" && user.Sex.ToLower() 
+                != "women"))
         {
             return "Please, set values of weight, sex, age and height before getting data.";
         }
@@ -39,11 +40,11 @@ public class GetApprovedAmountOfNutrientsQueryHandler : IRequestHandler<GetAppro
         
         var percentageOfFat = TelegramBotRecommendedAmountOfNutrients.PercentageOfFatFromCalories;
 
-        return $"Minimum needed amount of calories is {recommendedAmountOfCalories}, " +
-               $"protein({Math.Round(percentageOfProtein,2)}%) = {Math.Floor(recommendedAmountOfCalories * percentageOfProtein)}k, " +
+        return $"Minimum needed amount of calories is {recommendedAmountOfCalories} kcal, " +
+               $"protein({Math.Round(percentageOfProtein,2)}%) = {Math.Floor(recommendedAmountOfCalories * percentageOfProtein)} g, " +
                $"carbohydrates({Math.Round(percentageOfCarbohydrates,2)}%) = " +
-               $"{Math.Floor(recommendedAmountOfCalories * percentageOfCarbohydrates)}k, " +
-               $"fat({Math.Round(percentageOfFat,2)}%) = {Math.Floor(recommendedAmountOfCalories * percentageOfFat)}k."; 
+               $"{Math.Floor(recommendedAmountOfCalories * percentageOfCarbohydrates)} g, " +
+               $"fat({Math.Round(percentageOfFat,2)}%) = {Math.Floor(recommendedAmountOfCalories * percentageOfFat)} g."; 
         // basal metabolic rate = minimum amount of energy so body functions normally 
     }
 }

@@ -78,7 +78,7 @@ public class GetUserSupplementsOutlineQueryHandler : IRequestHandler<GetUserSupp
             var nutrientByName = nutrients.FirstOrDefault(n => n.Name
                 .Equals(recipeNutrient.Name));
 
-            var nutrientMeasurementUnit = nutrientByName!.Name.Equals("Calories") ? "k" : "g";
+            var nutrientMeasurementUnit = nutrientByName!.Name.Equals("Calories") ? "kcal" : "g";
             
             var userPreferenceForCurrentNutrient = await _ctx.NutrientUsers
                 .FirstOrDefaultAsync(nu => nu.NutrientId == nutrientByName!.Id, 
@@ -95,17 +95,17 @@ public class GetUserSupplementsOutlineQueryHandler : IRequestHandler<GetUserSupp
                 && recipeNutrient.Amount >= userPreferenceForCurrentNutrient.MinValue)
             {
                 responseMessageForCurrentNutrient = $"{recipeNutrient.Name}: " +
-                                                    $"{Math.Abs(recipeNutrient.Amount - userPreferenceForCurrentNutrient.MaxValue)}{nutrientMeasurementUnit} still need to be consumed.";
+                                                    $"{Math.Abs(recipeNutrient.Amount - userPreferenceForCurrentNutrient.MaxValue)} {nutrientMeasurementUnit} still need to be consumed.";
             } else if (recipeNutrient.Amount < userPreferenceForCurrentNutrient.MinValue)
             {
                 responseMessageForCurrentNutrient = $"{recipeNutrient.Name} is below your preferences. " +
-                                                    $"You have to consume {Math.Abs(userPreferenceForCurrentNutrient.MinValue - recipeNutrient.Amount)}{nutrientMeasurementUnit} more.";
+                                                    $"You have to consume {Math.Abs(userPreferenceForCurrentNutrient.MinValue - recipeNutrient.Amount)} {nutrientMeasurementUnit} more.";
             }
             else if (recipeNutrient.Amount > userPreferenceForCurrentNutrient.MaxValue)
             {
                 responseMessageForCurrentNutrient =
                     $"{recipeNutrient.Name} is above your preferences." +
-                    $" You have to consume {Math.Abs(recipeNutrient.Amount - userPreferenceForCurrentNutrient.MaxValue)}{nutrientMeasurementUnit} less.";
+                    $" You have to consume {Math.Abs(recipeNutrient.Amount - userPreferenceForCurrentNutrient.MaxValue)} {nutrientMeasurementUnit} less.";
             }
         
             response.AppendLine(responseMessageForCurrentNutrient);

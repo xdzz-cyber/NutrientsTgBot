@@ -28,7 +28,7 @@ public class GetUserInfoQueryHandler : IRequestHandler<GetUserInfoQuery, string>
         var bmiValueResponse = await _mediator
             .Send(new GetApprovedBmiValueQuery(request.Username), cancellationToken);
 
-        return $"Your tallness is {user.Height}cm, age is {user.Age}," +
-               $" weight is {user.Weight}kg and sex is {user.Sex.ToLower()}, and BMI value is {bmiValueResponse}";
+        return $"Your tallness is {user.Height} cm, age is {user.Age}," +
+               $" weight is {user.Weight} kg and sex is {user.Sex.ToLower()}, and BMI value is {bmiValueResponse}";
     }
 }
