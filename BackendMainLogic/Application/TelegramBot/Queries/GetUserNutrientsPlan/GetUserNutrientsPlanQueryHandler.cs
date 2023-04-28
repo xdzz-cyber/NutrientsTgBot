@@ -37,8 +37,20 @@ public class GetUserNutrientsPlanQueryHandler : IRequestHandler<GetUserNutrients
         foreach (var userNutrient in userNutrients)
         {
             var nutrientName = nutrients.FirstOrDefault(n => n.Id == userNutrient.NutrientId)?.Name;
-            response.AppendLine($"Nutrient name = {nutrientName},Max value = {userNutrient.MaxValue}, " +
-                                $"Min Value = {userNutrient.MinValue};");
+
+            nutrientName = nutrientName switch
+            {
+                "Carbohydrates" => "Carbs",
+                _ => nutrientName
+            };
+
+            var unitsOfMeasurements = nutrientName switch
+            {
+                "Calories" => "kcal",
+                _ => "g"
+            };
+
+            response.AppendLine($"{nutrientName}: max = {userNutrient.MaxValue} {unitsOfMeasurements}, min = {userNutrient.MinValue} {unitsOfMeasurements}");
         }
 
         return response.ToString();

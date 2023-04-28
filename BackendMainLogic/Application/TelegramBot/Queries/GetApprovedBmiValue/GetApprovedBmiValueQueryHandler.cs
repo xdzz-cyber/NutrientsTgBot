@@ -21,11 +21,11 @@ public class GetApprovedBmiValueQueryHandler : IRequestHandler<GetApprovedBmiVal
 
         var response = bmiValue switch
         {
-            <= 18.5 => "Underweight",
-            > 18.5 and <= 24.9 => "Normal",
-            >= 25 and <= 29.9 => "Overweight",
-            >= 30 => "Obese",
-            _ => "Very unhealthy condition"
+            <= 18.5 => "underweight which is a very unhealthy condition, so you need to consult a doctor.",
+            > 18.5 and <= 24.9 => "normal which is a healthy condition.",
+            >= 25 and <= 29.9 => "overweight which is a unhealthy condition, so you need to lose weight.",
+            >= 30 => "obese which is a very unhealthy condition, so you need to lose weight.",
+            _ => "very unhealthy condition which is a very unhealthy condition, so you need to consult a doctor."
         };
 
         return response;
