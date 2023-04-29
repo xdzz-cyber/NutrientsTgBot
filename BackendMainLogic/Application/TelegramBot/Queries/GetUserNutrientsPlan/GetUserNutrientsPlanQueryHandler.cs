@@ -34,6 +34,10 @@ public class GetUserNutrientsPlanQueryHandler : IRequestHandler<GetUserNutrients
 
         var response = new StringBuilder();
 
+        response.AppendLine("Based on nutrient plan you will get");
+
+        response.AppendLine("meals with following nutrients:");
+
         foreach (var userNutrient in userNutrients)
         {
             var nutrientName = nutrients.FirstOrDefault(n => n.Id == userNutrient.NutrientId)?.Name;
