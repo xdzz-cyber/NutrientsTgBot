@@ -26,13 +26,13 @@
                             Your information
                         </h4>
                         <p class="text-md font-light mt-2 text-white">
-                            @Model.UserInfo
+                            @Html.DisplayFor(m => m.UserInfo);
                         </p>
                         <p class="text-md font-light mt-2 text-white">
-                            @Model.ApprovedAmountOfNutrients
+                            @Html.DisplayFor(m => m.ApprovedAmountOfNutrients);
                         </p>
                         <p class="text-md font-light mt-2 text-white">
-                            @Model.UserSupplementsOutline
+                            @Html.DisplayFor(m => m.UserSupplementsOutline);
                         </p>
                     </blockquote>
                 </div>
@@ -70,7 +70,7 @@
                                     Recipes filters
                                 </h6>
                                 <div class="mb-4 text-blueGray-500">
-                                    <p>Filters available are: @Model.AvailableFiltersForRecipes</p>
+                                    <p>Filters available are: @Html.DisplayFor(m => m.AvailableFiltersForRecipes);</p>
                                     @if (TelegramBotDbContext.RecipeFiltersUsers.Count(rfu => rfu.IsTurnedIn
                                                                                               && rfu.AppUserId == User.FindFirst(ClaimTypes.NameIdentifier)!.Value) != TelegramBotDbContext.RecipeFilters.Count())
                                     {
@@ -114,7 +114,7 @@
                                 </div>
                                 <h6 class="text-xl mb-1 font-semibold">Water balance level</h6>
                                 <p class="mb-4 text-blueGray-500">
-                                    @Model.WaterBalanceInfo.
+                                    @Html.DisplayFor(m => m.WaterBalanceInfo).
                                     <span> Click to <a asp-action="DefaultForm" asp-route-controllerName="User" 
                                                                                                               asp-route-actionName="UpdateWaterBalance" class="text-blue-400">update</a></span>
                                     @* You've already consumed 70 and yet have to consume 3115 milliliters more. *@
@@ -132,7 +132,7 @@
                                 <h6 class="text-xl mb-1 font-semibold">Nutrients plan</h6>
                                 <div class="mb-4 text-blueGray-500">
                                     <div>
-                                        <p><pre style="font-family: ui-sans-serif, Arial; font-size: 16px;">@Model.NutrientsPlanInfo</pre></p>
+                                        <p><pre style="font-family: ui-sans-serif, Arial; font-size: 16px;">@Html.DisplayFor(m => m.NutrientsPlanInfo);</pre></p>
                                         <div>
                                             <p><a asp-action="NutrientsPlanForm" asp-controller="NutrientsPlan" 
                                                   class="text-blue-400">Update plan</a>

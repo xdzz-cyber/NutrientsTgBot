@@ -75,10 +75,12 @@ else
                                         <span class="font-bold">
                                             Nutrients report:
                                         </span>
-                                        <span class="text-sm">Calories : @Model.NutrientViewDto.Calories</span>
-                                        <span class="text-sm">Carbohydrates : @Model.NutrientViewDto.Carbohydrates</span>
-                                        <span class="text-sm">Fat : @Model.NutrientViewDto.Fat</span>
-                                        <span class="text-sm">Protein : @Model.NutrientViewDto.Protein </span>
+                                        <span class="text-sm">Calories : @Html.DisplayFor(m 
+                                                                             => m.NutrientViewDto!.Calories)</span>
+                                        <span class="text-sm">Carbohydrates : @Html.DisplayFor(m 
+                                                                                  => m.NutrientViewDto!.Carbohydrates)</span>
+                                        <span class="text-sm">Fat : @Html.DisplayFor(m => m.NutrientViewDto!.Fat)</span>
+                                        <span class="text-sm">Protein : @Html.DisplayFor(m => m.NutrientViewDto!.Protein)</span>
                                     </div>
                                 </div>
                             </div>
