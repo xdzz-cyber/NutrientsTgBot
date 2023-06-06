@@ -7,11 +7,15 @@
         ? Model.CurrentPageNumber + 4 : totalPagesNumber;
     var countStart = countStop - Model.CurrentPageNumber != 5 ? countStop -4 > 0 ? countStop - 4 
         : Model.CurrentPageNumber : 1;
+    
+    var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
 }
 
 @inject ITelegramBotDbContext TelegramBotDbContext
 
 @using Application.Interfaces
+@using Microsoft.AspNetCore.Mvc.TagHelpers
+@using System.Security.Claims
 @model RecipesCarouselViewModel
 
 <partial name="_HeaderNavbarPartial"/>
@@ -129,7 +133,8 @@ else
                                 </span>
                                 <span class="text-gray-600 capitalize"><a href="@recipe.SpoonacularSourceUrl">Link</a></span>
                             </li>
-                            @if (TelegramBotDbContext.RecipesUsers.FirstOrDefault(r => r.RecipeId == recipe.Id && r.IsPartOfTheMeal) != null)
+                            @if (TelegramBotDbContext.RecipesUsers
+                                .FirstOrDefault(ru => ru.RecipeId == recipe.Id && ru.IsPartOfTheMeal && ru.AppUserId == userId) != null)
                             {
                                 <li class="flex items-center space-x-2 px-8">
                                     <span class="bg-blue-600 rounded-full p-1">
@@ -161,7 +166,7 @@ else
                             }
                         </ul>
                         <div class="flex flex-row items-center gap-x-3 justify-center mt-6">
-                            @if (TelegramBotDbContext.RecipesUsers.Any(ru => ru.RecipeId == recipe.Id))
+                            @if (TelegramBotDbContext.RecipesUsers.Any(ru => ru.RecipeId == recipe.Id && ru.AppUserId == userId))
                             {
                                 <a asp-action="RemoveRecipeFromLikedList" asp-controller="Recipes"
                                    asp-route-recipeId="@recipe.Id"
@@ -192,7 +197,8 @@ else
             </div>
         </div>
     </div>
-    @if (Model.Recipes.Any(r => TelegramBotDbContext.RecipesUsers.FirstOrDefault(ru => ru.RecipeId == r.Id) == null))
+    @if (Model.Recipes.Any(r => TelegramBotDbContext.RecipesUsers
+        .FirstOrDefault(ru => ru.RecipeId == r.Id && ru.AppUserId == userId) == null))
     {
         <div class="flex justify-center content-center mb-8">
             <button onclick="addAllRecipesMarkedAsSaved()" class="group relative h-10 w-40 overflow-hidden rounded-lg bg-white text-sm shadow">

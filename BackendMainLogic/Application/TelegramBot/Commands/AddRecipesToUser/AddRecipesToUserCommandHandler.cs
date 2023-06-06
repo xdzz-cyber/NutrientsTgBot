@@ -40,7 +40,7 @@ public class AddRecipesToUserCommandHandler : IRequestHandler<AddRecipesToUserCo
 
             foreach (var recipeId in request.RecipeIds)
             {
-                if (_ctx.RecipesUsers.Count() >= TelegramBotRecipesPerUserAmount.MaxRecipesPerUser)
+                if (_ctx.RecipesUsers.Count(ru => ru.AppUserId == user.Id) >= TelegramBotRecipesPerUserAmount.MaxRecipesPerUser)
                 {
                     return "Not all recipes have been saved because max limit has been reached.";
                 }

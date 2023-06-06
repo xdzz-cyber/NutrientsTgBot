@@ -30,9 +30,12 @@ public class AuthController : Controller
     [HttpPost]
     public async Task<IActionResult> Registration([FromForm] RegistrationViewModel registrationViewModel)
     {
-
-        var newUserId = await _mediator.Send(new CreateUserCommand(username: registrationViewModel.UserName,
-            age: registrationViewModel.Age, password: registrationViewModel.Password));
+        var newUserId = await _mediator.Send(new CreateUserCommand()
+        {
+            Username = registrationViewModel.UserName,
+            Age = registrationViewModel.Age,
+            Password = registrationViewModel.Password
+        });
         
         if (!string.IsNullOrEmpty(newUserId.ToString()))
         {
@@ -42,7 +45,7 @@ public class AuthController : Controller
             return RedirectToAction("Main", "Home");
         }
 
-        return View();
+        return View(registrationViewModel);
     }
 
     [HttpGet]
@@ -64,7 +67,7 @@ public class AuthController : Controller
             return RedirectToAction("Main", "Home");
         }
 
-        return View();
+        return View(loginViewModel);
     }
 
     [HttpGet]

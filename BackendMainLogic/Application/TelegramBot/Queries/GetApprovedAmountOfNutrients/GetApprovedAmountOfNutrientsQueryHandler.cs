@@ -44,7 +44,7 @@ public class GetApprovedAmountOfNutrientsQueryHandler : IRequestHandler<GetAppro
                $"protein({Math.Round(percentageOfProtein,2)}%) = {Math.Floor(recommendedAmountOfCalories * percentageOfProtein)} g, " +
                $"carbohydrates({Math.Round(percentageOfCarbohydrates,2)}%) = " +
                $"{Math.Floor(recommendedAmountOfCalories * percentageOfCarbohydrates)} g, " +
-               $"fat({Math.Round(percentageOfFat,2)}%) = {Math.Floor(recommendedAmountOfCalories * percentageOfFat)} g."; 
+               $"fat({Math.Round(percentageOfFat,2)}%) = {Math.Floor(recommendedAmountOfCalories * percentageOfFat)} g.";
         // basal metabolic rate = minimum amount of energy so body functions normally 
     }
 }

@@ -17,6 +17,7 @@
                         Fat min value
                     </label>
                     <input
+                        min="0"
                         asp-for="FatMin"
                         id="fatMin"
                         class="w-full rounded-md border border-[#e0e0e0] bg-white py-3 px-6 text-base font-medium text-[#6B7280] outline-none focus:border-[#6A64F1] focus:shadow-md"
@@ -29,6 +30,7 @@
                         Fat max value
                     </label>
                     <input
+                        min="0"
                         asp-for="FatMax"
                         id="fatMax"
                         class="w-full rounded-md border border-[#e0e0e0] bg-white py-3 px-6 text-base font-medium text-[#6B7280] outline-none focus:border-[#6A64F1] focus:shadow-md"
@@ -43,6 +45,7 @@
                         Carbohydrates min
                     </label>
                     <input
+                        min="0"
                         asp-for="CarbohydratesMin"
                         id="carbohydratesMin"
                         class="w-full rounded-md border border-[#e0e0e0] bg-white py-3 px-6 text-base font-medium text-[#6B7280] outline-none focus:border-[#6A64F1] focus:shadow-md"
@@ -55,6 +58,7 @@
                         Carbohydrates max
                     </label>
                     <input
+                        min="0"
                         asp-for="CarbohydratesMax"
                         id="carbohydratesMax"
                         class="w-full rounded-md border border-[#e0e0e0] bg-white py-3 px-6 text-base font-medium text-[#6B7280] outline-none focus:border-[#6A64F1] focus:shadow-md"
@@ -69,6 +73,7 @@
                         Protein min
                     </label>
                     <input
+                        min="0"
                         asp-for="ProteinMin"
                         id="proteinMin"
                         class="w-full rounded-md border border-[#e0e0e0] bg-white py-3 px-6 text-base font-medium text-[#6B7280] outline-none focus:border-[#6A64F1] focus:shadow-md"
@@ -81,6 +86,7 @@
                         Protein max
                     </label>
                     <input
+                        min="0"
                         asp-for="ProteinMax"
                         id="proteinMax"
                         class="w-full rounded-md border border-[#e0e0e0] bg-white py-3 px-6 text-base font-medium text-[#6B7280] outline-none focus:border-[#6A64F1] focus:shadow-md"
@@ -94,7 +100,8 @@
                     <label for="caloriesMin" class="mb-3 block text-base font-medium text-[#07074D]">
                       Calories min
                     </label>
-                    <input
+                      <input
+                          min="0"
                       asp-for="CaloriesMin"
                       id="caloriesMin"
                       class="w-full rounded-md border border-[#e0e0e0] bg-white py-3 px-6 text-base font-medium text-[#6B7280] outline-none focus:border-[#6A64F1] focus:shadow-md"
@@ -106,7 +113,8 @@
                     <label for="caloriesMax" class="mb-3 block text-base font-medium text-[#07074D]">
                       Calories max
                     </label>
-                    <input
+                      <input
+                          min="0"
                       asp-for="CaloriesMax"
                       id="caloriesMax"
                       class="w-full rounded-md border border-[#e0e0e0] bg-white py-3 px-6 text-base font-medium text-[#6B7280] outline-none focus:border-[#6A64F1] focus:shadow-md"

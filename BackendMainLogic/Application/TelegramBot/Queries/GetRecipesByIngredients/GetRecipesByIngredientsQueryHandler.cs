@@ -50,20 +50,25 @@ public class GetRecipesByIngredientsQueryHandler : IRequestHandler<GetRecipesByI
                 cancellationToken: cancellationToken);
 
             var recipesSpoonacularSourceUrl = JsonSerializer.Deserialize<List<RecipeViewDto>>(await recipesSpoonacularSourceUrlHttpMessageResponse.Content.ReadAsStringAsync(cancellationToken));
-
+            
+            var vegetarianFilter = _ctx.RecipeFilters.First(rf => rf.Name == "Vegetarian");
+            var glutenFreeFilter = _ctx.RecipeFilters.First(rf => rf.Name == "GlutenFree");
+            
+            // var recipeFilters = await _ctx.RecipeFilters
+            //     .Join(_ctx.RecipeFiltersUsers, rf => rf.Id, rfu => rfu.RecipeFiltersId, 
+            //         (rf, rfu) => new {rf, rfu})
+            //     .Where(@t => t.rfu.IsTurnedIn && @t.rfu.AppUserId == userInfo.Id)
+            //     .Select(@t => t.rf)
+            //     .ToListAsync(cancellationToken);
+            
+            var recipeFilters = await _ctx.RecipeFilters
+                .Where(rf => rf.RecipeFiltersUsers
+                    .Any(rfu => rfu.RecipeFiltersId == rf.Id && rfu.IsTurnedIn 
+                                                             && rfu.AppUserId == userInfo.Id))
+                .ToListAsync(cancellationToken);
+            
             foreach (var recipe in content!)
             {
-
-                var recipeFilters = await _ctx.RecipeFilters
-                    .Where(rf => rf.RecipeFiltersUsers
-                        .Any(rfu => rfu.RecipeFiltersId == rf.Id && rfu.IsTurnedIn 
-                                                                 && rfu.AppUserId == userInfo.Id))
-                    .ToListAsync(cancellationToken);
-
-                var vegetarianFilter = _ctx.RecipeFilters.First(rf => rf.Name == "Vegetarian");
-                
-                var glutenFreeFilter = _ctx.RecipeFilters.First(rf => rf.Name == "GlutenFree");
-                
                 var satisfiesFiltersCount = 0;
                 
                 foreach (var recipeFilter in recipeFilters)
